@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds every app icon from one square logo on a flat background.
-# Usage: tools/make-icons.sh <logo.png> [background hex, default #FEF8EE]
+# Usage: tools/make-icons.sh design/capybara-logo.png [background hex, default #FEF8EE]
 #
 # Writes: www/icon-192.png, www/icon-512.png, www/icon-maskable-512.png,
 #   www/favicon.svg, the Android launcher (legacy mipmaps and the adaptive
