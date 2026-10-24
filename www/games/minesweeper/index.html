@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>مین‌روب — چوگان</title>
+<title>مین‌روب — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -773,7 +773,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = MinesEngin
           { label: C.t('difficulty'), value: C.t(snap.sizeKey) }
         ],
         paint: cardPaint(snap.board),
-        shareText: 'چوگان · مین‌روب ' + C.t(snap.sizeKey) + (snap.daily ? ('\nروزانه ' + snap.daily) : '') +
+        shareText: 'کاپیبارا · مین‌روب ' + C.t(snap.sizeKey) + (snap.daily ? ('\nروزانه ' + snap.daily) : '') +
           '\nروی مین رفتم · زمان ' + C.time(snap.elapsed),
         onAgain: snap.daily ? null : function () { newGame(snap.sizeKey); }
       });
@@ -851,7 +851,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = MinesEngin
         { label: C.t('difficulty'), value: C.t(S.sizeKey) },
         { label: C.t('hints'), value: C.num(S.hints) }
       ],
-      shareText: 'چوگان · مین‌روب ' + C.t(S.sizeKey) + (S.daily ? ('\nروزانه ' + S.daily) : '') +
+      shareText: 'کاپیبارا · مین‌روب ' + C.t(S.sizeKey) + (S.daily ? ('\nروزانه ' + S.daily) : '') +
         '\nزمان ' + C.time(S.elapsed) + ' · راهنمایی ' + C.num(S.hints),
       paint: cardPaint(boardSnap()),
       onAgain: daily ? null : function () { newGame(sizeKey); }

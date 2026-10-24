@@ -4,13 +4,13 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- دسته‌ی چوگان -->
+    <!-- دسته‌ی کاپیبارا -->
     <path
         android:pathData="M71,32 L52,57"
         android:strokeColor="#F2F5F7"
         android:strokeWidth="7"
         android:strokeLineCap="round" />
-    <!-- سر چوگان -->
+    <!-- سر کاپیبارا -->
     <path
         android:pathData="M52,57 L65,67"
         android:strokeColor="#F2F5F7"

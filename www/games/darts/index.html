@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>دارت — چوگان</title>
+<title>دارت — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -488,7 +488,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = DartsEngin
       won: won,
       title: G.mode === 'people' ? C.t('playerWon', { n: pname(w) }) : (won ? C.t('won') : C.t('lost')),
       timeMs: Date.now() - G.startedAt, coins: coins, points: points, lines: lines,
-      shareText: 'چوگان · دارت' + (G.daily ? ('\nروزانه ' + G.daily + ' · ' + mine + ' دارت') : ''),
+      shareText: 'کاپیبارا · دارت' + (G.daily ? ('\nروزانه ' + G.daily + ' · ' + mine + ' دارت') : ''),
       paint: cardPaint(),
       onAgain: G.daily ? null : function () { newGame(current()); }
     });

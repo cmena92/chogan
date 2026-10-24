@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>بلوک‌ریز — چوگان</title>
+<title>بلوک‌ریز — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -832,7 +832,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = BlockDropE
       won: won,
       title: won ? (sprint ? C.t('sprintDone') : C.t('marathonDone')) : C.t('toppedOut'),
       timeMs: Math.round(snap.time), coins: coins, points: points, lines: lines,
-      shareText: 'چوگان · بلوک‌ریز' + (daily ? (' · روزانه ' + daily) : '') + '\n' +
+      shareText: 'کاپیبارا · بلوک‌ریز' + (daily ? (' · روزانه ' + daily) : '') + '\n' +
         (sprint ? ('۴۰ خط' + (won ? ' در ' + C.time(snap.time) : ' · ' + C.num(snap.lines) + ' خط')) : ('ماراتن · ' + C.num(snap.lines) + ' خط · امتیاز ' + C.num(snap.score))),
       paint: cardPaint(snap),
       onAgain: function () { start(mode, daily); }

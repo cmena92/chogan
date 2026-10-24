@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>رمزشکن — چوگان</title>
+<title>رمزشکن — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -623,7 +623,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = Codebreake
         { label: C.t('guesses'), value: C.t('ofTen', { n: C.num(used), m: C.num(Lv.rows) }) },
         { label: C.t('level'), value: C.t(S.level) }
       ],
-      shareText: 'چوگان · رمزشکن · ' + C.t(S.level) +
+      shareText: 'کاپیبارا · رمزشکن · ' + C.t(S.level) +
         (S.daily ? ('\nروزانه ' + S.daily) : '') + '\n' + score + '\n' + lines.join('\n'),
       paint: cardPaint(),
       onAgain: S.daily ? null : function () { newGame(S.level, null); }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>بولینگ — چوگان</title>
+<title>بولینگ — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -492,7 +492,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = BowlingEng
         { label: C.t('strikesLabel'), value: C.num(G.strikes) },
         { label: C.t('sparesLabel'), value: C.num(G.spares) }
       ],
-      shareText: 'چوگان · بولینگ' + (G.daily ? ('\nروزانه ' + G.daily) : '') + '\n' + mine,
+      shareText: 'کاپیبارا · بولینگ' + (G.daily ? ('\nروزانه ' + G.daily) : '') + '\n' + mine,
       paint: cardPaint(),
       onAgain: G.daily ? null : function () { newGame(current()); }
     });

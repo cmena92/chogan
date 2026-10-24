@@ -20,7 +20,9 @@ def appVersionCode = ((versionSource =~ /APP_VERSION_CODE\s*=\s*(\d+)/)[0][1]).t
 def capacitorAssetsDir = layout.buildDirectory.dir('generated/capacitorAssets').get().asFile
 
 android {
-    namespace capConfig.appId
+    // The Java package stays as upstream so merges stay clean; the published
+    // application id comes from capacitor.config.json.
+    namespace 'io.github.choganhq.chogan'
     compileSdk 36
 
     defaultConfig {

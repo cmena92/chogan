@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>منچ — چوگان</title>
+<title>منچ — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -559,7 +559,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = LudoEngine
         { label: C.t('rollsLabel'), value: C.num(G.myRolls) },
         { label: C.t('capturesLabel'), value: C.num(G.captures) }
       ],
-      shareText: 'چوگان · منچ' + (G.daily ? ('\nروزانه ' + G.daily) : '') + '\n' + pname(w),
+      shareText: 'کاپیبارا · منچ' + (G.daily ? ('\nروزانه ' + G.daily) : '') + '\n' + pname(w),
       paint: cardPaint(),
       onAgain: G.daily ? null : function () { newGame(current()); }
     });

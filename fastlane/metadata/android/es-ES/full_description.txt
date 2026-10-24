@@ -1,4 +1,4 @@
-Chogan es una colección de juegos pequeños que se pueden terminar, en una sola app. Trae treinta y nueve juegos; los nuevos llegan como actualizaciones.
+Capybara es una colección de juegos pequeños que se pueden terminar, en una sola app. Trae treinta y nueve juegos; los nuevos llegan como actualizaciones.
 
 Los juegos:
 

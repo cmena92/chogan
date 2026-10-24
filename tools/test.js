@@ -3034,7 +3034,7 @@ function testFiles() {
   // خوانا بگیرد، و فارسی به شکل name_localized اضافه شده تا مرورگر خودش
   // بر اساس زبان دستگاه انتخاب کند و اسم موقع نصب قفل نشود.
   const man = JSON.parse(fs.readFileSync(path.join(ROOT, 'www/manifest.webmanifest'), 'utf8'));
-  ok(man.name === 'Chogan' && man.lang === 'en' && man.dir === 'ltr', 'پیش‌فرض منیفست انگلیسی است');
+  ok(man.name === 'Capybara' && man.lang === 'en' && man.dir === 'ltr', 'پیش‌فرض منیفست انگلیسی است');
   ok(!fs.existsSync(path.join(ROOT, 'www/manifest-en.webmanifest')), 'منیفست دوم حذف شده');
   for (const k of ['name_localized', 'short_name_localized', 'description_localized']) {
     ok(man[k] && man[k].fa, 'منیفست ' + k + ' فارسی دارد');
@@ -3042,7 +3042,7 @@ function testFiles() {
   // An installed app's description follows the device language; Spanish was missing until #256
   const manLang = { fa: 'fa', zh: 'zh-Hans', de: 'de', es: 'es' };
   ok(LOCALE_CODES.filter((c) => c !== 'en').every((c) => man.description_localized[manLang[c]] && man.description_localized[manLang[c]].value), 'the manifest describes the app in every language');
-  ok(man.name_localized.fa.value === 'چوگان', 'نام فارسی در منیفست درست است');
+  ok(man.name_localized.fa.value === 'کاپیبارا', 'نام فارسی در منیفست درست است');
   // The installed desktop app showed the browser's own title bar above the app's (#344)
   const dov = man.display_override || [];
   ok(dov[0] === 'window-controls-overlay' && dov.includes('standalone') && man.display === 'standalone', 'the manifest asks for the window controls overlay first and keeps standalone');
@@ -3071,8 +3071,8 @@ function testFiles() {
   // نام لانچر باید با زبان گوشی عوض شود، وگرنه گوشی انگلیسی هم لیبل فارسی می‌گیرد
   const strDefault = fs.readFileSync(path.join(ROOT, 'android/app/src/main/res/values/strings.xml'), 'utf8');
   const strFa = fs.readFileSync(path.join(ROOT, 'android/app/src/main/res/values-fa/strings.xml'), 'utf8');
-  ok(/<string name="app_name">Chogan<\/string>/.test(strDefault), 'نام پیش‌فرض لانچر انگلیسی است');
-  ok(/<string name="app_name">چوگان<\/string>/.test(strFa), 'نام فارسی لانچر در values-fa هست');
+  ok(/<string name="app_name">Capybara<\/string>/.test(strDefault), 'نام پیش‌فرض لانچر انگلیسی است');
+  ok(/<string name="app_name">کاپیبارا<\/string>/.test(strFa), 'نام فارسی لانچر در values-fa هست');
   const gradleApp = fs.readFileSync(path.join(ROOT, 'android/app/build.gradle'), 'utf8');
   // resValue فقط در پوشه‌ی پیش‌فرض می‌نشیند و values-fa را بی‌اثر می‌کند
   ok(!/resValue\s+'string',\s*'app_name'/.test(gradleApp), 'گریدل نام برنامه را روی منابع سوار نمی‌کند');
@@ -7743,7 +7743,7 @@ function testEnglishCi() {
     }
   }
   ok(files.length >= 12, 'files in scope found (' + files.length + ')');
-  const UI_VALUE = /\[ "\$FA" = "چوگان" \]|^  <h1>Chogan<span>چوگان<\/span><\/h1>$/;
+  const UI_VALUE = /\[ "\$FA" = "کاپیبارا" \]|^  <h1>Chogan<span>چوگان<\/span><\/h1>$/;
   for (const rel of files) {
     const bad = fs.readFileSync(path.join(ROOT, rel), 'utf8').split('\n')
       .filter((l) => /[؀-ۿ]/.test(l) && !UI_VALUE.test(l));

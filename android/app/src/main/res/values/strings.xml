@@ -3,5 +3,5 @@
      پس اینجا انگلیسی می‌نشیند و فارسی در values-fa. هم‌راستا با
      fastlane/metadata که از اول همین کار را می‌کرد. -->
 <resources>
-    <string name="app_name">Chogan</string>
+    <string name="app_name">Capybara</string>
 </resources>

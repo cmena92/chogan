@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>نونوگرام — چوگان</title>
+<title>نونوگرام — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -845,7 +845,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = NonogramEn
         { label: C.t('time'), value: C.time(elapsed) },
         { label: C.t('size'), value: C.num(n) + '×' + C.num(n) }
       ],
-      shareText: 'چوگان · نونوگرام ' + (picName ? picName + ' ' : '') + C.num(n) + '×' + C.num(n) +
+      shareText: 'کاپیبارا · نونوگرام ' + (picName ? picName + ' ' : '') + C.num(n) + '×' + C.num(n) +
         (snap.daily ? ('\nروزانه ' + snap.daily) : '') + '\nزمان ' + C.time(elapsed),
       paint: cardPaint(snap),
       onAgain: snap.daily ? null : (pic ? function () { newPicture(nextUnsolved(pic.id)); } : function () { newGame(snap.n, null); })

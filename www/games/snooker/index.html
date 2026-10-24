@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>اسنوکر — چوگان</title>
+<title>اسنوکر — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -827,7 +827,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = SnookerEng
     ctx.clearSave();
     ctx.finish({
       won: won, title: title, timeMs: Date.now() - startedAt, coins: coins, points: points, lines: lines,
-      shareText: 'چوگان · اسنوکر' + (daily ? ('\nروزانه ' + daily + '\n' + C.num(F.shots) + ' ' + C.t('shots')) : '\n' + title + '\n' + C.num(F.scores[0]) + ' – ' + C.num(F.scores[1])),
+      shareText: 'کاپیبارا · اسنوکر' + (daily ? ('\nروزانه ' + daily + '\n' + C.num(F.shots) + ' ' + C.t('shots')) : '\n' + title + '\n' + C.num(F.scores[0]) + ' – ' + C.num(F.scores[1])),
       paint: cardPaint(),
       onAgain: daily ? null : function () { newGame({ mode: F.mode, level: F.level, reds: F.reds }); }
     });

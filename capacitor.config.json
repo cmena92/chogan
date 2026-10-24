@@ -1,6 +1,6 @@
 {
-  "appId": "io.github.choganhq.chogan",
-  "appName": "چوگان",
+  "appId": "com.webcomcr.capybara",
+  "appName": "Capybara",
   "webDir": "www",
   "server": {
     "androidScheme": "https"

@@ -97,8 +97,8 @@ jobs:
           echo "$BADGE" | grep -E "^application(-label|-label-fa)" || true
           DEF=$(echo "$BADGE" | sed -n "s/^application-label:'\(.*\)'$/\1/p")
           FA=$(echo "$BADGE" | sed -n "s/^application-label-fa:'\(.*\)'$/\1/p")
-          [ "$DEF" = "Chogan" ] || { echo "Default name is \"$DEF\", not Chogan"; exit 1; }
-          [ "$FA" = "چوگان" ] || { echo "Persian name is \"$FA\", not the expected one"; exit 1; }
+          [ "$DEF" = "Capybara" ] || { echo "Default name is \"$DEF\", not Capybara"; exit 1; }
+          [ "$FA" = "کاپیبارا" ] || { echo "Persian name is \"$FA\", not the expected one"; exit 1; }
           echo "Default: $DEF · Persian: $FA"
 
       - name: Check package permissions

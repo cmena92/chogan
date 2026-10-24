@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>گوموکو — چوگان</title>
+<title>گوموکو — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -474,7 +474,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = GomokuEngi
       title: tie ? C.t('draw') : (vsAi ? (won ? C.t('won') : C.t('lost')) : C.t('playerWon', { n: pname(S.winner) })),
       timeMs: Date.now() - S.startedAt, coins: coins, points: points,
       lines: [{ label: C.t('placed'), value: C.num(S.history.length + (S.daily ? 4 : 0)) }],
-      shareText: 'چوگان · گوموکو' + (S.daily ? ('\nروزانه ' + S.daily) : '') +
+      shareText: 'کاپیبارا · گوموکو' + (S.daily ? ('\nروزانه ' + S.daily) : '') +
         '\n' + (tie ? C.t('draw') : pname(S.winner) + ' · ' + C.num(S.n) + '×' + C.num(S.n)),
       paint: cardPaint(),
       onAgain: S.daily ? null : function () { newGame(current()); }

@@ -1,5 +1,5 @@
 /* ===========================================================================
-   چوگان — هسته‌ی مشترک اپ
+   کاپیبارا — هسته‌ی مشترک اپ
    جاوااسکریپت خام، بدون وابستگی، بدون مرحله‌ی بیلد.
    هر چیزی که بین بازی‌ها مشترک است فقط اینجا زندگی می‌کند.
    =========================================================================== */
@@ -278,7 +278,7 @@
 
   var STR = {
     fa: {
-      appName: 'چوگان', home: 'خانه', daily: 'روزانه', league: 'لیگ',
+      appName: 'کاپیبارا', home: 'خانه', daily: 'روزانه', league: 'لیگ',
       achievements: 'دستاوردها', profile: 'پروفایل', settings: 'تنظیمات',
       play: 'بازی', resume: 'ادامه', newGame: 'بازی تازه', again: 'دوباره',
       cardBack: 'پشت کارت', backCarpet: 'قالی', backTermeh: 'ترمه', cardSpeed: 'سرعت بازی', speedSlow: 'آرام', speedNormal: 'معمولی', speedFast: 'تند',
@@ -319,7 +319,7 @@
       tutorial: 'آموزش', gotIt: 'فهمیدم', stars: 'ستاره'
     },
     en: {
-      appName: 'Chogan', home: 'Home', daily: 'Daily', league: 'League',
+      appName: 'Capybara', home: 'Home', daily: 'Daily', league: 'League',
       achievements: 'Awards', profile: 'Profile', settings: 'Settings',
       play: 'Play', resume: 'Resume', newGame: 'New game', again: 'Again',
       cardBack: 'Card back', backCarpet: 'Carpet', backTermeh: 'Termeh', cardSpeed: 'Speed', speedSlow: 'Slow', speedNormal: 'Normal', speedFast: 'Fast',
@@ -360,7 +360,7 @@
       tutorial: 'How to play', gotIt: 'Got it', stars: 'stars'
     },
     zh: {
-      appName: 'Chogan', home: '主页', daily: '每日', league: '联赛',
+      appName: 'Capybara', home: '主页', daily: '每日', league: '联赛',
       achievements: '成就', profile: '个人', settings: '设置',
       play: '开始', resume: '继续', newGame: '新游戏', again: '再来一局',
       cardBack: '牌背', backCarpet: '波斯地毯', backTermeh: '波斯织锦', cardSpeed: '速度', speedSlow: '慢', speedNormal: '正常', speedFast: '快',
@@ -401,7 +401,7 @@
       tutorial: '玩法', gotIt: '明白了', stars: '星'
     },
     de: {
-      appName: 'Chogan', home: 'Start', daily: 'Täglich', league: 'Liga',
+      appName: 'Capybara', home: 'Start', daily: 'Täglich', league: 'Liga',
       achievements: 'Erfolge', profile: 'Profil', settings: 'Einstellungen',
       play: 'Spielen', resume: 'Weiter', newGame: 'Neues Spiel', again: 'Nochmal',
       cardBack: 'Kartenrücken', backCarpet: 'Teppich', backTermeh: 'Termeh-Brokat', cardSpeed: 'Tempo', speedSlow: 'Langsam', speedNormal: 'Normal', speedFast: 'Schnell',
@@ -442,7 +442,7 @@
       tutorial: 'Anleitung', gotIt: 'Verstanden', stars: 'Sterne'
     },
     es: {
-      appName: 'Chogan', home: 'Inicio', daily: 'Diario', league: 'Liga',
+      appName: 'Capybara', home: 'Inicio', daily: 'Diario', league: 'Liga',
       achievements: 'Logros', profile: 'Perfil', settings: 'Ajustes',
       play: 'Jugar', resume: 'Seguir', newGame: 'Nueva partida', again: 'Otra vez',
       cardBack: 'Reverso', backCarpet: 'Alfombra', backTermeh: 'Termeh', cardSpeed: 'Velocidad', speedSlow: 'Lenta', speedNormal: 'Normal', speedFast: 'Rápida',
@@ -1411,7 +1411,7 @@
   function fontsReady() {
     if (document.fonts && document.fonts.ready) {
       // یک بار متن فارسی را بخواه تا فونت متغیر واقعاً بار شود
-      try { document.fonts.load('700 76px Vazirmatn', 'چوگان'); } catch (e) { /* مهم نیست */ }
+      try { document.fonts.load('700 76px Vazirmatn', 'کاپیبارا'); } catch (e) { /* مهم نیست */ }
       return document.fonts.ready.catch(function () { });
     }
     return Promise.resolve();
@@ -1456,7 +1456,7 @@
       g.textAlign = START;
       g.fillStyle = col.game;
       g.font = '800 46px ' + fam;
-      g.fillText(rtl ? 'چوگان' : 'Chogan', xs, 150);
+      g.fillText(rtl ? 'کاپیبارا' : 'Capybara', xs, 150);
       if (o.game) {
         g.textAlign = END;
         g.fillStyle = col.faint;

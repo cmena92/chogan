@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>فری‌سل — چوگان</title>
+<title>فری‌سل — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -929,7 +929,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = FreecellEn
         { label: C.t('moves'), value: C.num(S.moves) },
         { label: C.t('time'), value: C.time(ms) }
       ],
-      shareText: 'چوگان · فری‌سل، دست ' + C.num(S.deal) + (S.daily ? ('\nروزانه ' + S.daily) : '') +
+      shareText: 'کاپیبارا · فری‌سل، دست ' + C.num(S.deal) + (S.daily ? ('\nروزانه ' + S.daily) : '') +
         '\n' + C.num(S.moves) + ' حرکت در ' + C.time(ms),
       paint: cardPaint(kings),
       onAgain: S.daily ? null : function () { start(E.pickDeal(Math.random), null); }

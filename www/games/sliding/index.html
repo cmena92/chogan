@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>پازل کشویی — چوگان</title>
+<title>پازل کشویی — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -410,7 +410,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = SlidingEng
         { label: C.t('moves'), value: C.num(S.moves) },
         { label: C.t('time'), value: C.time(elapsed) }
       ],
-      shareText: 'چوگان · پازل کشویی' + (S.daily ? ('\nروزانه ' + S.daily) : ('\n' + sizeLabel(n))) + '\n' + C.t('movesN', { n: C.num(S.moves) }) + '\n' + C.time(elapsed),
+      shareText: 'کاپیبارا · پازل کشویی' + (S.daily ? ('\nروزانه ' + S.daily) : ('\n' + sizeLabel(n))) + '\n' + C.t('movesN', { n: C.num(S.moves) }) + '\n' + C.time(elapsed),
       paint: cardPaint(shot),
       againLabel: S.daily ? null : C.t('newShuffle'),
       onAgain: S.daily ? null : function () { newGame(n); }

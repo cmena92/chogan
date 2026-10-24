@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>هفت خبیث — چوگان</title>
+<title>هفت خبیث — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -692,7 +692,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = CrazyEight
       title: won ? C.t('matchWon') : C.t('matchLost', { n: pname(M.daily ? R.winner : best) }),
       timeMs: ms, coins: coins, points: points,
       lines: lines,
-      shareText: 'چوگان · هفت خبیث' + (M.daily ? ('\nروزانه ' + M.daily) : '') + '\n' + scores.map(function (s) { return C.num(s); }).join(' - '),
+      shareText: 'کاپیبارا · هفت خبیث' + (M.daily ? ('\nروزانه ' + M.daily) : '') + '\n' + scores.map(function (s) { return C.num(s); }).join(' - '),
       onAgain: M.daily ? null : function () { newMatch(null); }
     });
   }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>ماهجونگ — چوگان</title>
+<title>ماهجونگ — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -943,7 +943,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = MahjongEng
         { label: C.t('hints'), value: C.num(S.hints) },
         { label: C.t('shuffle'), value: C.num(S.shuffles) }
       ].concat(S.timed ? [{ label: C.t('speedBonus'), value: bonus ? '+' + C.num(bonus) : C.t('timeUp') }] : []),
-      shareText: 'چوگان · ماهجونگ' + (S.daily ? ('\nروزانه ' + S.daily) : '') + '\n' + C.time(elapsed),
+      shareText: 'کاپیبارا · ماهجونگ' + (S.daily ? ('\nروزانه ' + S.daily) : '') + '\n' + C.time(elapsed),
       onAgain: S.daily ? null : function () { newGame(S.layout); }
     });
   }

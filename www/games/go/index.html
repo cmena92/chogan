@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>گو — چوگان</title>
+<title>گو — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -535,7 +535,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = GoEngineFa
       won: vsAi ? won : null,
       title: vsAi ? (won ? C.t('won') : C.t('lost')) : C.t('playerWon', { n: pname(winner) }),
       timeMs: Date.now() - S.startedAt, coins: coins, points: points, lines: lines,
-      shareText: 'چوگان · گو' + (S.daily ? ('\nروزانه ' + S.daily) : '') + '\n' + label,
+      shareText: 'کاپیبارا · گو' + (S.daily ? ('\nروزانه ' + S.daily) : '') + '\n' + label,
       paint: cardPaint(),
       onAgain: S.daily ? null : function () { newGame(current()); }
     });

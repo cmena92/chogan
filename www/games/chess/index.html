@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#FBF6EF">
-<title>شطرنج — چوگان</title>
+<title>شطرنج — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
 <style>
@@ -1233,7 +1233,7 @@ function ChessBotFactory() {
       lines: pz.items.map(function (it, i) {
         return { label: C.t('pzOf', { i: C.num(i + 1), n: C.num(n) }) + ' · ' + C.t(it[0]), value: (pz.results[i] ? '✓ ' : '✗ ') + C.num(PZ[it[0]][it[1]][3]) };
       }),
-      shareText: 'چوگان · معمای شطرنج' + (pz.daily ? ' · روزانه ' + pz.daily : '') + '\n' + pz.results.map(function (r) { return r ? '🟩' : '🟥'; }).join(''),
+      shareText: 'کاپیبارا · معمای شطرنج' + (pz.daily ? ' · روزانه ' + pz.daily : '') + '\n' + pz.results.map(function (r) { return r ? '🟩' : '🟥'; }).join(''),
       onAgain: pz.daily ? null : function () { startSet(pz.tier); }
     });
   }
@@ -1559,7 +1559,7 @@ function ChessBotFactory() {
     ctx.finish({
       won: won, title: title, timeMs: Date.now() - G.startedAt, coins: coins, points: points,
       lines: [{ label: resultText(st), value: '' }, { label: C.t('moves'), value: C.num(Math.ceil(G.sans.length / 2)) }],
-      shareText: 'چوگان · شطرنج' + (isAi() ? ' · ' + C.t('bot') + ' ' + C.t(G.level) : '') + '\n' + G.sans.join(' '),
+      shareText: 'کاپیبارا · شطرنج' + (isAi() ? ' · ' + C.t('bot') + ' ' + C.t(G.level) : '') + '\n' + G.sans.join(' '),
       onAgain: function () { newGame(); }
     });
   }
