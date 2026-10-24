@@ -18,8 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Full history and tags: the release-post tests read every tag (#263)
       - name: Check out
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v7
