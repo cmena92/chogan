@@ -49,6 +49,13 @@ jobs:
               echo "Trial build for tag ${GITHUB_REF_NAME}"
               echo "IS_TEST=1" >> "$GITHUB_ENV"
               ;;
+            # Capybara fork releases: v<upstream version>-capybara.<n>, so the
+            # upstream version stays untouched and each fork build says which
+            # upstream release it carries.
+            "v$VERSION"-capybara.*)
+              echo "Capybara release ${GITHUB_REF_NAME} on upstream v$VERSION"
+              echo "IS_TEST=0" >> "$GITHUB_ENV"
+              ;;
             *)
               if [ "v$VERSION" != "${GITHUB_REF_NAME}" ]; then
                 echo "Tag ${GITHUB_REF_NAME} does not match www/version.js (v$VERSION)"
@@ -156,7 +163,8 @@ jobs:
     name: Post the release to Telegram
     runs-on: ubuntu-latest
     needs: apk
-    if: ${{ !endsWith(github.ref_name, '-test') }}
+    # The channel belongs to upstream: the Capybara fork never posts there
+    if: ${{ github.repository == 'choganhq/chogan' && !endsWith(github.ref_name, '-test') }}
     steps:
       # Full history: the post reads the previous release and its games from the tags (#263)
       - name: Check out
