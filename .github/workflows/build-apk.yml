@@ -1,0 +1,69 @@
+name: Build APK
+
+# Fork-only workflow: builds a debug APK of any branch and
+# keeps it as a downloadable artifact, so the app can be tried on a phone
+# without a local Android toolchain.
+
+on:
+  push:
+    branches: ['rebrand/**', 'feature/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    name: Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Test game engines
+        run: node tools/test.js
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # Same Gradle version as the wrapper, as in test.yml
+      - name: Read Gradle version from the wrapper
+        id: gradleversion
+        run: |
+          set -euo pipefail
+          V=$(sed -n 's|.*/gradle-\([0-9][^-]*\)-bin\.zip.*|\1|p' android/gradle/wrapper/gradle-wrapper.properties)
+          [ -n "$V" ] || { echo "Could not read the Gradle version from gradle-wrapper.properties"; exit 1; }
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: ${{ steps.gradleversion.outputs.version }}
+
+      - name: Build
+        working-directory: android
+        run: gradle --no-daemon assembleDebug
+
+      - name: Show package identity
+        run: |
+          set -euo pipefail
+          AAPT=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -n 1)
+          APK=$(ls android/app/build/outputs/apk/debug/*.apk | head -n 1)
+          "$AAPT" dump badging "$APK" | grep -E "^package:|^application-label"
+          echo "Size: $(du -h "$APK" | cut -f1)"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v6
+        with:
+          name: capybara-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14
