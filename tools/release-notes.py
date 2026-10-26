@@ -9,9 +9,14 @@ A changelog is sections in this order, each a heading line and "- " bullets:
     Improvements:
     - ...
 --check validates that shape instead and exits 1 with the reason.
+A contributor is credited on the line of their change, e.g.
+"- Chinese chess, thanks to @lanlan3292"; --md and --html link every @login to
+the GitHub profile (owner's wish, #533: the credit belongs on the change, not
+in a line of its own at the end).
 Usage: tools/release-notes.py --md|--html|--check <changelog.txt>
 """
 import html
+import re
 import sys
 
 SECTIONS = ['New games', 'Bug fixes', 'Improvements']
@@ -43,6 +48,16 @@ def parse(text):
     return sections
 
 
+# Only GitHub's own login characters, so a mention can never break out of its link
+MENTION = re.compile(r'(?<![\w@/])@([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}))(?![\w-])')
+
+
+def linked(text, fmt):
+    if fmt == '--md':
+        return MENTION.sub(lambda m: '[@%s](https://github.com/%s)' % (m.group(1), m.group(1)), text)
+    return MENTION.sub(lambda m: '<a href="https://github.com/%s">@%s</a>' % (m.group(1), m.group(1)), html.escape(text))
+
+
 def main():
     if len(sys.argv) != 3 or sys.argv[1] not in ('--md', '--html', '--check'):
         print(__doc__.strip().splitlines()[-1], file=sys.stderr)
@@ -63,10 +78,10 @@ def main():
     for name, items in sections:
         if sys.argv[1] == '--md':
             out.append('- **%s**' % name)
-            out.extend('  - %s' % i for i in items)
+            out.extend('  - %s' % linked(i, '--md') for i in items)
         else:
             out.append('<b>%s</b>' % html.escape(name))
-            out.extend('• %s' % html.escape(i) for i in items)
+            out.extend('• %s' % linked(i, '--html') for i in items)
             out.append('')
     print('\n'.join(out).rstrip())
     return 0

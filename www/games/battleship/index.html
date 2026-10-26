@@ -366,6 +366,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = Battleship
     name: NAME,
     accent: '#3A7AAA',
     mood: 'minesweeper',
+    // on a phone on its side the seas, the tray and the buttons are taller than the
+    // screen; the area scrolls like the card games' instead of cutting the buttons (#477)
+    scroll: true,
     strings: {
       fa: {
         placeTitle: 'ناوگانت را بچین', placeHint: 'کشتی را انتخاب کن و روی دریا بزن. روی خودش بزنی می‌چرخد.',

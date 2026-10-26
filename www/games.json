@@ -936,6 +936,198 @@
       "soft": "#DFF0DA",
       "added": "2026-10-23",
       "files": []
+    },
+    {
+      "id": "spider",
+      "cat": "cards",
+      "name": {
+        "fa": "عنکبوت",
+        "en": "Spider",
+        "zh": "蜘蛛纸牌",
+        "de": "Spider",
+        "es": "Spider"
+      },
+      "summary": {
+        "fa": "هر خال را از شاه تا آس پشت سر هم بچین؛ یک، دو یا چهار خال.",
+        "en": "Build each suit from king down to ace; one, two or four suits.",
+        "zh": "把每种花色从K到A依次排好；单色、双色或四色。",
+        "de": "Lege jede Farbe vom König bis zum Ass ab; eine, zwei oder vier Farben.",
+        "es": "Ordena cada palo del rey al as; uno, dos o cuatro palos."
+      },
+      "path": "games/spider/index.html",
+      "icon": "games/spider/icon.svg",
+      "color": "#55507A",
+      "soft": "#E6E4EF",
+      "added": "2026-10-24",
+      "files": []
+    },
+    {
+      "id": "pairs",
+      "cat": "puzzle",
+      "name": {
+        "fa": "جفت‌ها",
+        "en": "Pairs",
+        "zh": "翻牌配对",
+        "de": "Paare",
+        "es": "Parejas"
+      },
+      "summary": {
+        "fa": "کارت‌ها را دو تا دو تا برگردان و همه‌ی جفت‌ها را با کمترین حرکت پیدا کن.",
+        "en": "Turn two cards at a time and find every pair in as few moves as you can.",
+        "zh": "每次翻开两张牌，用最少的步数找出所有配对。",
+        "de": "Dreh immer zwei Karten um und finde alle Paare mit möglichst wenigen Zügen.",
+        "es": "Gira dos cartas cada vez y encuentra todas las parejas con pocos movimientos."
+      },
+      "path": "games/pairs/index.html",
+      "icon": "games/pairs/icon.svg",
+      "color": "#7C3AED",
+      "soft": "#EDE6FC",
+      "added": "2026-10-24",
+      "files": []
+    },
+    {
+      "id": "gorillas",
+      "cat": "skill",
+      "name": {
+        "fa": "گوریل‌ها",
+        "en": "Gorillas",
+        "zh": "大猩猩",
+        "de": "Gorillas",
+        "es": "Gorilas"
+      },
+      "summary": {
+        "fa": "از پشت‌بام موز منفجره پرت کن؛ زاویه، قدرت و باد. مقابل ربات یا دونفره.",
+        "en": "Throw exploding bananas across the rooftops: angle, power and wind. Against a bot or two players.",
+        "zh": "从屋顶扔出爆炸香蕉：角度、力度和风。对战电脑或双人。",
+        "de": "Wirf explodierende Bananen über die Dächer: Winkel, Kraft und Wind. Gegen einen Bot oder zu zweit.",
+        "es": "Lanza plátanos explosivos entre azoteas: ángulo, fuerza y viento. Contra un bot o para dos."
+      },
+      "path": "games/gorillas/index.html",
+      "icon": "games/gorillas/icon.svg",
+      "color": "#6B4423",
+      "soft": "#F0E6DD",
+      "added": "2026-10-24",
+      "files": []
+    },
+    {
+      "id": "hop",
+      "cat": "skill",
+      "name": {
+        "fa": "جهش",
+        "en": "Hop",
+        "zh": "跳跳",
+        "de": "Hüpf",
+        "es": "Salto"
+      },
+      "summary": {
+        "fa": "از سکو به سکو بالا برو و نیفت؛ با لمس یا کج کردن گوشی.",
+        "en": "Bounce from platform to platform and don't fall; touch or tilt to steer.",
+        "zh": "从一个平台跳到另一个平台，别掉下去；触摸或倾斜手机操作。",
+        "de": "Spring von Plattform zu Plattform und fall nicht; tippen oder neigen.",
+        "es": "Salta de plataforma en plataforma sin caer; toca o inclina el móvil."
+      },
+      "path": "games/hop/index.html",
+      "icon": "games/hop/icon.svg",
+      "color": "#1971C2",
+      "soft": "#E3EEF9",
+      "added": "2026-10-24",
+      "files": []
+    },
+    {
+      "id": "tanks",
+      "cat": "skill",
+      "name": {
+        "fa": "تانک‌ها",
+        "en": "Tanks",
+        "zh": "坦克",
+        "de": "Panzer",
+        "es": "Tanques"
+      },
+      "summary": {
+        "fa": "روی تپه‌ها به تانک حریف شلیک کن؛ زاویه، قدرت، باد و پنج نوع موشک.",
+        "en": "Fire across the hills at the other tank: angle, power, wind and five weapons.",
+        "zh": "隔着山丘向对方坦克开火：角度、力度、风和五种武器。",
+        "de": "Schieß über die Hügel auf den anderen Panzer: Winkel, Kraft, Wind und fünf Waffen.",
+        "es": "Dispara entre colinas al otro tanque: ángulo, fuerza, viento y cinco armas."
+      },
+      "path": "games/tanks/index.html",
+      "icon": "games/tanks/icon.svg",
+      "color": "#4A5D23",
+      "soft": "#E8ECDD",
+      "added": "2026-10-25",
+      "files": []
+    },
+    {
+      "id": "xiangqi",
+      "cat": "board",
+      "name": {
+        "fa": "شطرنج چینی",
+        "en": "Chinese chess",
+        "zh": "中国象棋",
+        "de": "Chinesisches Schach",
+        "es": "Ajedrez chino"
+      },
+      "summary": {
+        "fa": "شطرنج چینی روی صفحهٔ ۹×۱۰: کاخ، پیل، توپ و شاهان رو‌به‌روی هم؛ با رایانه یا دو نفره.",
+        "en": "Chinese chess on a 9×10 board: palace, elephant, cannon and flying generals; against the AI or a friend.",
+        "zh": "9×10 的中国象棋：九宫、象、炮与将帅照面；人机或双人对战。",
+        "de": "Chinesisches Schach auf einem 9×10-Brett: Palast, Elefant, Kanone und fliegende Generäle; gegen den Computer oder zu zweit.",
+        "es": "Ajedrez chino en un tablero de 9×10: palacio, elefante, cañón y generales que se miran; contra la máquina o a dos."
+      },
+      "path": "games/xiangqi/index.html",
+      "icon": "games/xiangqi/icon.svg",
+      "color": "#7C2D12",
+      "soft": "#F6E7DC",
+      "added": "2026-10-25",
+      "files": []
+    },
+    {
+      "id": "pingpong",
+      "cat": "skill",
+      "name": {
+        "fa": "پینگ‌پنگ",
+        "en": "Ping Pong",
+        "zh": "乒乓球",
+        "de": "Pingpong",
+        "es": "Ping-pong"
+      },
+      "summary": {
+        "fa": "توپ را از بالای میز برگردان تا از راکت حریف رد شود؛ اول ۱۱ امتیاز.",
+        "en": "Return the ball across the table until it gets past the other paddle; first to 11.",
+        "zh": "在球桌上把球打回去，直到它越过对方的球拍；先到 11 分。",
+        "de": "Spiel den Ball über den Tisch zurück, bis er am anderen Schläger vorbeigeht; zuerst 11.",
+        "es": "Devuelve la pelota por la mesa hasta que pase la otra pala; gana quien llegue a 11."
+      },
+      "path": "games/pingpong/index.html",
+      "icon": "games/pingpong/icon.svg",
+      "color": "#E2231A",
+      "soft": "#FBE5E2",
+      "added": "2026-10-25",
+      "files": []
+    },
+    {
+      "id": "airhockey",
+      "cat": "skill",
+      "name": {
+        "fa": "ایرهاکی",
+        "en": "Air Hockey",
+        "zh": "桌上冰球",
+        "de": "Airhockey",
+        "es": "Air hockey"
+      },
+      "summary": {
+        "fa": "توپک را روی میز نئونی به دروازه‌ی حریف بزن و از دروازه‌ی خودت دور نگه دار؛ اول هفت گل.",
+        "en": "Hit the puck into the other goal on a neon table and keep it out of yours; first to seven.",
+        "zh": "在霓虹球台上把冰球打进对方球门，守住自己的球门；先进七球。",
+        "de": "Schieß den Puck auf dem Neontisch ins andere Tor und halt ihn aus deinem raus; zuerst sieben.",
+        "es": "Mete el disco en la otra portería de una mesa de neón y protege la tuya; gana quien llegue a siete."
+      },
+      "path": "games/airhockey/index.html",
+      "icon": "games/airhockey/icon.svg",
+      "color": "#C000F4",
+      "soft": "#F5E3FD",
+      "added": "2026-10-25",
+      "files": []
     }
   ]
 }

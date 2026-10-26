@@ -1,46 +1,54 @@
-Capybara ist eine Sammlung kleiner Spiele in einer einzigen App, die du wirklich zu Ende spielst. Neununddreißig Spiele sind dabei, neue kommen als Updates dazu.
+Capybara ist eine Sammlung kleiner Spiele in einer einzigen App, die du wirklich zu Ende spielst. Über vierzig Spiele sind dabei, neue kommen als Updates dazu.
 
 Die Spiele:
 
-* Turmverteidigung — vier Türme, sechs Karten plus eine Tageskarte, zwanzig Wellen, Endlosmodus
-* Sudoku — vier Schwierigkeitsstufen mit garantiert eindeutiger Lösung, Notizen, Tipps und ein Tagesrätsel
+* Turmverteidigung — vier Türme, sechs Karten, zwanzig Wellen
+* Sudoku — vier Stufen, je eine Lösung, Notizen und Tipps
 * Minesweeper — ohne Raten erzeugt, vier Größen, Akkorde und Flaggen
-* Käsekästchen — zu zweit an einem Handy oder gegen drei Stufen Computer
-* Backgammon — zu zweit oder gegen drei Stufen Computer, Gammons zählen doppelt
-* Mancala — Kalah-Regeln, zu zweit oder gegen drei Stufen Computer
+* Käsekästchen — zu zweit an einem Handy oder gegen den Computer
+* Backgammon — zu zweit oder gegen den Computer, Gammons zählen doppelt
+* Mancala — Kalah-Regeln, zu zweit oder gegen den Computer
 * Nonogramm — drei Größen, jedes Rätsel allein mit Logik lösbar
-* FreeCell — die klassischen nummerierten Spiele, nie das eine unlösbare, unbegrenztes Rückgängig
-* Reversi — zu zweit oder gegen drei Stufen Computer
-* Mühle — zu zweit oder gegen drei Stufen Computer
+* FreeCell — die klassischen nummerierten Spiele, nie das eine unlösbare
+* Reversi — zu zweit oder gegen den Computer
+* Mühle — zu zweit oder gegen den Computer
 * Solitär — lass einen Stift übrig, für das perfekte Spiel in der Mitte
-* Schiffe versenken — gegen einen Computer, der nur weiß, was du auch wissen würdest
+* Schiffe versenken — gegen einen Computer, der nicht schummelt
 * Brücken — drei Größen, jedes Rätsel mit genau einer Lösung
 * Codeknacker — drei Stufen, farbenblindfreundlich
 * Breakout — zwölf feste Level, je drei Bälle
-* Pasur — das persische Kartenspiel gegen drei Stufen Computer, mit Surs und klassischer Wertung
+* Pasur — das persische Kartenspiel gegen drei Stufen Computer
 * Mahjong — drei Aufstellungen samt Schildkröte, jedes Spiel lösbar
-* Schach — gegen die KI in drei Stufen oder zu zweit an einem Handy, dazu Lichess-Rätsel
-* Hokm — das persische Kartenspiel zu viert: du und dein Partner gegen zwei KI-Gegner
+* Schach — gegen die KI in drei Stufen oder zu zweit, dazu Lichess-Rätsel
+* Hokm — das persische Kartenspiel zu viert, im Team gegen zwei KI-Gegner
 * Blocksturz — fallende Steine: 40-Reihen-Sprint oder 100-Reihen-Marathon
-* Gomoku — fünf in einer Reihe auf 9, 13 oder 15 Linien, gegen die KI in drei Stufen oder zu zweit
-* Go — Go auf 9×9 mit automatischer Zählung, gegen die KI in drei Stufen oder zu zweit
-* Ausweg — schick jeden Pfeil in einer passenden Reihenfolge vom Brett, Level ohne Ende
+* Gomoku — fünf in einer Reihe auf 9, 13 oder 15 Linien, gegen die KI oder zu zweit
+* Go — Go auf 9×9 mit automatischer Zählung, gegen die KI oder zu zweit
+* Ausweg — schick jeden Pfeil in einer passenden Reihenfolge vom Brett
 * Blackjack — näher an 21 als der Croupier, Partien aus zehn Händen ohne Einsätze
 * 8-Ball — versenke deine Gruppe und zuletzt die 8, gegen die KI oder zu zweit
-* Snooker — Rot, dann Farbe, zuletzt die Farben der Reihe nach; 6, 10 oder 15 Rote, gegen die KI oder zu zweit
-* Stau — schieb die Autos weg und fahr vom Parkplatz, Level ohne Ende
-* Kettenreaktion — Kugeln legen, bis Felder in Ketten platzen; 2 bis 4 Spieler oder gegen Bots
-* Ludo — mit einer Sechs raus, schlagen, alle Figuren ins Ziel; 2 bis 4 Spieler oder gegen Bots
-* Schlangen und Leitern — Leitern hoch, Schlangen runter, zuerst auf 100; 2 bis 4 Spieler oder gegen Bots
-* Darts — 501 oder 301, drei Darts pro Aufnahme, Finish auf Doppel; gegen einen Bot oder zu zweit
-* Bowling — zehn Frames, wischen zum Werfen, biegen für Drall; allein, gegen einen Bot oder zu zweit
-* Schiebepuzzle — nummerierte Plättchen wieder ordnen, 3×3 bis 5×5, mit wenigen Zügen
-* Puzzle — 12 bis 150 Teile in den Rahmen ziehen; persische Muster und Landschaften, im Code gezeichnet
-* Dame — 8×8 mit Schlagzwang, klassisch oder spanisch, gegen die KI oder zu zweit
+* Snooker — Rot, dann Farbe, zuletzt die Farben der Reihe nach; 6, 10 oder 15 Rote
+* Stau — schieb die Autos weg und fahr vom Parkplatz
+* Kettenreaktion — Kugeln legen, bis Felder in Ketten platzen; 2–4 Spieler oder Bots
+* Ludo — mit einer Sechs raus, alle Figuren ins Ziel; 2–4 Spieler oder Bots
+* Schlangen und Leitern — zuerst auf 100; 2–4 Spieler oder Bots
+* Darts — 501 oder 301, Finish auf Doppel; gegen einen Bot oder zu zweit
+* Bowling — zehn Frames, wischen zum Werfen
+* Schiebepuzzle — nummerierte Plättchen ordnen, 3×3 bis 5×5
+* Puzzle — 12 bis 150 Teile, im Code gezeichnet
+* Dame — klassisch oder spanisch, gegen die KI oder zu zweit
 * Klondike — Patience, eine oder drei Karten ziehen, das Tagesspiel ist immer lösbar
-* Verrückte Acht — Farbe oder Wert bedienen, iranische oder internationale Regeln; gegen 1 bis 3 Bots
-* Gin Rommé — Kombinationen gegen einen Bot: klopfen, Gin, Unterbieten, bis 100
+* Verrückte Acht — Farbe oder Wert bedienen, iranische oder internationale Regeln
+* Gin Rommé — Kombinationen gegen einen Bot, bis 100
 * Shelem — Hokm mit Bieten: die Mitte nehmen, Trumpf bestimmen, bis 505
+* Spider — zwei Decks in zehn Spalten; eine, zwei oder vier Farben
+* Paare — das Memory-Spiel: immer zwei Karten umdrehen, alle Paare finden
+* Gorillas — explodierende Bananen über die Stadt: Winkel, Kraft, Wind
+* Hüpf — von Plattform zu Plattform springen, ohne zu fallen; tippen oder neigen
+* Panzer — über die Hügel feuern, mit fünf Waffen; Bot oder zu zweit
+* Chinesisches Schach — Xiangqi mit Palast, Kanonen und fliegenden Generälen
+* Pingpong — Tischtennis von oben, bis 11; Bot oder zu zweit
+* Airhockey — ein Neontisch, bis sieben Tore; Bot oder zu zweit
 
 Rund um die Spiele:
 

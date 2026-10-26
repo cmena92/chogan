@@ -1,0 +1,14 @@
+New games:
+- Ping Pong: table tennis from above
+- Air Hockey on a neon table
+- Chinese chess, thanks to @lanlan3292
+Bug fixes:
+- Hokm no longer flashes a card before it flies
+- Spider deals by the rule and its hint glides
+- Pairs shows one focus ring
+Improvements:
+- Search games by name in the menu
+- Joystick aiming in Gorillas
+- Turn control for Pool and Snooker
+- Long-press the app icon for game shortcuts
+- Clearer Sudoku boxes in the dark theme

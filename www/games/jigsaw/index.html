@@ -26,6 +26,17 @@
     touch-action: pan-x;
   }
   .jg-slot { flex: none; position: relative; cursor: grab; border-radius: 8px; touch-action: pan-x; }
+  .jg-mid { width: 100%; display: flex; flex-direction: column; align-items: center; gap: var(--s-3); direction: ltr; }
+  /* A wide window: the loose pieces in a column left of the frame, scrolling up and down,
+     and a piece is lifted out of it sideways (#516) */
+  .jg-wrap--side { max-width: none; }
+  .jg-wrap--side .jg-mid { flex-direction: row-reverse; justify-content: center; align-items: flex-start; gap: 12px; }
+  /* the sizes above the column and the mistakes under it, so the frame takes the full height */
+  .jg-aside { display: flex; flex-direction: column; gap: var(--s-2); min-height: 0; direction: ltr; }
+  html[dir="rtl"] .jg-aside { direction: rtl; }
+  .jg-aside .jg-tray { flex: 1; min-height: 0; }
+  .jg-wrap--side .jg-tray { flex-wrap: wrap; align-content: flex-start; justify-content: center; overflow-x: hidden; overflow-y: auto; touch-action: pan-y; }
+  .jg-wrap--side .jg-slot { touch-action: pan-y; }
   .jg-slot canvas { display: block; pointer-events: none; }
   .jg-slot--sel { outline: 3px solid var(--c-accent); outline-offset: 1px; }
   .jg-slot--away { visibility: hidden; }
@@ -131,6 +142,20 @@ function JigsawEngineFactory() {
     return { w: w, h: h, cols: cr[0], rows: cr[1], cw: cw, ch: ch, m: Math.ceil(TAB * Math.max(cw, ch)) + 2 };
   }
 
+  // The picture's room in a game area, and whether the loose pieces go under the frame or in a
+  // column beside it. Beside wins whenever it gives a bigger picture: on a wide window the row
+  // under the frame took height from the picture and left most of the width empty (#516).
+  // Beside, the sizes row and the mistakes line sit in the column too, so the frame keeps
+  // the whole height but the game area's own padding (EDGE): above and below it they cost
+  // the picture 86px on a full-HD window.
+  var BARS = 110, EDGE = 24, SIDES = 24, MAX_W = 900, GAP = 12;
+  function room(mainW, mainH, trayW, trayH) {
+    var below = [Math.min(mainW, MAX_W) - SIDES, Math.max(mainH - trayH - BARS, 200)];
+    var beside = [Math.min(mainW - trayW - GAP, MAX_W) - SIDES, Math.max(mainH - EDGE, 200)];
+    var fit = function (r) { return Math.min(r[0], r[1] / ASPECT); };
+    return fit(beside) > fit(below) ? { side: true, w: beside[0], h: beside[1] } : { side: false, w: below[0], h: below[1] };
+  }
+
   // The counts a screen offers: a big-only count needs pieces of at least MIN_PIECE there
   function offered(availW, availH) {
     return COUNTS.filter(function (n) {
@@ -191,8 +216,8 @@ function JigsawEngineFactory() {
     return { count: o.count, seed: o.seed, pic: o.pic, tray: o.tray.slice(), placed: o.placed.slice(), misses: o.misses, done: !o.tray.length, cols: cr[0], rows: cr[1] };
   }
 
-  var api = { CUTS: CUTS, COUNTS: COUNTS, BIG_ONLY: BIG_ONLY, MIN_PIECE: MIN_PIECE, DAILY_COUNT: DAILY_COUNT, PICS: PICS, FITS: FITS, ASPECT: ASPECT, TAB: TAB, SNAP: SNAP,
-    offered: offered, picsFor: picsFor, pick: pick, cut: cut, edges: edges, outline: outline, layout: layout, deal: deal, fits: fits, fitsCell: fitsCell, place: place, miss: miss, restore: restore };
+  var api = { CUTS: CUTS, COUNTS: COUNTS, BIG_ONLY: BIG_ONLY, MIN_PIECE: MIN_PIECE, DAILY_COUNT: DAILY_COUNT, PICS: PICS, FITS: FITS, ASPECT: ASPECT, TAB: TAB, SNAP: SNAP, GAP: GAP,
+    room: room, offered: offered, picsFor: picsFor, pick: pick, cut: cut, edges: edges, outline: outline, layout: layout, deal: deal, fits: fits, fitsCell: fitsCell, place: place, miss: miss, restore: restore };
   if (typeof self !== 'undefined') self.JigsawEngine = api;
   return api;
 }
@@ -2258,14 +2283,14 @@ function JigsawPictures() {
 
   var params = new URLSearchParams(location.search);
   var dailyDate = params.get('daily');
-  var TRAY_H = 96, LIFT_PX = 8, WIN_MS = 900, GLIDE_MS = 200;
+  var TRAY_H = 96, TRAY_W = 232, LIFT_PX = 8, WIN_MS = 900, GLIDE_MS = 200;
 
   var prefs = ctx.store.get('prefs', null);
   if (!prefs || E.COUNTS.indexOf(prefs.count) < 0) prefs = { count: 24, last: null };
   // the pictures finished at each count, so a new game shows one not finished there yet (#376)
   if (!prefs.done || typeof prefs.done !== 'object') prefs.done = {};
 
-  var S = null, L = null, pic = null, slots = {}, placedNodes = {}, drag = null, sel = -1, aim = -1, lifted = false;
+  var S = null, L = null, side = false, pic = null, slots = {}, placedNodes = {}, drag = null, sel = -1, aim = -1, lifted = false;
   var startedAt = Date.now(), pausedAt = 0, busy = false;
 
   var top = el('div', { class: 'jg-top' });
@@ -2277,7 +2302,9 @@ function JigsawPictures() {
   frame.appendChild(cursor);
   var tray = el('div', { class: 'jg-tray', role: 'list', 'aria-label': C.t('tray') });
   var status = el('div', { class: 'jg-status', 'aria-live': 'polite' });
-  var wrap = el('div', { class: 'jg-wrap' }, [top, frame, tray, status]);
+  var aside = el('div', { class: 'jg-aside' });
+  var mid = el('div', { class: 'jg-mid' }, [frame, tray]);
+  var wrap = el('div', { class: 'jg-wrap' }, [top, mid, status]);
 
   // one number in the bar: with two, the title had no room left on a phone
   ctx.stat('left', C.t('left'));
@@ -2348,9 +2375,8 @@ function JigsawPictures() {
   // Lays the frame and the row out for the space there is, and draws every piece afresh
   // The room the picture has, shared by the layout and the counts this screen offers
   function room() {
-    var availW = Math.min(ctx.main.clientWidth || window.innerWidth, 900) - 24;
-    var availH = (ctx.main.clientHeight || window.innerHeight) - TRAY_H - 110;
-    return [availW, Math.max(availH, 200)];
+    var r = E.room(ctx.main.clientWidth || window.innerWidth, ctx.main.clientHeight || window.innerHeight, TRAY_W, TRAY_H);
+    return [r.w, r.h, r.side];
   }
   // A count this screen does not offer, kept from a bigger window, falls back to the largest it does
   function usable(n) {
@@ -2360,10 +2386,28 @@ function JigsawPictures() {
   function layout() {
     var r = room(), availW = r[0];
     L = E.layout(r[0], r[1], S.count);
+    side = r[2];
+    wrap.classList.toggle('jg-wrap--side', side);
+    // beside the frame, the sizes and the mistakes go with the pieces (#516); under it, back around the frame
+    if (side) { aside.append(top, tray, status); mid.append(frame, aside); }
+    else { aside.remove(); mid.append(frame, tray); wrap.prepend(top); wrap.append(status); }
     frame.style.width = L.w + 'px';
     frame.style.height = L.h + 'px';
-    tray.style.height = TRAY_H + 'px';
-    tray.style.maxWidth = Math.max(L.w, Math.min(availW, 900)) + 'px';
+    if (side) {
+      // two to four pieces across, as many as the width the frame leaves will take
+      var slotW = (L.cw + 2 * L.m) * trayScale() + 6;
+      var spare = (ctx.main.clientWidth || window.innerWidth) - L.w - E.GAP - 24;
+      var cols = Math.max(2, Math.min(4, Math.floor((spare - 22) / slotW)));
+      aside.style.width = Math.ceil(cols * slotW + 22) + 'px';
+      aside.style.height = L.h + 'px';
+      tray.style.width = '';
+      tray.style.height = '';
+      tray.style.maxWidth = '';
+    } else {
+      tray.style.width = '';
+      tray.style.height = TRAY_H + 'px';
+      tray.style.maxWidth = Math.max(L.w, Math.min(availW, 900)) + 'px';
+    }
     pic = makePicture();
     drawGrid();
     Object.keys(placedNodes).forEach(function (k) { placedNodes[k].remove(); });
@@ -2612,7 +2656,8 @@ function JigsawPictures() {
 
   /* ------------------------------------------------------------ input */
 
-  // A finger on a piece in the row: sideways it scrolls the row (the browser does that), up it lifts
+  // A finger on a piece in the row: sideways it scrolls the row (the browser does that), up it lifts;
+  // in the column beside the frame it is the other way round
   tray.addEventListener('pointerdown', function (e) {
     if (!S || S.done || busy || drag) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -2626,8 +2671,8 @@ function JigsawPictures() {
     if (!drag.node) {
       var dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
       if (Math.hypot(dx, dy) < LIFT_PX) return;
-      // a touch must move upwards more than sideways; a mouse may lift any way
-      if (!drag.mouse && Math.abs(dy) < Math.abs(dx)) { drag = null; return; }
+      // a touch must move across the way the row scrolls; a mouse may lift any way
+      if (!drag.mouse && (side ? Math.abs(dx) < Math.abs(dy) : Math.abs(dy) < Math.abs(dx))) { drag = null; return; }
       lift();
     }
     moveFloat(e.clientX, e.clientY);
@@ -2664,9 +2709,9 @@ function JigsawPictures() {
   }
   window.addEventListener('pointerup', function (e) { endDrag(e, true); });
   window.addEventListener('pointercancel', function (e) { endDrag(e, false); });
-  // a mouse wheel scrolls the row sideways
+  // a mouse wheel scrolls the row sideways; the column scrolls by itself
   tray.addEventListener('wheel', function (e) {
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { tray.scrollLeft += e.deltaY; e.preventDefault(); }
+    if (!side && Math.abs(e.deltaY) > Math.abs(e.deltaX)) { tray.scrollLeft += e.deltaY; e.preventDefault(); }
   }, { passive: false });
 
   // Keyboard: ← → pick a piece in the row, Enter lifts it, the arrows aim at a cell, Enter drops

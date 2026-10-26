@@ -269,6 +269,37 @@
     return Math.abs(d) < Math.PI * 40 / 180;
   }
 
+  // #532: a player could only pull back by starting on the white ball, which felt like a
+  // long press on it; the cue stick drawn behind the ball is a handle too. True when the
+  // point (px, py) is on the stick: behind the ball (cx, cy) against the aim, between the
+  // stick's tip (from) and its end (to), within tol of its line.
+  function onStick(angle, cx, cy, px, py, from, to, tol) {
+    var ux = Math.cos(angle), uy = Math.sin(angle), dx = px - cx, dy = py - cy;
+    var along = -(dx * ux + dy * uy), across = Math.abs(dx * uy - dy * ux);
+    return along >= from && along <= to && across <= tol;
+  }
+
+  // #505: the turn control (#492) measured a drag across the aim line as it stood when
+  // the drag began, so the same finger move turned the cue one way or the other with the
+  // cue's direction, and its speed matched nothing the finger did. A move now turns the
+  // cue by the angle it sweeps round the white ball (cx, cy), as Point mode does, but
+  // from where the cue already is, never snapping to the finger; inside minR of the ball
+  // the radius is taken as minR, so a finger crossing the ball cannot spin the cue.
+  function turnStep(cx, cy, px, py, qx, qy, minR) {
+    var rx = px - cx, ry = py - cy, r = Math.sqrt(rx * rx + ry * ry);
+    if (r < 1e-9) return 0;
+    var t = (rx * (qy - py) - ry * (qx - px)) / r;
+    return t / Math.max(r, minR);
+  }
+
+  // #506: the power bar took the distance from where the finger went down in either
+  // direction, so sliding left of the start to back out of a shot built power instead.
+  // The bar fills from the left in every language; only a pull to the right adds power,
+  // and the full bar is 80% of its width away.
+  function barPower(dx, width) {
+    return width > 0 ? Math.max(0, Math.min(1, dx / (width * 0.8))) : 0;
+  }
+
   // #407: a potted ball vanished at the pocket's mouth in one frame. Pool and
   // snooker keep each pot for SINK_MS and draw the ball sliding into the
   // pocket's centre as it shrinks and fades. sinksOf reads where each ball of
@@ -290,7 +321,7 @@
   var api = {
     DT: DT, MAX_TICKS: MAX_TICKS, table: table, clone: clone, speedOf: speedOf,
     start: start, tick: tick, simulate: simulate, aim: aim, free: free, clear: clear, nearestPocket: nearestPocket,
-    pullsBack: pullsBack, SINK_MS: SINK_MS, sinksOf: sinksOf, sinkAt: sinkAt
+    pullsBack: pullsBack, onStick: onStick, turnStep: turnStep, barPower: barPower, SINK_MS: SINK_MS, sinksOf: sinksOf, sinkAt: sinkAt
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (root) root.ChoganCue = api;

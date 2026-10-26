@@ -16,7 +16,7 @@ cat > www/_shot.html <<'HTML'
 <!doctype html><meta charset=utf-8><title>shot</title>
 <script>
 var p = new URLSearchParams(location.search);
-['tower-defence','sudoku','minesweeper','dots'].forEach(function(g){
+['tower-defence','sudoku','minesweeper','dots','hokm','eightball','airhockey','chess'].forEach(function(g){
   try { localStorage.setItem('chogan.'+g+'.tutSeen','true'); } catch(e){}
 });
 // The welcome screen would cover every shot unless asked for explicitly
@@ -82,13 +82,17 @@ shot() {
 TODAY=$(date +%Y-%m-%d)
 for lang in fa en zh de es; do
   mkdir -p "$OUT/$lang"
+  # the menu, then one game of each kind (cards, table physics, a neon arcade game,
+  # board, puzzle, strategy): the first set showed only the four oldest games, and
+  # a store page six weeks and forty games later still looked like that (#536)
   shot 1 "index.html" light "$lang"
-  shot 2 "games%2Ftower-defence%2Findex.html" light "$lang"
-  shot 3 "games%2Fsudoku%2Findex.html" light "$lang"
-  shot 4 "games%2Fminesweeper%2Findex.html%3Fdaily%3D$TODAY" light "$lang"
-  shot 5 "games%2Fdots%2Findex.html" light "$lang"
-  shot 6 "index.html" dark "$lang"
-  shot 7 "index.html" light "$lang" welcome
+  shot 2 "games%2Fhokm%2Findex.html" light "$lang"
+  shot 3 "games%2Feightball%2Findex.html" light "$lang"
+  shot 4 "games%2Fairhockey%2Findex.html" dark "$lang"
+  shot 5 "games%2Fchess%2Findex.html" light "$lang"
+  shot 6 "games%2Fsudoku%2Findex.html%3Fdaily%3D$TODAY" light "$lang"
+  shot 7 "games%2Ftower-defence%2Findex.html" light "$lang"
+  shot 8 "index.html" dark "$lang"
 done
 
 copy_to() {
