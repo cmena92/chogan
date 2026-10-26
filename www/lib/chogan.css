@@ -255,6 +255,29 @@ a  { color: var(--c-accent); text-decoration: none; }
 @media (max-width: 360px) { .ch-seg.ch-cats button { padding-inline: 7px; } }
 .ch-cat__head { font-size: var(--fs-md); color: var(--c-text-dim); margin: var(--s-5) 0 var(--s-3); }
 .ch-cats + .ch-cat__head { margin-top: 0; }
+/* Search by name above the chips (#521). 16px text, or iOS zooms the page on focus;
+   while a search is on, the chips step back because the results ignore them. */
+.ch-search {
+  display: flex; align-items: center; gap: var(--s-2);
+  background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-pill);
+  padding: 0 6px 0 14px; margin-bottom: var(--s-3); color: var(--c-text-dim);
+  box-shadow: var(--sh-1);
+}
+.ch-search:focus-within { border-color: var(--c-accent); }
+.ch-search > svg { flex: none; }
+.ch-search__input {
+  flex: 1; min-width: 0; min-height: 44px; border: 0; background: none; outline: none;
+  font: inherit; font-size: var(--fs-md); color: var(--c-text);
+}
+.ch-search__input::placeholder { color: var(--c-text-dim); opacity: 1; }
+.ch-search__input::-webkit-search-cancel-button { display: none; }
+.ch-search__clear {
+  flex: none; width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--c-surface-2);
+  color: var(--c-text-dim); display: grid; place-items: center; cursor: pointer;
+}
+.ch-search__clear[hidden] { display: none; }
+.ch-cats--off { opacity: .45; }
+.ch-search__none { color: var(--c-text-dim); text-align: center; padding: var(--s-6) 0; }
 
 /* ------------------------------------------------------- playing cards */
 /* Shared by the card games (#178). --pw is the card's width; a game sets it, or
@@ -269,6 +292,10 @@ a  { color: var(--c-accent); text-decoration: none; }
 }
 .ch-pcard[disabled] { cursor: default; }
 .ch-pcard--red { color: var(--c-bad); }
+/* In the dark theme a card's edge is light: a dark face with a dark line ran into the
+   next card in a stack, and Spider's columns read as one block (#485) */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ch-pcard { border-color: rgba(255, 255, 255, .42); } }
+:root[data-theme="dark"] .ch-pcard { border-color: rgba(255, 255, 255, .42); }
 .ch-pcard__r { position: absolute; top: 3px; left: 5px; font-weight: 800; font-size: calc(var(--pw) * .3); line-height: 1; }
 .ch-pcard__s { position: absolute; left: 0; right: 0; bottom: 8%; text-align: center; font-size: calc(var(--pw) * .5); line-height: 1; }
 .ch-pcard__mini { position: absolute; top: 3px; right: 5px; font-size: calc(var(--pw) * .24); line-height: 1; }
@@ -639,6 +666,11 @@ a  { color: var(--c-accent); text-decoration: none; }
 .ch-fit {
   flex: 1 1 0; min-height: 0; min-width: 0; align-self: stretch;
   container-type: size; display: grid; place-items: center;
+  /* the one cell is the slot's own size, never its content's: an auto row grew to the
+     canvas a game had drawn, and games that size their canvas by its box read that
+     size back, so turning a phone kept the upright board and it ran off the screen
+     (#474: Gorillas, Darts, Ludo, Snakes and Ladders, Chain Reaction, Bowling) */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   /* never taller than the board it holds, so in a tall window the other rows stay
      next to the board instead of being pushed to the edges */
   max-height: calc(100cqw / var(--fit-ar, 1));

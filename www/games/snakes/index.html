@@ -34,8 +34,10 @@
   .sl-canvas { display: block; border-radius: var(--r-md); box-shadow: var(--sh-2); }
   .sl-bar { display: flex; align-items: center; justify-content: center; gap: var(--s-3); width: 100%; max-width: 560px; }
   .sl-status { flex: 1; min-width: 0; font-weight: 700; font-size: var(--fs-sm); color: var(--c-text-dim); text-align: center; }
+  /* The margin holds the nudge below (turn 8°, grow 5%, about 6px past the box);
+     without it the scrolling side column showed both scrollbars on desktop (#513). */
   .sl-die {
-    width: 64px; height: 64px; flex: 0 0 64px; border: 0; padding: 0; border-radius: 16px; cursor: pointer;
+    width: 64px; height: 64px; flex: 0 0 64px; margin: 6px; border: 0; padding: 0; border-radius: 16px; cursor: pointer;
     background: var(--c-surface); box-shadow: var(--sh-2), inset 0 0 0 3px var(--pc, var(--c-line));
     display: grid; place-items: center; touch-action: manipulation;
     transition: transform var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);

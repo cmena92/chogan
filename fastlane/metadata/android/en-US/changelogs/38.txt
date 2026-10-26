@@ -1,0 +1,12 @@
+New games:
+- Spider solitaire, with one, two or four suits
+- Pairs, the memory game
+- Gorillas: exploding bananas across a city
+- Hop: bounce up the platforms, by touch or tilt
+- Tanks: five weapons across the hills
+Bug fixes:
+- Boards fit again after turning the phone
+- Battleship scrolls on a phone on its side
+- Darts awards no longer count as Dots and Boxes ones
+Improvements:
+- New games are listed at the top of the menu

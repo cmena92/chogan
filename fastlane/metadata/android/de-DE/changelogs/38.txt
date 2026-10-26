@@ -1,0 +1,5 @@
+Neue Spiele: Spider mit einer, zwei oder vier Farben, Paare (Memory), Gorillas, Hüpf mit Tippen oder Neigen, und Panzer mit fünf Waffen.
+Spielfelder passen nach dem Drehen des Handys wieder.
+Schiffe versenken lässt sich im Querformat scrollen.
+Darts-Erfolge zählen nicht mehr als Käsekästchen-Erfolge.
+Neue Spiele stehen oben im Menü.

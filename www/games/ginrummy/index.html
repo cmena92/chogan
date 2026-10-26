@@ -38,7 +38,7 @@
      corner under the rank, so the visible strip of every card says what it is */
   .gr-hand .ch-pcard__s, .gr-hand .ch-pcard__mini { left: 4px; right: auto; bottom: auto; top: calc(5px + var(--pw) * .3); width: auto; text-align: left; font-size: calc(var(--pw) * .27); }
   .gr-hand .gr-sel { transform: translateY(-12px); box-shadow: var(--sh-2), 0 0 0 2px var(--game); }
-  .gr-hand .gr-drag { transition: none; z-index: 5; opacity: .9; }
+  .gr-hand .gr-drag { transition: none; z-index: 5; opacity: .9; will-change: transform; }
   /* cards in a meld carry its colour underneath; deadwood carries none */
   .gr-hand .gr-m0 { border-bottom: 4px solid #4F8A5B; } .gr-hand .gr-m1 { border-bottom: 4px solid #3B7AA8; } .gr-hand .gr-m2 { border-bottom: 4px solid #B07A2A; } .gr-hand .gr-m3 { border-bottom: 4px solid #8A5BA8; }
   .gr-actions { display: flex; gap: var(--s-2); justify-content: center; flex-wrap: wrap; min-height: 44px; }

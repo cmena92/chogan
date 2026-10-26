@@ -12,6 +12,13 @@
      laptop or tablet showed it in half the screen. In a wide window the tools and
      a 3x3 number pad sit beside it (the core's .ch-split). */
   .sd-tools, .sd-pad { width: 100%; }
+  /* The box lines and the frame have their own colour, at least 3:1 against the
+     cells: in the frame's --c-line the dark theme showed a 5px gap and a 2px gap
+     alike, and players could not find the 3x3 boxes (#519). Only in the dark theme: the
+     owner found the light board right as it was (#526). */
+  :root { --sd-box: var(--c-line); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --sd-box: #857560; } }
+  :root[data-theme="dark"] { --sd-box: #857560; }
   @container game (min-aspect-ratio: 5 / 4) {
     .ch-side .sd-pad { grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .ch-side .sd-pad .sd-num { min-height: clamp(36px, 10cqh, 76px); padding-block: 2px; font-size: clamp(16px, 3.4cqh, 28px); }
@@ -29,7 +36,7 @@
     aspect-ratio: 1; container-type: inline-size;
     background: var(--c-line); gap: 2px; padding: 3px;
     border-radius: var(--r-md); box-shadow: var(--sh-2);
-    border: 3px solid var(--c-line);
+    border: 3px solid var(--sd-box);
     /* خانه‌ها مربع‌اند و بدون این، چهار گوشه‌شان از گوشه‌ی گرد تخته بیرون
        می‌زند. بریدن به‌تنهایی گوشه را تخت می‌کند، پس خودِ چهار خانه‌ی گوشه هم
        شعاع می‌گیرند: شعاع بیرونی منهای حاشیه منهای پدینگ، تا دو منحنی
@@ -44,6 +51,10 @@
   .sd-cell:nth-child(9)  { border-start-end-radius: var(--sd-inner-r); }
   .sd-cell:nth-child(73) { border-end-start-radius: var(--sd-inner-r); }
   .sd-cell:nth-child(81) { border-end-end-radius: var(--sd-inner-r); }
+  /* each line covers its spacer track and the gaps either side, out to the frame */
+  .sd-sep { background: var(--sd-box); pointer-events: none; }
+  .sd-sep--col { grid-row: 1 / -1; margin: -3px -2px; }
+  .sd-sep--row { grid-column: 1 / -1; margin: -2px -3px; }
   .sd-cell {
     background: var(--c-surface); border: 0; padding: 0; font: inherit; cursor: pointer;
     display: grid; place-items: center; position: relative;
@@ -476,6 +487,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = SudokuEngi
       board.appendChild(b);
     })(i);
   }
+  // after the cells, so the corner cells keep their nth-child radius
+  [4, 8].forEach(function (t) {
+    board.appendChild(el('div', { class: 'sd-sep sd-sep--col', 'aria-hidden': 'true', style: { 'grid-column': String(t) } }));
+    board.appendChild(el('div', { class: 'sd-sep sd-sep--row', 'aria-hidden': 'true', style: { 'grid-row': String(t) } }));
+  });
 
   for (var n = 1; n <= 9; n++) {
     (function (v) {

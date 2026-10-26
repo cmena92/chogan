@@ -8,17 +8,17 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'release (one tag), history (all, oldest first), delete (a message), photo (channel photo) or bot-photo (the bot picture)'
+        description: 'release (one tag), history (all, oldest first), edit (rewrite a release post in place), delete (a message), photo (channel photo) or bot-photo (the bot picture)'
         required: true
         default: release
         type: choice
-        options: [release, history, delete, photo, bot-photo]
+        options: [release, history, edit, delete, photo, bot-photo]
       tag:
-        description: 'For release: the tag, e.g. v0.5.2'
+        description: 'For release and edit: the tag, e.g. v0.5.2'
         required: false
         type: string
       message_id:
-        description: 'For delete: the message number in t.me/chogan_games/<n>'
+        description: 'For edit and delete: the message number in t.me/chogan_games/<n>'
         required: false
         type: string
       dry_run:
@@ -50,6 +50,7 @@ jobs:
           case "$MODE" in
             release) tools/telegram-post.sh "$TAG" ;;
             history) tools/telegram-post.sh --history ;;
+            edit)    tools/telegram-post.sh --edit "$MESSAGE_ID" "$TAG" ;;
             delete)  tools/telegram-post.sh --delete "$MESSAGE_ID" ;;
             photo)   tools/telegram-post.sh --set-photo ;;
             bot-photo) tools/telegram-post.sh --bot-photo ;;

@@ -1,0 +1,5 @@
+Juegos nuevos: Spider con uno, dos o cuatro palos, Parejas (memoria), Gorilas, Salto con toque o inclinación, y Tanques con cinco armas.
+Los tableros vuelven a caber tras girar el móvil.
+Batalla naval se desplaza con el móvil en horizontal.
+Los logros de Dardos ya no cuentan como de Puntos y cajas.
+Los juegos nuevos aparecen arriba en el menú.

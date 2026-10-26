@@ -4,6 +4,7 @@
 #   tools/telegram-post.sh v0.5.2        one release
 #   tools/telegram-post.sh --history     every release, oldest first
 #   tools/telegram-post.sh --delete <message-id>
+#   tools/telegram-post.sh --edit <message-id> v0.5.2   rewrite a release's post in place
 #   tools/telegram-post.sh --set-photo   channel photo = www/icon-512.png
 #   tools/telegram-post.sh --bot-photo   the bot's photo = tools/telegram-bot-photo.jpg
 #
@@ -134,6 +135,27 @@ case "${1:-}" in
   --history)
     [ -n "$(releases)" ] || { echo "No release tags; fetch them first" >&2; exit 2; }
     for t in $(releases); do post "$t"; [ "$DRY" = "1" ] || sleep 4; done ;;
+  --edit)
+    # Rewrites a release's text post where it stands, without a new notification:
+    # older posts gained a contributor's name after the fact (#533), and deleting and
+    # reposting would have moved them out of order. Only the text post; an album stays.
+    [ -n "${2:-}" ] && [ -n "${3:-}" ] || { echo "Usage: --edit <message-id> <tag>" >&2; exit 2; }
+    releases | grep -qx -- "$3" || { echo "No release tag $3" >&2; exit 2; }
+    text=$(text_for "$3")
+    if [ "$DRY" = "1" ]; then
+      echo "=== edit message $2 to $3"
+      printf '%s\n' "$text"
+      echo "[cover] $(cover_for "$3")"
+      echo "[buttons] $(buttons_for "$3")"
+      exit 0
+    fi
+    r=$(api editMessageText --data-urlencode "chat_id=$CHANNEL" --data-urlencode "message_id=$2" --data-urlencode "text=$text" \
+      --data-urlencode "parse_mode=HTML" --data-urlencode "link_preview_options=$(cover_for "$3")" \
+      --data-urlencode "reply_markup=$(buttons_for "$3")")
+    # an unchanged text is not an error: the post already says this
+    if printf '%s' "$r" | grep -q 'message is not modified'; then echo "Message $2 already up to date"; exit 0; fi
+    check "the edit of $2" "$r"
+    echo "Edited message $2 for $3" ;;
   --delete)
     [ -n "${2:-}" ] || { echo "Usage: --delete <message-id>" >&2; exit 2; }
     [ "$DRY" = "1" ] && { echo "Would delete message $2"; exit 0; }
@@ -150,5 +172,5 @@ case "${1:-}" in
     check "the bot photo" "$(api setMyProfilePhoto --form-string 'photo={"type":"static","photo":"attach://pic"}' -F "pic=@tools/telegram-bot-photo.jpg;type=image/jpeg")"
     echo "Bot photo set" ;;
   v*) post "$1" ;;
-  *) echo "Usage: tools/telegram-post.sh <tag> | --history | --delete <id> | --set-photo | --bot-photo" >&2; exit 2 ;;
+  *) echo "Usage: tools/telegram-post.sh <tag> | --history | --edit <id> <tag> | --delete <id> | --set-photo | --bot-photo" >&2; exit 2 ;;
 esac

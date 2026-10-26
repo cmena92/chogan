@@ -468,8 +468,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = DartsEngin
       coins = won ? base : Math.max(2, Math.round(base * 0.3));
       points = won ? base * 4 : Math.round(base * 1.2);
       if (won) {
-        C.achievements.unlock('dt-win');
-        if (G.level === 'hard') C.achievements.unlock('dt-hard');
+        C.achievements.unlock('dr-win');
+        if (G.level === 'hard') C.achievements.unlock('dr-hard');
         if (G.start === 501) C.stats.best('darts', 'darts501', mine, true);
       }
     } else if (G.mode === 'solo') {

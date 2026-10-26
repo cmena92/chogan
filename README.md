@@ -10,6 +10,13 @@ Ways to play:
 - **Telegram:** [@chogangamebot](https://t.me/chogangamebot) opens the web version inside Telegram.
 - **News:** every release is announced in the Telegram channel [@chogan_games](https://t.me/chogan_games).
 
+<p>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="23%" alt="The menu">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="23%" alt="Hokm">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="23%" alt="8-Ball Pool">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="23%" alt="Air Hockey">
+</p>
+
 ### The games
 
 | Game | About |
@@ -34,13 +41,13 @@ Ways to play:
 | Chess | Two players or three levels of AI, plus 600 puzzles; the daily challenge is three puzzles |
 | Hokm | Four players in two teams, you and three AI players at three levels, matches to 3 or 7 |
 | Block Drop | Falling blocks: a 40-line sprint and a 100-line marathon, with hold and three next pieces |
-| Gomoku | Five in a row on a 9, 13 or 15 board, two players or three levels of AI, and a daily game |
+| Gomoku | Five in a row on a 9, 13 or 15 board, two players or three levels of AI, and a daily game; with [@lanlan3292](https://github.com/lanlan3292) |
 | Go | Go on a 9×9 board with area scoring and automatic dead-stone counting, two players or three levels of AI, and a daily game |
-| Way Out | Send every arrow off the board in a working order, three hearts a level, levels without end |
+| Way Out | Send every arrow off the board in a working order, three hearts a level, levels without end; by [@ggYasin](https://github.com/ggYasin) |
 | Blackjack | Closer to 21 than the dealer: ten-hand matches with no betting, hit/stand advice and a daily game |
-| 8-Ball Pool | Eight-ball pool with real table physics: pot your group, then the 8, against three levels of AI or two players, and a daily clear-the-table challenge |
+| 8-Ball Pool | Eight-ball pool with real table physics: pot your group, then the 8; aim at your finger and pull back the white ball or the cue, or turn the cue finely and shoot with the power bar; against three levels of AI or two players, and a daily clear-the-table challenge |
 | Snooker | Snooker on the same table physics: a red, then a colour, then the colours in order, with 6, 10 or 15 reds, against three levels of AI or two players, and a daily three-red clearance |
-| Gridlock | Slide the cars out of the way and drive yours out of the lot, one drag a move, levels without end and a daily puzzle |
+| Gridlock | Slide the cars out of the way and drive yours out of the lot, one drag a move, levels without end and a daily puzzle; by [@ggYasin](https://github.com/ggYasin) |
 | Chain Reaction | Add orbs until cells burst and chain across the board; the last colour left wins, 2 to 4 players on one phone or against bots, and a daily game |
 | Ludo | Roll, come out on a six, capture and race your tokens home; a quick game with two tokens each or the full one with four, 2 to 4 players or against bots, and a daily game |
 | Snakes and Ladders | Roll, climb the ladders, slide down the snakes and reach 100 first, on our own board; 2 to 4 players on one phone or against bots, with an optional exact finish |
@@ -53,8 +60,16 @@ Ways to play:
 | Crazy Eights | Match the top card by suit or rank and empty your hand first. By default the Iranian Haft Khabis rules: the jack is wild, a seven makes the next player draw two (sevens stack), an eight plays again, a ten reverses, an ace skips; the international rules, with eights wild, are a choice behind the gear. Against 1 to 3 bots at three levels, a match to 100 points, and a daily round dealt the same for everyone |
 | Gin Rummy | Ten cards each against a bot at three levels: draw from the stock or take the upcard, make sets and runs, knock at 10 or less deadwood, gin and undercut bonuses, lay-offs at the showdown, a match to 100; drag to reorder your hand or tap Arrange, and a daily hand dealt the same for everyone |
 | Shelem | The Iranian partnership game: you and a bot partner against two bots, twelve cards each, bids from 100 to 165 in fives, the declarer takes the four-card widow, puts four back and names trump; aces and tens 10, fives 5, every trick 5, a shelem (every trick) 330; three levels, a match to 505 or 1165, and a daily hand dealt the same for everyone |
+| Spider | Two decks in ten columns: build each suit from king down to ace and a full run leaves by itself; one, two or four suits, a tap sends a run to its best place or drag it, a hint, unlimited undo, and a daily one-suit deal dealt the same for everyone |
+| Pairs | The memory game: every picture twice, face down; turn two cards at a time and find every pair in as few moves as you can, on a 4×4, 4×6 or 6×6 table, with eighteen pictures that differ in shape and colour, no clock, and a daily table the same for everyone |
+| Gorillas | Two gorillas on a skyline drawn in code take turns throwing an exploding banana: angle, power, gravity and wind, and every hit bites a hole in the city; aim by dragging like a slingshot, with numbers as in the original, or with a joystick, against three levels of bot or two players on one phone, first to three rounds, every city winnable, and a daily match against the medium bot |
+| Hop | Bounce up from platform to platform without falling: plain, moving, crumbling and spring platforms, the world wraps at the sides, and the gaps grow but always stay within a jump; steer by holding the left or right half of the screen or by tilting the phone, endless with a best height, and a daily climb to a summit at 2,000 m |
+| Tanks | Two tanks on hills drawn in code fire in turns: angle, power, gravity and a wind that changes every turn; blasts dig out the ground and the earth above falls in; five weapons (shell, heavy, triple, roller, dirt) and four moves a match; scored by damage over ten shots each, against three levels of bot or two players on one phone, both aim controls behind the gear, and a daily match against the medium bot |
+| Chinese chess | Chinese chess (xiangqi) on a 9×10 board between two palaces: the general and his advisors never leave the palace, elephants never cross the river, horses are blocked at the leg, cannons capture over exactly one piece, and the two generals may never face each other on an open file; checkmate and stalemate both lose and a threefold repetition draws. Against the AI at three levels or two players, unlimited undo, and a daily game dealt the same for everyone; by [@lanlan3292](https://github.com/lanlan3292) |
+| Ping Pong | Table tennis seen from above: the ball bounces off the sides of the table, where it meets the paddle sets the angle of the return, and every hit is a little faster; two serves each, one each from ten all, first to 11 by two; against three levels of bot or two players on one phone, each on their own half, and a daily match against the medium bot |
+| Air Hockey | Air hockey seen from above on a neon table drawn in code: move your mallet in your own half and hit the puck off the boards into the other goal, the faster the hit the faster the shot; after a goal the puck goes to the player who let it in; first to seven, against three levels of bot or two players on one phone, each on their own half, and a daily match against the medium bot |
 
-Around the games: a daily challenge that is identical on every device with no server at all, a weekly offline league with five tiers, over eighty awards, a shared coin that is only ever spent on hints and cosmetics, stats and a profile, and a Persian, English, Simplified Chinese, German and Spanish interface with light and dark themes.
+Around the games: search by name, pinned and recently played games and a row of new ones at the top of the menu, long-press shortcuts to games on the app icon, a daily challenge that is identical on every device with no server at all, a weekly offline league with five tiers, over 150 awards, a shared coin that is only ever spent on hints and cosmetics, stats and a profile, and a Persian, English, Simplified Chinese, German and Spanish interface with light and dark themes.
 
 ### Why Chogan
 
@@ -119,6 +134,13 @@ MIT, see [LICENSE](LICENSE). The Vazirmatn font is under the OFL; its licence te
 - **تلگرام:** [@chogangamebot](https://t.me/chogangamebot) نسخه‌ی وب را داخل تلگرام باز می‌کند.
 - **خبرها:** هر نسخه‌ی تازه در کانال تلگرام [@chogan_games](https://t.me/chogan_games) (به انگلیسی) اعلام می‌شود.
 
+<p>
+<img src="fastlane/metadata/android/fa/images/phoneScreenshots/1.png" width="23%" alt="منو">
+<img src="fastlane/metadata/android/fa/images/phoneScreenshots/2.png" width="23%" alt="حکم">
+<img src="fastlane/metadata/android/fa/images/phoneScreenshots/3.png" width="23%" alt="بیلیارد">
+<img src="fastlane/metadata/android/fa/images/phoneScreenshots/4.png" width="23%" alt="ایرهاکی">
+</p>
+
 ### بازی‌ها
 
 | بازی | توضیح |
@@ -143,13 +165,13 @@ MIT, see [LICENSE](LICENSE). The Vazirmatn font is under the OFL; its licence te
 | شطرنج | دو نفره یا مقابل هوش مصنوعی با سه سطح، به‌علاوه‌ی ۶۰۰ معما؛ چالش روزانه سه معماست |
 | حکم | چهار نفر در دو تیم، تو و سه بازیکن هوش مصنوعی با سه سطح، بازی تا ۳ یا ۷ |
 | بلوک‌ریز | بلوک‌های ریزان: سرعتی ۴۰ خط و ماراتن ۱۰۰ خط، با نگه داشتن قطعه و سه قطعه‌ی بعدی |
-| گوموکو | پنج در یک خط روی تخته‌ی ۹، ۱۳ یا ۱۵، دو نفره یا مقابل ربات با سه سطح، و بازی روزانه |
+| گوموکو | پنج در یک خط روی تخته‌ی ۹، ۱۳ یا ۱۵، دو نفره یا مقابل ربات با سه سطح، و بازی روزانه؛ با همکاری [@lanlan3292](https://github.com/lanlan3292) |
 | گو | گوی ۹×۹ با شمارش زمین و تشخیص خودکار سنگ‌های مرده، دو نفره یا مقابل ربات با سه سطح، و بازی روزانه |
-| راه دررو | همه‌ی پیکان‌ها را به ترتیب درست از تخته بیرون بفرست، سه جان در هر مرحله، مرحله‌های بی‌پایان |
+| راه دررو | همه‌ی پیکان‌ها را به ترتیب درست از تخته بیرون بفرست، سه جان در هر مرحله، مرحله‌های بی‌پایان؛ ساخته‌ی [@ggYasin](https://github.com/ggYasin) |
 | بیست‌ویک | نزدیک‌تر از دیلر به ۲۱: مسابقه‌ی ده‌دستی بدون شرط‌بندی، با پیشنهاد حرکت و بازی روزانه |
-| بیلیارد | بیلیارد هشت‌توپ با فیزیک واقعی میز: توپ‌های دسته‌ات و بعد توپ ۸ را بینداز، با ربات در سه سطح یا دو نفره، و چالش روزانه‌ی پاک کردن میز |
+| بیلیارد | بیلیارد هشت‌توپ با فیزیک واقعی میز: توپ‌های دسته‌ات و بعد توپ ۸ را بینداز؛ نشانه به سمت انگشت و عقب کشیدن توپ سفید یا چوب، یا چرخاندن ریز چوب و ضربه با نوار قدرت؛ با ربات در سه سطح یا دو نفره، و چالش روزانه‌ی پاک کردن میز |
 | اسنوکر | اسنوکر با همان فیزیک میز: یک سرخ، یک رنگی و آخر رنگی‌ها به ترتیب، با ۶، ۱۰ یا ۱۵ سرخ، با ربات در سه سطح یا دو نفره، و چالش روزانه‌ی پاک کردن میز سه‌سرخه |
-| راه‌بندان | ماشین‌ها را کنار بزن و ماشینت را از پارکینگ بیرون ببر، هر کشیدن یک حرکت، مرحله‌های بی‌پایان و بازی روزانه |
+| راه‌بندان | ماشین‌ها را کنار بزن و ماشینت را از پارکینگ بیرون ببر، هر کشیدن یک حرکت، مرحله‌های بی‌پایان و بازی روزانه؛ ساخته‌ی [@ggYasin](https://github.com/ggYasin) |
 | واکنش زنجیره‌ای | گوی بگذار تا خانه‌ها بترکند و زنجیروار پخش شوند؛ آخرین رنگ برنده است، ۲ تا ۴ نفر روی یک گوشی یا با ربات، و بازی روزانه |
 | منچ | تاس بریز، با شش بیرون بیا، حریف را بزن و مهره‌هایت را به خانه برسان؛ بازی سریع با دو مهره یا کامل با چهار مهره، ۲ تا ۴ نفر یا با ربات، و بازی روزانه |
 | مار و پله | تاس بریز، از نردبان بالا برو، از مار پایین بیا و اول به ۱۰۰ برس، روی صفحه‌ی خود ما؛ ۲ تا ۴ نفر روی یک گوشی یا با ربات، با پایان دقیق به انتخاب |
@@ -162,8 +184,16 @@ MIT, see [LICENSE](LICENSE). The Vazirmatn font is under the OFL; its licence te
 | هفت خبیث | هم‌خال یا هم‌عدد کارت روی زمین بازی کن و زودتر دستت را خالی کن. پیش‌فرض قانون ایرانی است: سرباز خال را عوض می‌کند، هفت نفر بعد را دو کارت جریمه می‌کند (هفت‌ها روی هم جمع می‌شوند)، هشت یک کارت دیگر، ده جهت را برعکس و آس نوبت نفر بعد را می‌سوزاند؛ قانون بین‌المللی (هشت دیوانه) پشت چرخ‌دنده است. مقابل ۱ تا ۳ ربات در سه سطح، مسابقه تا ۱۰۰ امتیاز، و دست روزانه‌ای که برای همه یکی است |
 | جین رامی | ده کارت مقابل یک ربات در سه سطح: از دسته یا کارت رو بردار، دسته‌ی هم‌عدد یا پشت سر هم بساز، با ۱۰ یا کمتر ناک کن، جایزه‌ی جین و آندرکات، چسباندن کارت در پایان دست، مسابقه تا ۱۰۰؛ کارت‌ها را بکش و مرتب کن یا «مرتب کن» را بزن، و دست روزانه‌ای که برای همه یکی است |
 | شلم | بازی دونفره‌ی تیمی ایرانی: تو و یار رباتت مقابل دو ربات، دوازده کارت به هر نفر، خواندن از ۱۰۰ تا ۱۶۵ پنج‌تا‌پنج‌تا، خواننده چهار کارت وسط را برمی‌دارد، چهار کارت می‌خواباند و حکم را می‌گوید؛ آس و ده ۱۰، پنج ۵، هر دست ۵ و شلم (همه‌ی دست‌ها) ۳۳۰؛ سه سطح، مسابقه تا ۵۰۵ یا ۱۱۶۵، و دست روزانه‌ای که برای همه یکی است |
+| عنکبوت | دو دست ورق در ده ستون: هر خال را از شاه تا آس پشت سر هم بچین تا ردیف کامل خودش برداشته شود؛ یک، دو یا چهار خال، با یک ضربه یا کشیدن، راهنمایی، برگرداندن بی‌حد و دست روزانه‌ی یک‌خال که برای همه یکی است |
+| جفت‌ها | بازی حافظه: هر نقش دو بار، پشت‌ورو؛ دو کارت دو کارت برگردان و همه‌ی جفت‌ها را با کمترین حرکت پیدا کن، روی میز ۴×۴، ۴×۶ یا ۶×۶، با هجده نقش که هم شکلشان فرق دارد هم رنگشان، بدون ساعت، و میز روزانه‌ای که برای همه یکی است |
+| گوریل‌ها | دو گوریل روی شهری که با کد کشیده شده به نوبت موز منفجره پرت می‌کنند: زاویه، قدرت، جاذبه و باد، و هر برخورد تکه‌ای از شهر را می‌کند؛ نشانه‌گیری با کشیدن مثل فلاخن، با عدد مثل بازی اصلی یا با دسته، مقابل ربات در سه سطح یا دونفره روی یک گوشی، سه دست برد، هر شهر بردنی، و مسابقه‌ی روزانه با ربات متوسط |
+| جهش | از سکو به سکو بالا برو و نیفت: سکوی معمولی، متحرک، شکننده و فنری، دو طرف صفحه به هم راه دارند، و فاصله‌ها بیشتر می‌شوند ولی همیشه در دسترس یک پرش می‌مانند؛ کنترل با نگه داشتن نیمه‌ی چپ یا راست صفحه یا کج کردن گوشی، بی‌پایان با رکورد ارتفاع، و صعود روزانه تا قله‌ای در ۲۰۰۰ متر |
+| تانک‌ها | دو تانک روی تپه‌هایی که با کد کشیده شده‌اند به نوبت شلیک می‌کنند: زاویه، قدرت، جاذبه و بادی که هر نوبت عوض می‌شود؛ انفجار زمین را می‌کند و خاک بالایش فرو می‌ریزد؛ پنج نوع موشک (گلوله، سنگین، سه‌تایی، غلتان، خاک) و چهار حرکت در هر مسابقه؛ امتیاز با آسیب در ده شلیک برای هر نفر، مقابل ربات در سه سطح یا دونفره، هر دو نوع نشانه‌گیری پشت چرخ‌دنده، و مسابقه‌ی روزانه با ربات متوسط |
+| شطرنج چینی | شطرنج چینی روی صفحهٔ ۹×۱۰ میان دو کاخ: شاه و مشاور هرگز از کاخ بیرون نمی‌روند، پیل از رودخانه نمی‌گذرد، اسب را مهرهٔ کنار پایش می‌بندد، توپ فقط از روی یک مهره می‌گیرد و دو شاه هرگز رو‌به‌روی هم نمی‌ایستند؛ کیش‌ومات و پات هر دو باخت‌اند و تکرار سه‌باره مساوی است. مقابل هوش مصنوعی در سه سطح یا دو نفره، برگرداندن بی‌حد، و بازی روزانه‌ای که برای همه یکی است؛ ساخته‌ی [@lanlan3292](https://github.com/lanlan3292) |
+| پینگ‌پنگ | تنیس روی میز از بالا: توپ از دو لبه‌ی میز برمی‌گردد، جایی از راکت که توپ به آن می‌خورد زاویه‌ی برگشت را تعیین می‌کند و هر ضربه کمی تندتر است؛ هر نفر دو سرویس و از ده‌ده یک سرویس، تا ۱۱ با دو امتیاز اختلاف؛ مقابل ربات در سه سطح یا دونفره روی یک گوشی، هر کس روی نیمه‌ی خودش، و مسابقه‌ی روزانه با ربات متوسط |
+| ایرهاکی | ایرهاکی از بالا روی میز نئونی که با کد کشیده شده: دسته‌ات را در نیمه‌ی خودت حرکت بده و توپک را با کمک دیواره‌ها به دروازه‌ی حریف بزن، هر چه ضربه تندتر، شوت تندتر؛ بعد از هر گل توپک به نیمه‌ی کسی می‌رود که گل خورده؛ اول هفت گل، مقابل ربات در سه سطح یا دونفره روی یک گوشی، هر کس روی نیمه‌ی خودش، و مسابقه‌ی روزانه با ربات متوسط |
 
-بیرون از بازی‌ها: چالش روزانه‌ی مشترک برای همه‌ی دستگاه‌ها بدون هیچ سروری، لیگ هفتگی آفلاین با پنج رده، بیش از هشتاد دستاورد، سکه‌ی مشترک که فقط خرج راهنمایی و تزئینات می‌شود، آمار و پروفایل، و رابط فارسی، انگلیسی، چینی ساده‌شده، آلمانی و اسپانیایی با تم روشن و تاریک.
+بیرون از بازی‌ها: جست‌وجوی بازی با نام، بازی‌های سنجاق‌شده، اخیراً بازی‌شده و ردیف بازی‌های تازه بالای منو، میان‌بر بازی‌ها با نگه داشتن آیکون اپ، چالش روزانه‌ی مشترک برای همه‌ی دستگاه‌ها بدون هیچ سروری، لیگ هفتگی آفلاین با پنج رده، بیش از ۱۵۰ دستاورد، سکه‌ی مشترک که فقط خرج راهنمایی و تزئینات می‌شود، آمار و پروفایل، و رابط فارسی، انگلیسی، چینی ساده‌شده، آلمانی و اسپانیایی با تم روشن و تاریک.
 
 ### چرا چوگان
 

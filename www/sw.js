@@ -43,10 +43,13 @@ async function buildList() {
   return list;
 }
 
+// Every file comes from the network, not the browser's HTTP cache: GitHub Pages lets
+// that cache keep a file ten minutes, so a deploy soon after another filled the new
+// build's cache with the old games.json and the new game was missing (#482).
 self.addEventListener('install', (event) => {
   event.waitUntil(
     buildList()
-      .then((list) => caches.open(CACHE).then((c) => c.addAll(list)))
+      .then((list) => caches.open(CACHE).then((c) => c.addAll(list.map((u) => new Request(u, { cache: 'reload' })))))
   );
 });
 
