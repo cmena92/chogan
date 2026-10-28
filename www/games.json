@@ -1128,6 +1128,30 @@
       "soft": "#F5E3FD",
       "added": "2026-10-25",
       "files": []
+    },
+    {
+      "id": "simon",
+      "cat": "puzzle",
+      "name": {
+        "fa": "سایمون",
+        "en": "Echo",
+        "zh": "闪灯记忆",
+        "de": "Echo",
+        "es": "Eco"
+      },
+      "summary": {
+        "fa": "دکمه‌های رنگی روشن می‌شوند؛ همان ترتیب را تکرار کن. هر دور یکی بیشتر.",
+        "en": "The coloured pads light up; repeat the same order. One more every round.",
+        "zh": "彩色按键依次亮起，按同样的顺序重复。每轮多一个。",
+        "de": "Die Farbtasten leuchten auf; tippe dieselbe Reihenfolge nach. Jede Runde eine mehr.",
+        "es": "Los botones de colores se encienden; repite el mismo orden. Uno más cada ronda."
+      },
+      "path": "games/simon/index.html",
+      "icon": "games/simon/icon.svg",
+      "color": "#2C64FC",
+      "soft": "#E3EBFE",
+      "added": "2026-10-27",
+      "files": []
     }
   ]
 }

@@ -63,6 +63,8 @@
   }
   .xq-piece--r { color: var(--xq-red); border: 2px solid var(--xq-red); }
   .xq-piece--b { color: var(--xq-black); border: 2px solid var(--xq-black); }
+  /* face to face (#545): Black's characters turn to the player across the table */
+  .xq-face .xq-piece--b .xq-glyph { display: inline-block; transform: rotate(180deg); }
   .xq-glyph {
     font-size: var(--xq-font);
     font-weight: 700;
@@ -595,7 +597,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
         tutTitle1: 'صفحه', tutText1: 'صفحهٔ ۹×۱۰ را رودخانه به دو نیمه تقسیم می‌کند. کاخ‌ها با خطوط مورب مشخص شده‌اند و شاه و مشاور هرگز از آن‌ها بیرون نمی‌روند.',
         tutTitle2: 'مهره‌ها', tutText2: 'اسب را مهرهٔ کنار پایش می‌بندد، پیل از رودخانه نمی‌گذرد و توپ تنها وقتی می‌گیرد که دقیقاً یک مهره میان آن و هدف باشد.',
         tutTitle3: 'بردن', tutText3: 'کسی که هیچ حرکت قانونی ندارد می‌بازد، حتی بدون کیش. شاهان هرگز نباید بی‌پرده رو‌به‌روی هم بایستند. برگرداندن حرکت بی‌حد است.',
-        settingsNote: 'تغییرها بی‌درنگ اثر می‌کنند؛ بازی تازه با سطح انتخابی آغاز می‌شود.'
+        faceToFace: 'روبه‌رو (مهره‌های سیاه رو به بازیکن بالا)', settingsNote: 'تغییرها بی‌درنگ اثر می‌کنند؛ بازی تازه با سطح انتخابی آغاز می‌شود.'
       },
       en: {
         table: 'Xiangqi board', moves: 'Moves', movesN: '{n} moves', newGame: 'New game',
@@ -615,7 +617,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
         tutTitle1: 'The board', tutText1: 'The 9×10 board is split by the river. The two palaces are marked with diagonals; the general and his advisors may never leave them.',
         tutTitle2: 'The pieces', tutText2: 'The horse is blocked by the piece beside its leg, the elephant cannot cross the river, and a cannon captures only when exactly one piece stands between it and its target.',
         tutTitle3: 'Winning', tutText3: 'A player with no legal move loses, even without check. The two generals may never face each other on an open file. Undo is unlimited.',
-        settingsNote: 'Changes apply at once; a new game uses the chosen level.'
+        faceToFace: 'Face to face (Black faces the top player)', settingsNote: 'Changes apply at once; a new game uses the chosen level.'
       },
       zh: {
         table: '棋盘', moves: '着法', movesN: '{n} 着', newGame: '新对局',
@@ -635,7 +637,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
         tutTitle1: '棋盘', tutText1: '9×10 的棋盘被中间的楚河汉界分开。两侧的九宫画有斜线，将帅和士永远不能离开九宫。',
         tutTitle2: '棋子走法', tutText2: '马被马腿旁的棋子挡住就不能走，象不能过河，炮只有在与目标之间恰隔一个棋子时才能吃子。',
         tutTitle3: '取胜', tutText3: '没有合法着法的一方判负，即使并未被将军。两位将帅不能在同一直线上照面。悔棋次数不限。',
-        settingsNote: '设置立即生效；新对局按所选难度开始。'
+        faceToFace: '面对面（黑方朝向上方玩家）', settingsNote: '设置立即生效；新对局按所选难度开始。'
       },
       de: {
         table: 'Xiangqi-Brett', moves: 'Züge', movesN: '{n} Züge', newGame: 'Neues Spiel',
@@ -655,7 +657,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
         tutTitle1: 'Das Brett', tutText1: 'Das 9×10-Brett wird vom Fluss geteilt. Die Paläste sind mit Diagonalen markiert; General und Berater dürfen sie nie verlassen.',
         tutTitle2: 'Die Figuren', tutText2: 'Das Pferd wird von der Figur an seinem Bein blockiert, der Elefant überquert den Fluss nie, und eine Kanone schlägt nur über genau eine Figur hinweg.',
         tutTitle3: 'Gewinnen', tutText3: 'Wer keinen Zug mehr hat, verliert – auch ohne Schach. Die fliegenden Generäle dürfen niemals offen auf einer Linie stehen. Zurücknehmen ist unbegrenzt.',
-        settingsNote: 'Änderungen gelten sofort; ein neues Spiel startet mit der gewählten Stufe.'
+        faceToFace: 'Gegenüber (Schwarz zum oberen Spieler)', settingsNote: 'Änderungen gelten sofort; ein neues Spiel startet mit der gewählten Stufe.'
       },
       es: {
         table: 'Tablero de xiangqi', moves: 'Movimientos', movesN: '{n} movimientos', newGame: 'Nueva partida',
@@ -675,7 +677,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
         tutTitle1: 'El tablero', tutText1: 'El tablero de 9×10 está dividido por el río. Los palacios se marcan con diagonales; el general y los consejeros nunca pueden salir de ellos.',
         tutTitle2: 'Las piezas', tutText2: 'El caballo queda bloqueado por la pieza junto a su pata, el elefante nunca cruza el río y el cañón solo captura cuando hay exactamente una pieza entre él y su objetivo.',
         tutTitle3: 'Ganar', tutText3: 'Quien no tiene ningún movimiento legal pierde, aunque no esté en jaque. Los dos generales nunca pueden mirarse en una línea abierta. Deshacer es ilimitado.',
-        settingsNote: 'Los cambios se aplican al momento; una partida nueva empieza con el nivel elegido.'
+        faceToFace: 'Cara a cara (las negras miran al jugador de arriba)', settingsNote: 'Los cambios se aplican al momento; una partida nueva empieza con el nivel elegido.'
       }
     }
   });
@@ -738,6 +740,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
   var S = null, L = null, nodes = {}, sel = -1, targets = [], cursor = 76, kbOn = false;
   var thinkTimer = 0, thinkSeq = 0, busy = false, pausedAt = 0, finishing = false;
   var prefs = ctx.store.get('prefs', null) || { level: 2, mode: 'ai' };
+  prefs.face = !!prefs.face;
 
   ctx.button({ icon: 'help', label: C.t('help'), onClick: showHelp });
   ctx.button({ icon: 'undo', label: C.t('undoMove'), onClick: undo });
@@ -909,6 +912,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
     if (!S) return;
     layout();
     st = st || E.status(S);
+    board.classList.toggle('xq-face', S.mode === 'two' && prefs.face);
     renderBoard();
     renderMarks();
     renderTop();
@@ -1130,7 +1134,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
   }
 
   function savePrefs() {
-    prefs = { level: S ? S.level : prefs.level, mode: S ? S.mode : prefs.mode };
+    prefs = { level: S ? S.level : prefs.level, mode: S ? S.mode : prefs.mode, face: !!prefs.face };
     ctx.store.set('prefs', prefs);
   }
 
@@ -1143,7 +1147,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
       { value: 3, label: C.t('hard') }
     ], S ? S.level : prefs.level, function (v) {
       if (S) { S.level = v; save(); }
-      prefs.level = v; ctx.store.set('prefs', { level: prefs.level, mode: prefs.mode });
+      prefs.level = v; ctx.store.set('prefs', { level: prefs.level, mode: prefs.mode, face: prefs.face });
       render();
     }));
     body.appendChild(el('div', { class: 'ch-item__label', text: C.t('mode'), style: 'margin-top:14px' }));
@@ -1154,10 +1158,18 @@ if (typeof module !== 'undefined' && module.exports) module.exports = XiangqiEng
       cancelThink();
       if (S) { S.mode = v === 'two' ? 'two' : 'ai'; save(); }
       prefs.mode = v === 'two' ? 'two' : 'ai';
-      ctx.store.set('prefs', { level: prefs.level, mode: prefs.mode });
+      if (faceRow) faceRow.style.display = prefs.mode === 'two' ? '' : 'none';
+      ctx.store.set('prefs', { level: prefs.level, mode: prefs.mode, face: prefs.face });
       if (S && S.mode === 'ai' && S.turn === 'b' && !S.finished) scheduleThink();
       else render();
     }));
+    // two players across a table: Black's characters face the player at the top (#545)
+    var faceRow = el('div', { class: 'ch-item', style: 'margin-top:14px' }, [
+      el('div', { class: 'ch-item__label', text: C.t('faceToFace') }),
+      C.ui.switch(prefs.face, function (v) { prefs.face = v; ctx.store.set('prefs', { level: prefs.level, mode: prefs.mode, face: prefs.face }); render(); })
+    ]);
+    faceRow.style.display = S && S.mode === 'two' ? '' : 'none';
+    body.appendChild(faceRow);
     body.appendChild(el('p', { class: 'xq-note', text: C.t('settingsNote') }));
     body.appendChild(C.cards.speedRow());
     C.ui.modal({ title: C.t('settings'), body: body, actions: [{ label: C.t('done'), kind: 'primary' }] });
