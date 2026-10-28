@@ -1,0 +1,145 @@
+{
+  "marco": {
+    "ancho": 120,
+    "alto": 170
+  },
+  "nota": "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello y cuerpo son comunes a los ocho.",
+  "animales": {
+    "fox": {
+      "cabeza": {
+        "x": 60,
+        "y": 26
+      },
+      "cuello": {
+        "x": 60,
+        "y": 100,
+        "ancho": 40
+      },
+      "cuerpo": {
+        "x": 60,
+        "y": 130,
+        "ancho": 56,
+        "alto": 44
+      }
+    },
+    "owl": {
+      "cabeza": {
+        "x": 60,
+        "y": 20
+      },
+      "cuello": {
+        "x": 60,
+        "y": 100,
+        "ancho": 40
+      },
+      "cuerpo": {
+        "x": 60,
+        "y": 130,
+        "ancho": 56,
+        "alto": 44
+      }
+    },
+    "cat": {
+      "cabeza": {
+        "x": 60,
+        "y": 28
+      },
+      "cuello": {
+        "x": 60,
+        "y": 100,
+        "ancho": 40
+      },
+      "cuerpo": {
+        "x": 60,
+        "y": 130,
+        "ancho": 56,
+        "alto": 44
+      }
+    },
+    "bear": {
+      "cabeza": {
+        "x": 60,
+        "y": 26
+      },
+      "cuello": {
+        "x": 60,
+        "y": 100,
+        "ancho": 40
+      },
+      "cuerpo": {
+        "x": 60,
+        "y": 130,
+        "ancho": 56,
+        "alto": 44
+      }
+    },
+    "capybara": {
+      "cabeza": {
+        "x": 60,
+        "y": 26
+      },
+      "cuello": {
+        "x": 60,
+        "y": 100,
+        "ancho": 40
+      },
+      "cuerpo": {
+        "x": 60,
+        "y": 130,
+        "ancho": 56,
+        "alto": 44
+      }
+    },
+    "conejo": {
+      "cabeza": {
+        "x": 60,
+        "y": 36
+      },
+      "cuello": {
+        "x": 60,
+        "y": 100,
+        "ancho": 40
+      },
+      "cuerpo": {
+        "x": 60,
+        "y": 130,
+        "ancho": 56,
+        "alto": 44
+      }
+    },
+    "panda": {
+      "cabeza": {
+        "x": 60,
+        "y": 26
+      },
+      "cuello": {
+        "x": 60,
+        "y": 100,
+        "ancho": 40
+      },
+      "cuerpo": {
+        "x": 60,
+        "y": 130,
+        "ancho": 56,
+        "alto": 44
+      }
+    },
+    "nutria": {
+      "cabeza": {
+        "x": 60,
+        "y": 24
+      },
+      "cuello": {
+        "x": 60,
+        "y": 100,
+        "ancho": 40
+      },
+      "cuerpo": {
+        "x": 60,
+        "y": 130,
+        "ancho": 56,
+        "alto": 44
+      }
+    }
+  }
+}
