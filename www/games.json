@@ -241,6 +241,24 @@
       "files": []
     },
     {
+      "id": "companero",
+      "cat": "skill",
+      "name": { "fa": "همراه من", "en": "My companion", "zh": "我的伙伴", "de": "Mein Begleiter", "es": "Mi compañero" },
+      "summary": {
+        "fa": "حیوان همراهت را انتخاب کن و از آن مراقبت کن؛ بدون عجله و بدون جریمه.",
+        "en": "Pick an animal companion and look after it; no rush and no penalties.",
+        "zh": "挑选一只动物伙伴并照顾它；不赶时间，也没有惩罚。",
+        "de": "Wähle ein Tier als Begleiter und kümmere dich darum; ohne Eile und ohne Strafen.",
+        "es": "Elige un animal como compañero y cuídalo; sin prisa y sin castigos."
+      },
+      "path": "games/companero/index.html",
+      "icon": "games/companero/icon.svg",
+      "color": "#E9B486",
+      "soft": "#FAEEDF",
+      "added": "2026-10-28",
+      "files": ["games/companero/economia.js", "games/companero/arte.js"]
+    },
+    {
       "id": "morris",
       "cat": "board",
       "name": {

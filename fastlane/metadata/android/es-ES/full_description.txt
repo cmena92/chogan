@@ -1,8 +1,9 @@
-Capybara es una colección de juegos pequeños que se pueden terminar, en una sola app. Trae más de cuarenta juegos; los nuevos llegan como actualizaciones.
+Capybara reúne más de cuarenta juegos pequeños y terminables en una sola app; los nuevos llegan como actualizaciones.
 
 Los juegos:
 
 * Defensa de torres — cuatro torres, seis mapas, veinte oleadas
+* Mi compañero — una mascota
 * Sudoku — cuatro dificultades, solución única, notas y pistas
 * Buscaminas — generación sin adivinar, cuatro tamaños, despeje rápido y banderas
 * Puntos y cajas — dos jugadores en un mismo móvil, o contra la IA
