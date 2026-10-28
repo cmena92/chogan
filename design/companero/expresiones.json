@@ -1,0 +1,14 @@
+{
+  "nota": "Expresiones del compañero (#9, #18). Solo cambian ojos y boca; las coordenadas copian las de cada cara. tipo: punto (ojo oscuro), pupila (búho: pupila sobre el disco claro) o panda (ojo claro con pupila sobre la mancha). Sin boca: el búho (pico) y el conejo (dientes).",
+  "expresiones": ["contento", "feliz", "antojado", "dormido", "sorprendido"],
+  "animales": {
+    "fox": { "tipo": "punto", "color": "#3A2620", "ojos": [[46, 58, 5], [74, 58, 5]], "boca": { "d": "M54 82c2 3 10 3 12 0", "cx": 60, "cy": 83.5, "ancho": 12 } },
+    "owl": { "tipo": "pupila", "color": "#2C2620", "ojos": [[45, 52, 6.5], [75, 52, 6.5]] },
+    "cat": { "tipo": "punto", "color": "#2C2620", "ojos": [[47, 58, 5.5], [73, 58, 5.5]], "boca": { "d": "M60 70v5M56 80c2 2 6 2 8 0", "cx": 60, "cy": 81, "ancho": 8, "prefijo": "M60 70v5" } },
+    "bear": { "tipo": "punto", "color": "#22301F", "ojos": [[47, 56, 5], [73, 56, 5]], "boca": { "d": "M60 74v4M54 82c2 2.6 10 2.6 12 0", "cx": 60, "cy": 83, "ancho": 12, "prefijo": "M60 74v4" } },
+    "capybara": { "tipo": "punto", "color": "#3A2620", "ojos": [[44, 53, 5], [76, 53, 5]], "boca": { "d": "M53 84c2 3 12 3 14 0", "cx": 60, "cy": 85.5, "ancho": 14 } },
+    "conejo": { "tipo": "punto", "color": "#3A2620", "ojos": [[47, 63, 5], [73, 63, 5]] },
+    "panda": { "tipo": "panda", "color": "#FBEDE6", "pupila": "#2C2620", "ojos": [[46, 56, 4], [74, 56, 4]], "pupilas": [[46.5, 56.5, 2.2], [73.5, 56.5, 2.2]], "boca": { "d": "M60 74v4M54 82c2 2.6 10 2.6 12 0", "cx": 60, "cy": 83, "ancho": 12, "prefijo": "M60 74v4", "color": "#4A4E5C" } },
+    "nutria": { "tipo": "punto", "color": "#3A2E4A", "ojos": [[46, 56, 5], [74, 56, 5]], "boca": { "d": "M60 76v4M54 85c2 2.6 10 2.6 12 0", "cx": 60, "cy": 86, "ancho": 12, "prefijo": "M60 76v4" } }
+  }
+}

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 170" width="120" height="170">
+  <g id="cola"><circle cx="88" cy="148" r="10" fill="#E59AB4"/><circle cx="87" cy="147" r="6" fill="#FCE9EF"/></g>
+  <g id="cuerpo">
+    <ellipse cx="60" cy="130" rx="30" ry="30" fill="#F2B3C8"/>
+    <ellipse id="panza" cx="60" cy="136" rx="18" ry="19" fill="#FCE9EF"/>
+    <g id="brazos"><ellipse cx="32" cy="124" rx="7" ry="11" transform="rotate(20 32 124)" fill="#E59AB4"/><ellipse cx="88" cy="124" rx="7" ry="11" transform="rotate(-20 88 124)" fill="#E59AB4"/></g>
+    <g id="patas" fill="#E59AB4"><ellipse cx="46" cy="160" rx="10" ry="6"/><ellipse cx="74" cy="160" rx="10" ry="6"/></g>
+  </g>
+  <g id="cara"><g id="orejas">
+    <ellipse cx="44" cy="28" rx="9" ry="23" transform="rotate(-12 44 28)" fill="#E59AB4"/>
+    <ellipse cx="76" cy="28" rx="9" ry="23" transform="rotate(12 76 28)" fill="#E59AB4"/>
+    <ellipse cx="44" cy="29" rx="4" ry="15" transform="rotate(-12 44 29)" fill="#FCE9EF"/>
+    <ellipse cx="76" cy="29" rx="4" ry="15" transform="rotate(12 76 29)" fill="#FCE9EF"/>
+  </g>
+  <circle id="cabeza" cx="60" cy="68" r="32" fill="#F2B3C8"/>
+  <ellipse id="hocico" cx="60" cy="82" rx="17" ry="13" fill="#FCE9EF"/>
+  <g id="rasgos">
+    
+    <path d="M60 79c2.6 0 4.6-1.6 4.6-3.4S62.6 73 60 73s-4.6 1-4.6 2.6S57.4 79 60 79z" fill="#C8574B"/>
+    <rect x="56" y="82" width="8" height="7" rx="2" fill="#FFFFFF" stroke="#3A2620" stroke-width="1.5"/>
+    <path d="M60 82v7" stroke="#3A2620" stroke-width="1.5"/>
+  </g><circle data-expr="1" cx="47" cy="63" r="6.5" fill="#3A2620"/><circle data-expr="1" cx="44.73" cy="60.73" r="1.95" fill="#FFFFFF"/><circle data-expr="1" cx="73" cy="63" r="6.5" fill="#3A2620"/><circle data-expr="1" cx="70.72" cy="60.73" r="1.95" fill="#FFFFFF"/></g>
+</svg>

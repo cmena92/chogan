@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 170" width="120" height="170">
+  <g id="cola"></g>
+  <g id="cuerpo">
+    <ellipse cx="60" cy="130" rx="30" ry="30" fill="#94C398"/>
+    <ellipse id="panza" cx="60" cy="136" rx="18" ry="19" fill="#E7F2E4"/>
+    <g id="brazos"><ellipse cx="32" cy="124" rx="7" ry="11" transform="rotate(20 32 124)" fill="#7BAE7F"/><ellipse cx="88" cy="124" rx="7" ry="11" transform="rotate(-20 88 124)" fill="#7BAE7F"/></g>
+    <g id="patas" fill="#7BAE7F"><ellipse cx="46" cy="160" rx="10" ry="6"/><ellipse cx="74" cy="160" rx="10" ry="6"/></g>
+  </g>
+  <g id="cara"><circle cx="32" cy="34" r="14" fill="#7BAE7F"/><circle cx="88" cy="34" r="14" fill="#7BAE7F"/><circle cx="60" cy="62" r="36" fill="#94C398"/><ellipse cx="60" cy="76" rx="20" ry="14" fill="#E7F2E4"/><path d="M60 70c3.4 0 6-2 6-4.4s-2.6-3.6-6-3.6-6 1.2-6 3.6 2.6 4.4 6 4.4z" fill="#22301F"/><circle data-expr="1" cx="49.5" cy="54.25" r="5" fill="#22301F"/><circle data-expr="1" cx="47.75" cy="52.5" r="1.5" fill="#FFFFFF"/><circle data-expr="1" cx="75.5" cy="54.25" r="5" fill="#22301F"/><circle data-expr="1" cx="73.75" cy="52.5" r="1.5" fill="#FFFFFF"/><path data-expr="1" d="M60 74v4" stroke="#22301F" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><ellipse data-expr="1" cx="61.44" cy="85.4" rx="2.6" ry="3" fill="#E8697A"/><path data-expr="1" d="M56.4 83c1.2 1.8 6 1.8 7.2 0" stroke="#22301F" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>
