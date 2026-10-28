@@ -72,10 +72,11 @@ for (const [id, c] of Object.entries(ANIMALES)) {
     ojos: c.ojos,
     rasgos: { x0: c.rasgos[0], y0: c.rasgos[1], x1: c.rasgos[2], y1: c.rasgos[3] },
     ajustes: AJUSTES[id] || {},
+    colores: { base: c.base, oscuro: c.oscuro, claro: c.claro },
   };
 }
 fs.writeFileSync(
   path.join(here, "anclajes.json"),
-  JSON.stringify({ marco: { ancho: 120, alto: 170 }, nota: "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello y cuerpo son comunes a los ocho; ojos: para los lentes; rasgos: zona que ninguna prenda cubre; ajustes: desplazamiento o escala de una prenda en ese animal.", animales: anclajes }, null, 2) + "\n",
+  JSON.stringify({ marco: { ancho: 120, alto: 170 }, nota: "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello y cuerpo son comunes a los ocho; ojos: para los lentes; rasgos: zona que ninguna prenda cubre; ajustes: desplazamiento o escala de una prenda en ese animal; colores: los del diseño Natural, que los demás diseños reemplazan.", animales: anclajes }, null, 2) + "\n",
 );
 console.log(`${Object.keys(ANIMALES).length} cuerpos y anclajes.json listos`);
