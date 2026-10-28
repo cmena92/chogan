@@ -1,0 +1,11 @@
+{
+  "prendas": [
+    { "id": "gorra", "espacio": "cabeza", "nombre": "Gorra" },
+    { "id": "corona", "espacio": "cabeza", "nombre": "Corona" },
+    { "id": "lentes", "espacio": "cabeza", "anclaje": "ojos", "nombre": "Lentes" },
+    { "id": "lazo", "espacio": "cuello", "nombre": "Lazo" },
+    { "id": "panuelo", "espacio": "cuello", "nombre": "Pañuelo" },
+    { "id": "sueter", "espacio": "cuerpo", "nombre": "Suéter" },
+    { "id": "capa", "espacio": "cuerpo", "nombre": "Capa" }
+  ]
+}

@@ -3,7 +3,7 @@
     "ancho": 120,
     "alto": 170
   },
-  "nota": "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello y cuerpo son comunes a los ocho.",
+  "nota": "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello y cuerpo son comunes a los ocho; ojos: para los lentes; rasgos: zona que ninguna prenda cubre; ajustes: desplazamiento o escala de una prenda en ese animal.",
   "animales": {
     "fox": {
       "cabeza": {
@@ -20,7 +20,20 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
-      }
+      },
+      "ojos": {
+        "izq": 46,
+        "der": 74,
+        "y": 58,
+        "r": 5
+      },
+      "rasgos": {
+        "x0": 41,
+        "y0": 53,
+        "x1": 79,
+        "y1": 86
+      },
+      "ajustes": {}
     },
     "owl": {
       "cabeza": {
@@ -37,6 +50,23 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
+      },
+      "ojos": {
+        "izq": 45,
+        "der": 75,
+        "y": 52,
+        "r": 6.5
+      },
+      "rasgos": {
+        "x0": 30,
+        "y0": 37,
+        "x1": 90,
+        "y1": 93
+      },
+      "ajustes": {
+        "cabeza": {
+          "dy": 4
+        }
       }
     },
     "cat": {
@@ -54,7 +84,20 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
-      }
+      },
+      "ojos": {
+        "izq": 47,
+        "der": 73,
+        "y": 58,
+        "r": 5.5
+      },
+      "rasgos": {
+        "x0": 41,
+        "y0": 52,
+        "x1": 79,
+        "y1": 83
+      },
+      "ajustes": {}
     },
     "bear": {
       "cabeza": {
@@ -71,7 +114,20 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
-      }
+      },
+      "ojos": {
+        "izq": 47,
+        "der": 73,
+        "y": 56,
+        "r": 5
+      },
+      "rasgos": {
+        "x0": 40,
+        "y0": 51,
+        "x1": 80,
+        "y1": 90
+      },
+      "ajustes": {}
     },
     "capybara": {
       "cabeza": {
@@ -88,7 +144,20 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
-      }
+      },
+      "ojos": {
+        "izq": 44,
+        "der": 76,
+        "y": 53,
+        "r": 5
+      },
+      "rasgos": {
+        "x0": 33,
+        "y0": 48,
+        "x1": 87,
+        "y1": 96
+      },
+      "ajustes": {}
     },
     "conejo": {
       "cabeza": {
@@ -105,6 +174,24 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
+      },
+      "ojos": {
+        "izq": 47,
+        "der": 73,
+        "y": 63,
+        "r": 5
+      },
+      "rasgos": {
+        "x0": 42,
+        "y0": 58,
+        "x1": 78,
+        "y1": 95
+      },
+      "ajustes": {
+        "cabeza": {
+          "dy": 2,
+          "escala": 0.75
+        }
       }
     },
     "panda": {
@@ -122,7 +209,20 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
-      }
+      },
+      "ojos": {
+        "izq": 45,
+        "der": 75,
+        "y": 57,
+        "r": 11
+      },
+      "rasgos": {
+        "x0": 34,
+        "y0": 45,
+        "x1": 86,
+        "y1": 86
+      },
+      "ajustes": {}
     },
     "nutria": {
       "cabeza": {
@@ -139,7 +239,20 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
-      }
+      },
+      "ojos": {
+        "izq": 46,
+        "der": 74,
+        "y": 56,
+        "r": 5
+      },
+      "rasgos": {
+        "x0": 34,
+        "y0": 51,
+        "x1": 86,
+        "y1": 98
+      },
+      "ajustes": {}
     }
   }
 }

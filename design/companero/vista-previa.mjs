@@ -4,6 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
+import { componer, catalogo } from "./prendas.mjs";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const core = fs.readFileSync(path.join(here, "../../www/lib/chogan.js"), "utf8");
@@ -38,6 +39,15 @@ const filaCuerpos = (alto, marcas) =>
 const cuerpos = (nombre, fondo, texto) =>
   `<section style="background:${fondo};color:${texto}"><h2>${nombre}</h2><h3>170 px</h3>${filaCuerpos(170)}<h3>100 px</h3>${filaCuerpos(100)}</section>`;
 
+// Each garment on the eight animals, and whole outfits with the three slots at once
+const vestido = (id, prendas, alto) => componer(id, prendas).replace('width="120" height="170"', `width="${Math.round((alto * 120) / 170)}" height="${alto}"`);
+const filaPrenda = (prendas, alto) =>
+  `<div class="fila">${ids.map((id) => `<figure>${vestido(id, prendas, alto)}<figcaption>${id}</figcaption></figure>`).join("")}</div>`;
+const CONJUNTOS = [["gorra", "lazo", "sueter"], ["corona", "panuelo", "capa"], ["lentes", "lazo", "capa"]];
+const ropa = `<section style="background:#FBF6EF;color:#2C2620"><h2>Prendas (#16)</h2>${catalogo
+  .map((p) => `<h3>${p.nombre} · ${p.espacio}</h3>${filaPrenda([p.id], 120)}`)
+  .join("")}<h2>Conjuntos completos</h2>${CONJUNTOS.map((c) => `<h3>${c.join(" + ")}</h3>${filaPrenda(c, 150)}`).join("")}</section>`;
+
 fs.writeFileSync(
   path.join(here, "vista-previa.html"),
   `<!doctype html><meta charset="utf-8"><title>Compañero · bocetos de animales</title>
@@ -46,6 +56,7 @@ fs.writeFileSync(
 <p style="padding:8px 24px;margin:0">Los cuatro actuales (del núcleo) y los cuatro nuevos (✦), issue #12.</p>
 ${tema("Tema claro", "#FBF6EF", "#2C2620")}${tema("Tema oscuro", "#1E1B18", "#F2EDE6")}
 ${cuerpos("Cuerpo entero · tema claro", "#FBF6EF", "#2C2620")}${cuerpos("Cuerpo entero · tema oscuro", "#1E1B18", "#F2EDE6")}
+${ropa}
 <section style="background:#FBF6EF"><h2>Anclajes de la ropa</h2><p>Rojo: cabeza (gorro, corona, lentes) · verde: cuello (lazo, pañuelo) · azul: cuerpo (suéter, capa).</p>${filaCuerpos(170, true)}</section>`,
 );
 console.log("vista-previa.html lista");
