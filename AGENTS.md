@@ -18,6 +18,9 @@ Upstream cambia muy seguido, y cada línea propia en el núcleo es un conflicto 
 ## Comandos
 
 ```bash
-node tools/test.js        # tiene que terminar con «همه‌ی … بررسی سبز»
-./tools/browser-check.sh  # todas las páginas cargan sin errores (necesita Chrome)
+node tools/test.js            # tiene que terminar con «همه‌ی … بررسی سبز»
+node tools/test-companero.js  # las pruebas del compañero (épica #2)
+./tools/browser-check.sh      # todas las páginas cargan sin errores (necesita Chrome)
 ```
+
+Las pruebas del fork van en `tools/test-companero.js`, nunca en `tools/test.js`: upstream lo cambia casi a diario y cada línea propia ahí sería un conflicto en cada actualización.

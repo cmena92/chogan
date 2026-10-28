@@ -30,6 +30,10 @@ jobs:
       - name: Test game engines
         run: node tools/test.js
 
+      # Capybara's companion keeps its tests apart, so tools/test.js stays upstream's (#3)
+      - name: Test the companion
+        run: node tools/test-companero.js
+
       - name: Load every page in headless Chrome
         run: ./tools/browser-check.sh
 
