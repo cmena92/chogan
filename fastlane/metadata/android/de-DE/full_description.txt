@@ -1,8 +1,9 @@
-Capybara ist eine Sammlung kleiner Spiele in einer einzigen App, die du wirklich zu Ende spielst. Über vierzig Spiele sind dabei, neue kommen als Updates dazu.
+Capybara bündelt über vierzig kleine Spiele in einer App, die du wirklich zu Ende spielst; neue kommen als Updates dazu.
 
 Die Spiele:
 
 * Turmverteidigung — vier Türme, sechs Karten, zwanzig Wellen
+* Mein Begleiter — ein Haustier
 * Sudoku — vier Stufen, je eine Lösung, Notizen und Tipps
 * Minesweeper — ohne Raten erzeugt, vier Größen, Akkorde und Flaggen
 * Käsekästchen — zu zweit an einem Handy oder gegen den Computer

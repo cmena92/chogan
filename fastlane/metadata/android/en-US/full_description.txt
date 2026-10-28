@@ -1,8 +1,9 @@
-Capybara is a collection of small, finishable games in a single app. It ships with more than forty games; new ones arrive as updates to the same app.
+Capybara gathers more than forty small, finishable games in a single app; new ones arrive as updates.
 
 The games:
 
 * Tower Defence — four towers, six maps, twenty waves
+* My companion — a calm pet
 * Sudoku — four difficulties, one solution each, notes and hints
 * Minesweeper — no-guess generation, four sizes, chording and flags
 * Dots and Boxes — two players on one phone, or against the AI
