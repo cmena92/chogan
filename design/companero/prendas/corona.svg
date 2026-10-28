@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 80 80" width="120" height="120">
+  <g id="prenda">
+    <path d="M-17 8V-10l8.5 8L0-14l8.5 12 8.5-8V8z" fill="#F4C430"/>
+    <rect x="-17" y="2" width="34" height="6" fill="#E0A800"/>
+    <circle cx="0" cy="-3" r="2.6" fill="#D7263D"/><circle cx="-9" cy="2" r="1.8" fill="#2F6FDE"/><circle cx="9" cy="2" r="1.8" fill="#2F6FDE"/>
+  </g>
+</svg>
