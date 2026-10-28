@@ -1,0 +1,21 @@
+{
+  "nota": "Diseños exclusivos del compañero (#7, #17). Los de color reemplazan base, oscuro y claro del animal; los de patrón superponen un dibujo solo a la cabeza y al cuerpo. Los colores salen de calcular el contraste de los ojos (mínimo 3:1).",
+  "disenos": [
+    { "id": "natural", "nombre": "Natural", "precio": 0 },
+    { "id": "medianoche", "nombre": "Medianoche", "precio": 120, "colores": { "base": "#7880DD", "oscuro": "#3E4595", "claro": "#D9DCF7" }, "patron": "brillitos" },
+    { "id": "arcoiris", "nombre": "Arcoíris suave", "precio": 150, "colores": { "base": ["#F6B3C6", "#F9D7A0", "#BFE3B4", "#B3D4F2", "#D3BDF0"], "oscuro": "#6E58A8", "claro": "#FFF8FB" } },
+    { "id": "manchitas", "nombre": "Manchitas", "precio": 180, "patron": "manchitas" },
+    { "id": "rayas", "nombre": "Rayas", "precio": 180, "patron": "rayas" },
+    { "id": "dorado", "nombre": "Dorado", "precio": 300, "colores": { "base": "#E7B43C", "oscuro": "#8A6210", "claro": "#FFF1C2" } }
+  ],
+  "ojos": {
+    "fox": { "color": "#3A2620", "sobre": "base" },
+    "owl": { "color": "#2C2620", "sobre": "claro" },
+    "cat": { "color": "#2C2620", "sobre": "base" },
+    "bear": { "color": "#22301F", "sobre": "base" },
+    "capybara": { "color": "#3A2620", "sobre": "base" },
+    "conejo": { "color": "#3A2620", "sobre": "base" },
+    "panda": { "color": "#FBEDE6", "sobre": "oscuro" },
+    "nutria": { "color": "#3A2E4A", "sobre": "base" }
+  }
+}

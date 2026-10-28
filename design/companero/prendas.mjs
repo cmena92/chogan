@@ -55,7 +55,7 @@ export function componer(animal, prendas = []) {
   return s.replace(/<\/svg>\s*$/, `${frente}</svg>\n`);
 }
 
-function chrome() {
+export function chrome() {
   if (process.env.CHROME) return process.env.CHROME;
   for (const c of ["google-chrome", "chromium", "chromium-browser"]) {
     if (spawnSync("sh", ["-c", `command -v ${c}`]).status === 0) return c;

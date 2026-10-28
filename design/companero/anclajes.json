@@ -3,7 +3,7 @@
     "ancho": 120,
     "alto": 170
   },
-  "nota": "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello y cuerpo son comunes a los ocho; ojos: para los lentes; rasgos: zona que ninguna prenda cubre; ajustes: desplazamiento o escala de una prenda en ese animal.",
+  "nota": "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello y cuerpo son comunes a los ocho; ojos: para los lentes; rasgos: zona que ninguna prenda cubre; ajustes: desplazamiento o escala de una prenda en ese animal; colores: los del diseño Natural, que los demás diseños reemplazan.",
   "animales": {
     "fox": {
       "cabeza": {
@@ -33,7 +33,12 @@
         "x1": 79,
         "y1": 86
       },
-      "ajustes": {}
+      "ajustes": {},
+      "colores": {
+        "base": "#EE9070",
+        "oscuro": "#E07A5F",
+        "claro": "#FBEDE6"
+      }
     },
     "owl": {
       "cabeza": {
@@ -67,6 +72,11 @@
         "cabeza": {
           "dy": 4
         }
+      },
+      "colores": {
+        "base": "#6A8CBF",
+        "oscuro": "#4E6C97",
+        "claro": "#FBEDE6"
       }
     },
     "cat": {
@@ -97,7 +107,12 @@
         "x1": 79,
         "y1": 83
       },
-      "ajustes": {}
+      "ajustes": {},
+      "colores": {
+        "base": "#F0BC70",
+        "oscuro": "#E4A853",
+        "claro": "#FBEDE6"
+      }
     },
     "bear": {
       "cabeza": {
@@ -127,7 +142,12 @@
         "x1": 80,
         "y1": 90
       },
-      "ajustes": {}
+      "ajustes": {},
+      "colores": {
+        "base": "#94C398",
+        "oscuro": "#7BAE7F",
+        "claro": "#E7F2E4"
+      }
     },
     "capybara": {
       "cabeza": {
@@ -157,7 +177,12 @@
         "x1": 87,
         "y1": 96
       },
-      "ajustes": {}
+      "ajustes": {},
+      "colores": {
+        "base": "#C9935F",
+        "oscuro": "#A9744A",
+        "claro": "#E6BE92"
+      }
     },
     "conejo": {
       "cabeza": {
@@ -192,6 +217,11 @@
           "dy": 2,
           "escala": 0.75
         }
+      },
+      "colores": {
+        "base": "#F2B3C8",
+        "oscuro": "#E59AB4",
+        "claro": "#FCE9EF"
       }
     },
     "panda": {
@@ -222,7 +252,12 @@
         "x1": 86,
         "y1": 86
       },
-      "ajustes": {}
+      "ajustes": {},
+      "colores": {
+        "base": "#F4F1EA",
+        "oscuro": "#4A4E5C",
+        "claro": "#FFFFFF"
+      }
     },
     "nutria": {
       "cabeza": {
@@ -252,7 +287,12 @@
         "x1": 86,
         "y1": 98
       },
-      "ajustes": {}
+      "ajustes": {},
+      "colores": {
+        "base": "#B59BD6",
+        "oscuro": "#9C80C2",
+        "claro": "#F1E9FA"
+      }
     }
   }
 }

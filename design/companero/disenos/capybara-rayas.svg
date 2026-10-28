@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 170" width="120" height="170"><defs><pattern id="p-capybara-rayas" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="4" fill="#A9744A" opacity="0.45"/></pattern></defs>
+  <g id="cola"></g>
+  <g id="cuerpo">
+    <ellipse cx="60" cy="130" rx="30" ry="30" fill="#C9935F"/><ellipse cx="60" cy="130" rx="30" ry="30" fill="url(#p-capybara-rayas)" data-patron="rayas"/>
+    <ellipse id="panza" cx="60" cy="136" rx="18" ry="19" fill="#E6BE92"/>
+    <g id="brazos"><ellipse cx="32" cy="124" rx="7" ry="11" transform="rotate(20 32 124)" fill="#A9744A"/><ellipse cx="88" cy="124" rx="7" ry="11" transform="rotate(-20 88 124)" fill="#A9744A"/></g>
+    <g id="patas" fill="#A9744A"><ellipse cx="46" cy="160" rx="10" ry="6"/><ellipse cx="74" cy="160" rx="10" ry="6"/></g>
+  </g>
+  <g id="cara"><g id="orejas" fill="#A9744A"><circle cx="33" cy="33" r="9"/><circle cx="87" cy="33" r="9"/></g>
+  <path id="cabeza" d="M60 26c24 0 38 14 38 34v14c0 16-16 26-38 26S22 90 22 74V60c0-20 14-34 38-34z" fill="#C9935F"/><path d="M60 26c24 0 38 14 38 34v14c0 16-16 26-38 26S22 90 22 74V60c0-20 14-34 38-34z" fill="url(#p-capybara-rayas)" data-patron="rayas"/>
+  <ellipse id="hocico" cx="60" cy="78" rx="27" ry="18" fill="#E6BE92"/>
+  <g id="rasgos" fill="#3A2620">
+    <circle cx="44" cy="53" r="5"/><circle cx="76" cy="53" r="5"/>
+    <ellipse cx="52" cy="72" rx="3" ry="4"/><ellipse cx="68" cy="72" rx="3" ry="4"/>
+    <path d="M53 84c2 3 12 3 14 0" stroke="#3A2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g></g>
+</svg>
