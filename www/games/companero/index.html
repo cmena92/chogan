@@ -21,6 +21,8 @@
   .cp-item[aria-pressed="true"] { border-color: var(--game); }
   .cp-item:focus-visible { outline: 3px solid var(--game); outline-offset: 2px; }
   .cp-nota { font-size: .8rem; opacity: .75; }
+  .cp-item--falta svg { opacity: .55; filter: grayscale(.4); }
+  .cp-precio { font-weight: 600; opacity: 1; }
 </style>
 </head>
 <body>
@@ -35,19 +37,24 @@
 
   /* ==== TEXTOS START ==== */
   var TEXTOS = {
-    fa: { monedas: 'سکه', animales: 'حیوان‌ها', colores: 'رنگ‌ها', ropa: 'لباس‌ها', cuidado: 'مراقبت',
+    fa: { desbloquear: 'با {n} سکه باز شود؟', desbloquearBtn: 'باز کردن', faltan: '{n} سکه کم داری', jugarParaGanar: 'یک بازی کن تا سکه بگیری.', enPerfil: 'در نمایه باز می‌شود', precio: '{n} سکه', tuyo: 'مال توست',
+      monedas: 'سکه', animales: 'حیوان‌ها', colores: 'رنگ‌ها', ropa: 'لباس‌ها', cuidado: 'مراقبت',
       cargando: 'همراهت را آماده می‌کنیم…', vacio: 'هنوز اینجا چیزی نیست.', sinMonedas: 'هنوز سکه نداری. یک بازی کن تا سکه بگیری.', equipado: 'در حال استفاده',
       a_fox: 'روباه', a_owl: 'جغد', a_cat: 'گربه', a_bear: 'خرس', a_capybara: 'کاپیبارا', a_conejo: 'خرگوش', a_panda: 'پاندا', a_nutria: 'سمور آبی' },
-    en: { monedas: 'Coins', animales: 'Animals', colores: 'Colours', ropa: 'Clothes', cuidado: 'Care',
+    en: { desbloquear: 'Unlock for {n} coins?', desbloquearBtn: 'Unlock', faltan: 'You need {n} more coins', jugarParaGanar: 'Play a game to earn some.', enPerfil: 'Unlocked in your profile', precio: '{n} coins', tuyo: 'Yours',
+      monedas: 'Coins', animales: 'Animals', colores: 'Colours', ropa: 'Clothes', cuidado: 'Care',
       cargando: 'Getting your companion ready…', vacio: 'Nothing here yet.', sinMonedas: 'You have no coins yet. Play a game to earn some.', equipado: 'In use',
       a_fox: 'Fox', a_owl: 'Owl', a_cat: 'Cat', a_bear: 'Bear', a_capybara: 'Capybara', a_conejo: 'Rabbit', a_panda: 'Panda', a_nutria: 'Otter' },
-    zh: { monedas: '金币', animales: '动物', colores: '颜色', ropa: '服装', cuidado: '照顾',
+    zh: { desbloquear: '花 {n} 金币解锁？', desbloquearBtn: '解锁', faltan: '还差 {n} 金币', jugarParaGanar: '玩一局就能赚到。', enPerfil: '在个人资料中解锁', precio: '{n} 金币', tuyo: '已拥有',
+      monedas: '金币', animales: '动物', colores: '颜色', ropa: '服装', cuidado: '照顾',
       cargando: '正在准备你的伙伴……', vacio: '这里还没有东西。', sinMonedas: '你还没有金币。玩一局就能赚到。', equipado: '使用中',
       a_fox: '狐狸', a_owl: '猫头鹰', a_cat: '猫', a_bear: '熊', a_capybara: '水豚', a_conejo: '兔子', a_panda: '熊猫', a_nutria: '水獭' },
-    de: { monedas: 'Münzen', animales: 'Tiere', colores: 'Farben', ropa: 'Kleidung', cuidado: 'Pflege',
+    de: { desbloquear: 'Für {n} Münzen freischalten?', desbloquearBtn: 'Freischalten', faltan: 'Dir fehlen {n} Münzen', jugarParaGanar: 'Spiel eine Runde, um welche zu verdienen.', enPerfil: 'Im Profil freischaltbar', precio: '{n} Münzen', tuyo: 'Deins',
+      monedas: 'Münzen', animales: 'Tiere', colores: 'Farben', ropa: 'Kleidung', cuidado: 'Pflege',
       cargando: 'Dein Begleiter wird vorbereitet …', vacio: 'Hier ist noch nichts.', sinMonedas: 'Du hast noch keine Münzen. Spiel eine Runde, um welche zu verdienen.', equipado: 'In Gebrauch',
       a_fox: 'Fuchs', a_owl: 'Eule', a_cat: 'Katze', a_bear: 'Bär', a_capybara: 'Wasserschwein', a_conejo: 'Hase', a_panda: 'Panda', a_nutria: 'Otter' },
-    es: { monedas: 'Monedas', animales: 'Animales', colores: 'Colores', ropa: 'Ropa', cuidado: 'Cuidado',
+    es: { desbloquear: '¿Desbloquear por {n} monedas?', desbloquearBtn: 'Desbloquear', faltan: 'Te faltan {n} monedas', jugarParaGanar: 'Juega una partida para ganarlas.', enPerfil: 'Se desbloquea en tu perfil', precio: '{n} monedas', tuyo: 'Tuyo',
+      monedas: 'Monedas', animales: 'Animales', colores: 'Colores', ropa: 'Ropa', cuidado: 'Cuidado',
       cargando: 'Preparando a tu compañero…', vacio: 'Todavía no hay nada aquí.', sinMonedas: 'Todavía no tienes monedas. Juega una partida para ganarlas.', equipado: 'En uso',
       a_fox: 'Zorro', a_owl: 'Búho', a_cat: 'Gato', a_bear: 'Oso', a_capybara: 'Capibara', a_conejo: 'Conejo', a_panda: 'Panda', a_nutria: 'Nutria' }
   };
@@ -73,8 +80,12 @@
     nucleo: function () { return { unlocks: C.state.unlocks, mascot: C.state.settings.mascot }; }
   });
   var ARTE = window.CompaneroArte;
-  // The core's characters: in this piece the companion shows the ones the player owns (#6 adds the new four)
-  var ANIMALES = ['fox', 'owl', 'cat', 'bear'];
+  // The eight animals, the capybara first. The core's own (fox, owl, cat, bear) are bought in the
+  // core's shop and only read here (#3); the new ones are bought in the companion (#6).
+  var ANIMALES = ['capybara', 'fox', 'owl', 'cat', 'bear', 'conejo', 'panda', 'nutria'];
+  var NUCLEO = ['fox', 'owl', 'cat', 'bear'];
+  var precioDe = {};
+  window.CompaneroEconomia.CATALOGO.forEach(function (a) { precioDe[a.id] = a.precio; });
 
   var estado = el('p', { class: 'cp-aviso', 'data-estado': 'cargando', role: 'status', text: C.t('cargando') });
   var compa = el('div', { class: 'cp-compa', 'aria-live': 'polite' });
@@ -108,15 +119,20 @@
     if (svg) { svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', C.t('a_' + eq.animal)); }
 
     grid.innerHTML = '';
-    ANIMALES.filter(E.poseido).forEach(function (id) {
-      var puesto = eq.animal === id;
-      var b = el('button', { class: 'cp-item', type: 'button', 'data-animal': id, 'aria-pressed': puesto ? 'true' : 'false' });
+    ANIMALES.forEach(function (id) {
+      var tiene = E.poseido(id), puesto = eq.animal === id, delNucleo = NUCLEO.indexOf(id) >= 0;
+      var b = el('button', { class: 'cp-item', type: 'button', 'data-animal': id, 'data-tiene': tiene ? '1' : '0',
+        'aria-pressed': puesto ? 'true' : 'false' });
+      if (!tiene && delNucleo) b.setAttribute('data-bloqueado', 'perfil');
       b.innerHTML = ARTE.cuerpos[id];
+      var dibujo = b.querySelector('svg');
+      if (dibujo) dibujo.setAttribute('aria-hidden', 'true');
+      if (!tiene) b.classList.add('cp-item--falta');
       b.appendChild(el('span', { text: C.t('a_' + id) }));
       if (puesto) b.appendChild(el('span', { class: 'cp-nota', text: C.t('equipado') }));
-      b.addEventListener('click', function () {
-        if (E.equipar(id).ok) { C.feedback('tap'); render(); grid.querySelector('[data-animal="' + id + '"]').focus(); }
-      });
+      else if (!tiene && delNucleo) b.appendChild(el('span', { class: 'cp-nota', text: C.t('enPerfil') }));
+      else if (!tiene) b.appendChild(el('span', { class: 'cp-nota cp-precio', 'data-precio': String(precioDe[id]), text: C.t('precio', { n: C.num(precioDe[id]) }) }));
+      b.addEventListener('click', function () { tocar(id); });
       grid.appendChild(b);
     });
 
@@ -125,6 +141,34 @@
     sinMonedas.hidden = monedas > 0;
     estado.hidden = true;
   }
+  function enfocar(id) { var b = grid.querySelector('[data-animal="' + id + '"]'); if (b) b.focus(); }
+
+  function tocar(id) {
+    if (E.poseido(id)) {
+      if (E.equipar(id).ok) { C.feedback('tap'); render(); enfocar(id); }
+      return;
+    }
+    // the core's characters are bought in its own shop; the companion never writes its unlocks
+    if (NUCLEO.indexOf(id) >= 0) { C.ui.toast({ title: C.t('enPerfil') }); return; }
+    var precio = precioDe[id];
+    if (!C.coins.can(precio)) {
+      C.ui.toast({ icon: 'coin', title: C.t('faltan', { n: C.num(precio - C.coins.get()) }), sub: C.t('jugarParaGanar') });
+      C.feedback('bad');
+      return;
+    }
+    C.ui.confirm({
+      title: C.t('desbloquear', { n: C.num(precio) }),
+      okLabel: C.t('desbloquearBtn'),
+      onOk: function () {
+        if (!E.comprar(id).ok) return;
+        E.equipar(id);
+        C.feedback('coin');
+        render();
+        enfocar(id);
+      }
+    });
+  }
+
   render();
 })();
 </script>
