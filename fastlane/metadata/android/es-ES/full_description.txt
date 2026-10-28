@@ -36,8 +36,8 @@ Los juegos:
 * Bolos — diez juegos, desliza para lanzar
 * Puzle deslizante — ordena las fichas numeradas, de 3×3 a 5×5
 * Rompecabezas — de 12 a 150 piezas dibujadas con código
-* Damas — reglas clásicas o españolas, contra la IA o para dos
-* Solitario — robo de una o de tres cartas, y una partida diaria siempre con solución
+* Damas — reglas clásicas, españolas o Huevo Style, contra la IA o para dos
+* Solitario — robo de una o de tres cartas
 * Ocho loco — sigue el palo o el número, reglas iraníes o internacionales
 * Gin Rummy — combinaciones contra un bot, hasta 100
 * Shelem — Hokm con subasta: toma el centro, elige triunfo, a 505
@@ -49,12 +49,13 @@ Los juegos:
 * Ajedrez chino — xiangqi con palacio, cañones y generales voladores
 * Ping-pong — tenis de mesa desde arriba, a 11; bot o para dos
 * Air hockey — una mesa de neón, a siete goles; bot o para dos
+* Eco — los botones de colores se encienden; repite el orden, uno más por ronda
 
 Alrededor de los juegos:
 
 * Un reto diario igual en todas partes, sin ningún servidor
 * Una liga semanal sin conexión con cinco niveles
-* Más de ochenta logros
+* Más de 150 logros
 * Estadísticas y un perfil
 * En persa, inglés, chino, alemán y español, con tema claro y oscuro
 

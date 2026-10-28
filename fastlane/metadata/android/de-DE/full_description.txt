@@ -36,8 +36,8 @@ Die Spiele:
 * Bowling — zehn Frames, wischen zum Werfen
 * Schiebepuzzle — nummerierte Plättchen ordnen, 3×3 bis 5×5
 * Puzzle — 12 bis 150 Teile, im Code gezeichnet
-* Dame — klassisch oder spanisch, gegen die KI oder zu zweit
-* Klondike — Patience, eine oder drei Karten ziehen, das Tagesspiel ist immer lösbar
+* Dame — klassisch, spanisch oder Huevo Style, gegen die KI oder zu zweit
+* Klondike — Patience, eine oder drei Karten ziehen
 * Verrückte Acht — Farbe oder Wert bedienen, iranische oder internationale Regeln
 * Gin Rommé — Kombinationen gegen einen Bot, bis 100
 * Shelem — Hokm mit Bieten: die Mitte nehmen, Trumpf bestimmen, bis 505
@@ -49,12 +49,13 @@ Die Spiele:
 * Chinesisches Schach — Xiangqi mit Palast, Kanonen und fliegenden Generälen
 * Pingpong — Tischtennis von oben, bis 11; Bot oder zu zweit
 * Airhockey — ein Neontisch, bis sieben Tore; Bot oder zu zweit
+* Echo — Farbtasten leuchten auf; tippe die Folge nach, jede Runde eine mehr
 
 Rund um die Spiele:
 
 * Ein Tagesrätsel, überall gleich, ganz ohne Server
 * Eine wöchentliche Offline-Liga mit fünf Stufen
-* Über achtzig Erfolge
+* Über 150 Erfolge
 * Statistik und Profil
 * Auf Persisch, Englisch, Chinesisch, Deutsch und Spanisch, mit hellem und dunklem Design
 

@@ -17,6 +17,9 @@
   .cs-player__name { font-weight: 800; font-size: var(--fs-sm); }
   .cs-player__caps { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 0; direction: ltr; justify-content: flex-end; }
   .cs-player__caps svg { width: 18px; height: 18px; margin-inline-start: -4px; }
+  /* face to face (#545): the row above the board turns to the player across the table,
+     only while it is above the board; beside it, in a wide window, it stays upright */
+  @container game (max-aspect-ratio: 5 / 4) { .cs-player--face { transform: rotate(180deg); } }
   /* «+۱» در متن راست‌چین علامت را به طرف دیگر می‌برد؛ عدد جدا و چپ‌به‌راست می‌ماند */
   .cs-player__diff { font-weight: 800; font-size: var(--fs-sm); color: var(--c-text-dim); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
   .cs-board { direction: ltr; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(8, minmax(0, 1fr));
@@ -896,7 +899,7 @@ function ChessBotFactory() {
         stalemate: 'پات: مساوی', fifty: 'پنجاه حرکت بدون زدن و حرکت پیاده: مساوی', repetition: 'تکرار سه‌باره: مساوی',
         material: 'مهره‌ی کافی برای مات نمانده: مساوی', agreed: 'مساوی با توافق', whiteWins: 'سفید برد', blackWins: 'سیاه برد',
         resigned: '{c} تسلیم شد', resign: 'تسلیم', resignAsk: '{c} تسلیم می‌شود؟', offerDraw: 'مساوی',
-        drawAsk: 'هر دو بازیکن با مساوی موافقید؟', autoFlip: 'چرخاندن تخته', promote: 'ارتقای پیاده به',
+        drawAsk: 'هر دو بازیکن با مساوی موافقید؟', autoFlip: 'چرخاندن تخته', faceToFace: 'روبه‌رو', promote: 'ارتقای پیاده به',
         newGame: 'بازی تازه', undoMove: 'برگرداندن حرکت', board: 'صفحه‌ی شطرنج', move: 'جابه‌جایی روی تخته',
         pick: 'انتخاب یا حرکت', flipKey: 'چرخاندن تخته', cancelPick: 'لغو انتخاب', moves: 'حرکت‌ها',
         vsAi: 'با ربات', twoPlayers: 'دو نفره', bot: 'ربات', thinking: 'ربات فکر می‌کند…', yourMove: 'نوبت تو',
@@ -911,7 +914,7 @@ function ChessBotFactory() {
         stalemate: 'Stalemate: draw', fifty: 'Fifty moves without a capture or pawn move: draw', repetition: 'Threefold repetition: draw',
         material: 'Not enough material to mate: draw', agreed: 'Draw by agreement', whiteWins: 'White wins', blackWins: 'Black wins',
         resigned: '{c} resigned', resign: 'Resign', resignAsk: '{c} resigns?', offerDraw: 'Draw',
-        drawAsk: 'Do both players agree to a draw?', autoFlip: 'Rotate board', promote: 'Promote the pawn to',
+        drawAsk: 'Do both players agree to a draw?', autoFlip: 'Rotate board', faceToFace: 'Face to face', promote: 'Promote the pawn to',
         newGame: 'New game', undoMove: 'Undo move', board: 'Chess board', move: 'Move on the board',
         pick: 'Pick or move', flipKey: 'Rotate the board', cancelPick: 'Cancel selection', moves: 'Moves',
         vsAi: 'Versus AI', twoPlayers: 'Two players', bot: 'AI', thinking: 'AI is thinking…', yourMove: 'Your move',
@@ -926,7 +929,7 @@ function ChessBotFactory() {
         stalemate: '逼和：平局', fifty: '五十步未吃子未动兵：平局', repetition: '三次重复局面：平局',
         material: '子力不足以将死：平局', agreed: '协议和棋', whiteWins: '白方胜', blackWins: '黑方胜',
         resigned: '{c}认输', resign: '认输', resignAsk: '{c}认输？', offerDraw: '和棋',
-        drawAsk: '双方都同意和棋吗？', autoFlip: '旋转棋盘', promote: '兵升变为',
+        drawAsk: '双方都同意和棋吗？', autoFlip: '旋转棋盘', faceToFace: '面对面', promote: '兵升变为',
         newGame: '新一局', undoMove: '撤销一步', board: '国际象棋棋盘', move: '在棋盘上移动',
         pick: '选择或走子', flipKey: '旋转棋盘', cancelPick: '取消选择', moves: '着法',
         vsAi: '对战电脑', twoPlayers: '双人', bot: '电脑', thinking: '电脑思考中…', yourMove: '轮到你',
@@ -941,7 +944,7 @@ function ChessBotFactory() {
         stalemate: 'Patt: Remis', fifty: 'Fünfzig Züge ohne Schlagen oder Bauernzug: Remis', repetition: 'Dreifache Wiederholung: Remis',
         material: 'Zu wenig Material zum Mattsetzen: Remis', agreed: 'Remis nach Einigung', whiteWins: 'Sieg für Weiß', blackWins: 'Sieg für Schwarz',
         resigned: 'Aufgabe: {c}', resign: 'Aufgeben', resignAsk: 'Aufgabe von {c}?', offerDraw: 'Remis',
-        drawAsk: 'Sind beide mit Remis einverstanden?', autoFlip: 'Brett drehen', promote: 'Bauer wird zu',
+        drawAsk: 'Sind beide mit Remis einverstanden?', autoFlip: 'Brett drehen', faceToFace: 'Gegenüber', promote: 'Bauer wird zu',
         newGame: 'Neues Spiel', undoMove: 'Zug zurück', board: 'Schachbrett', move: 'Auf dem Brett bewegen',
         pick: 'Wählen oder ziehen', flipKey: 'Brett drehen', cancelPick: 'Auswahl aufheben', moves: 'Züge',
         vsAi: 'Gegen KI', twoPlayers: 'Zwei Spieler', bot: 'KI', thinking: 'KI denkt nach …', yourMove: 'Du bist dran',
@@ -956,7 +959,7 @@ function ChessBotFactory() {
         stalemate: 'Ahogado: tablas', fifty: 'Cincuenta jugadas sin captura ni movimiento de peón: tablas', repetition: 'Triple repetición: tablas',
         material: 'Material insuficiente para dar mate: tablas', agreed: 'Tablas por acuerdo', whiteWins: 'Ganan blancas', blackWins: 'Ganan negras',
         resigned: 'Abandono: {c}', resign: 'Rendirse', resignAsk: '¿Abandono de {c}?', offerDraw: 'Tablas',
-        drawAsk: '¿Aceptan los dos jugadores las tablas?', autoFlip: 'Girar tablero', promote: 'Coronar el peón como',
+        drawAsk: '¿Aceptan los dos jugadores las tablas?', autoFlip: 'Girar tablero', faceToFace: 'Cara a cara', promote: 'Coronar el peón como',
         newGame: 'Nueva partida', undoMove: 'Deshacer', board: 'Tablero de ajedrez', move: 'Moverse por el tablero',
         pick: 'Elegir o mover', flipKey: 'Girar el tablero', cancelPick: 'Cancelar selección', moves: 'Jugadas',
         vsAi: 'Contra la IA', twoPlayers: 'Dos jugadores', bot: 'IA', thinking: 'La IA está pensando…', yourMove: 'Tu turno',
@@ -970,7 +973,7 @@ function ChessBotFactory() {
   });
 
   // پیش‌فرض بازی با ربات است، چون بیشتر وقت‌ها یک نفر تنها شطرنج را باز می‌کند (#143)
-  var PREFS0 = { flip: true, mode: 'ai', level: 'easy', human: 'w', tier: 'easy' };
+  var PREFS0 = { flip: true, face: false, mode: 'ai', level: 'easy', human: 'w', tier: 'easy' };
   var prefs = Object.assign({}, PREFS0, ctx.store.get('prefs', {}));
   var G = null, S = null, sel = -1, targets = [], cur = -1, dragFrom = -1;
   var thinking = false, thinkId = 0, worker = null, localBot = null;
@@ -985,10 +988,12 @@ function ChessBotFactory() {
     q: '<path d="M11 38h23l-2-7 3.5-14-7 8-3-11-3 11-3-11-3 11-7-8 3.5 14z"/><circle cx="9.5" cy="15" r="2.4"/><circle cx="16" cy="11.5" r="2.4"/><circle cx="22.5" cy="10" r="2.4"/><circle cx="29" cy="11.5" r="2.4"/><circle cx="35.5" cy="15" r="2.4"/>',
     k: '<path d="M12.5 38h20l-1.5-7c4-2.5 6-7 3.5-11-3-4.5-9.5-2-12 2.5-2.5-4.5-9-7-12-2.5-2.5 4 0 8.5 3.5 11z"/><path d="M22.5 5v10M18.5 9h8" class="cs-cut"/>'
   };
-  function pieceSvg(p) {
+  // up: turned 180° inside the drawing, for the player across the table (#545); a turn
+  // on the <svg> itself would be undone by the slide animation, which sets its transform
+  function pieceSvg(p, up) {
     var white = p === p.toUpperCase();
     var fill = white ? '#FBF7EE' : '#2B2622', line = white ? '#2B2622' : '#F2E8D6';
-    return '<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><g fill="' + fill + '" stroke="' + line + '" stroke-width="1.6" stroke-linejoin="round">' +
+    return '<svg viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg"><g' + (up ? ' transform="rotate(180 22.5 22.5)"' : '') + ' fill="' + fill + '" stroke="' + line + '" stroke-width="1.6" stroke-linejoin="round">' +
       SHAPES[p.toLowerCase()].replace(/class="cs-eye"/g, 'fill="' + line + '" stroke="none"').replace(/class="cs-cut"/g, 'fill="none" stroke="' + line + '" stroke-width="1.8" stroke-linecap="round"') +
       '</g></svg>';
   }
@@ -1023,8 +1028,11 @@ function ChessBotFactory() {
   // با ربات و در معما تخته همیشه از سمت تو دیده می‌شود؛ دونفره به نوبت می‌چرخد
   function flipped() {
     if (isAi() || isPz()) return G.human === 'b';
-    return prefs.flip && S && S.turn === 'b' && !(G && G.result);
+    return prefs.flip && !prefs.face && S && S.turn === 'b' && !(G && G.result);
   }
+  // Two players facing each other across the phone: the board stays put and Black's
+  // pieces face the player at the top (#545)
+  function faceUp(p) { return !isAi() && !isPz() && !!prefs.face && !!p && p !== p.toUpperCase(); }
   function sqAt(v) { return flipped() ? 63 - v : v; }     // خانه‌ی نمایشی v → خانه‌ی تخته
   function viewOf(i) { return flipped() ? 63 - i : i; }
 
@@ -1342,10 +1350,16 @@ function ChessBotFactory() {
     actions.innerHTML = '';
     if (isPz()) { pzActions(); paint(); return; }
     if (!isAi()) {
-    var fl = el('button', { class: 'ch-btn ch-btn--soft ch-btn--sm', type: 'button', 'aria-pressed': prefs.flip ? 'true' : 'false' },
-      [C.icon('refresh', 16), el('span', { text: C.t('autoFlip') + (prefs.flip ? ' ✓' : '') })]);
-    fl.addEventListener('click', function () { prefs.flip = !prefs.flip; ctx.store.set('prefs', prefs); C.feedback('tap'); render(); });
+    var flipOn = prefs.flip && !prefs.face;
+    var fl = el('button', { class: 'ch-btn ch-btn--soft ch-btn--sm', type: 'button', 'aria-pressed': flipOn ? 'true' : 'false' },
+      [C.icon('refresh', 16), el('span', { text: C.t('autoFlip') + (flipOn ? ' ✓' : '') })]);
+    fl.addEventListener('click', function () { prefs.flip = !flipOn; if (prefs.flip) prefs.face = false; ctx.store.set('prefs', prefs); C.feedback('tap'); render(); });
     actions.appendChild(fl);
+    // the two views exclude each other: turning the board would put the turned pieces upside down again
+    var fc = el('button', { class: 'ch-btn ch-btn--soft ch-btn--sm', type: 'button', 'aria-pressed': prefs.face ? 'true' : 'false' },
+      [C.icon('user', 16), el('span', { text: C.t('faceToFace') + (prefs.face ? ' ✓' : '') })]);
+    fc.addEventListener('click', function () { prefs.face = !prefs.face; if (prefs.face) prefs.flip = false; ctx.store.set('prefs', prefs); C.feedback('tap'); render(); });
+    actions.appendChild(fc);
     }
     if (!G.result && !isAi()) {
       var dr = el('button', { class: 'ch-btn ch-btn--soft ch-btn--sm', type: 'button', text: C.t('offerDraw') });
@@ -1420,6 +1434,7 @@ function ChessBotFactory() {
       playerRow(topRow, top);
       playerRow(bottomRow, top === 'w' ? 'b' : 'w');
     }
+    topRow.classList.toggle('cs-player--face', !isAi() && !isPz() && !!prefs.face);
     var checkSq = !G.result || G.result.check ? (E.inCheck(S) ? S.board.indexOf(S.turn === 'w' ? 'K' : 'k') : -1) : -1;
     for (var v = 0; v < 64; v++) {
       var i = sqAt(v), q = squares[v], p = S.board[i];
@@ -1430,7 +1445,7 @@ function ChessBotFactory() {
       if (i === checkSq) cls += ' cs-sq--check';
       if (v === cur) cls += ' cs-sq--cur';
       q.className = cls;
-      var html = p ? pieceSvg(p) : '';
+      var html = p ? pieceSvg(p, faceUp(p)) : '';
       if (targets.some(function (m) { return m.to === i; })) html += S.board[i] || targets.some(function (m) { return m.to === i && m.epCapture; }) ? '<span class="cs-ring"></span>' : '<span class="cs-dot"></span>';
       if ((v & 7) === 7) html += '<span class="cs-coord cs-coord--r" style="left:auto;right:3px">' + (8 - (i >> 3)) + '</span>';
       if (v >= 56) html += '<span class="cs-coord cs-coord--f" style="right:auto;left:3px">' + E.FILES[i & 7] + '</span>';
@@ -1464,7 +1479,7 @@ function ChessBotFactory() {
     // the fading piece floats above the board, so a repaint of the square cannot cut it short
     if (gone && !C.ui.reduceMotion()) {
       var at = inner(gone.sq);
-      var g = el('span', { class: 'cs-gone', html: pieceSvg(gone.p), style: { left: at.left + 'px', top: at.top + 'px', width: at.width + 'px', height: at.height + 'px' } });
+      var g = el('span', { class: 'cs-gone', html: pieceSvg(gone.p, faceUp(gone.p)), style: { left: at.left + 'px', top: at.top + 'px', width: at.width + 'px', height: at.height + 'px' } });
       document.body.appendChild(g);
       setTimeout(function () { if (g.parentNode) g.parentNode.removeChild(g); }, 320);
     }

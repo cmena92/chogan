@@ -20,7 +20,7 @@ The games:
 * Pasur — the Persian fishing card game, against the AI
 * Mahjong Solitaire — three layouts including the turtle, every deal solvable
 * Chess — against the AI or two players, plus Lichess puzzles
-* Hokm — the Persian four-player card game: you and your partner against two AI rivals
+* Hokm — the Persian four-player card game, with an AI partner
 * Block Drop — falling blocks: a 40-line sprint or a 100-line marathon
 * Gomoku — five in a row on a 9, 13 or 15 board, against the AI or two players
 * Go — 9×9 Go with automatic counting, against the AI or two players
@@ -36,12 +36,12 @@ The games:
 * Bowling — ten frames, swipe to bowl
 * Sliding Puzzle — slide the numbered tiles back into order, from 3×3 to 5×5
 * Jigsaw — 12 to 150 pieces, on Persian patterns and scenes drawn in code
-* Checkers — classic or Spanish rules, against the AI or two players
-* Klondike — classic solitaire, draw one or three, and a daily deal that is always winnable
+* Checkers — classic, Spanish or Huevo Style rules, AI or two players
+* Klondike — classic solitaire, draw one or three
 * Crazy Eights — match the suit or rank, Iranian or international rules
 * Gin Rummy — melds and deadwood against a bot, a match to 100
 * Shelem — Hokm with bidding: take the widow, name trump, a match to 505
-* Spider — two decks in ten columns, king down to ace; one, two or four suits
+* Spider — two decks; one, two or four suits
 * Pairs — the memory game: turn two cards at a time and find every pair
 * Gorillas — exploding bananas across a city: angle, power and wind
 * Hop — bounce from platform to platform without falling; touch or tilt to steer
@@ -49,12 +49,13 @@ The games:
 * Chinese chess — xiangqi with palace, cannons, elephants and flying generals
 * Ping Pong — table tennis from above, first to 11; a bot or two players
 * Air Hockey — a neon table, first to seven goals; a bot or two players
+* Echo — the coloured pads light up; repeat the order, one more each round
 
 Around the games:
 
 * A daily challenge that is identical on every device, with no server at all
 * A weekly offline league with five tiers
-* Over eighty awards
+* Over 150 awards
 * Stats and a profile
 * Persian, English, Simplified Chinese, German and Spanish interface with light and dark themes
 

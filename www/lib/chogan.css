@@ -514,6 +514,35 @@ a  { color: var(--c-accent); text-decoration: none; }
 .ch-nav__item[aria-selected="true"] { color: var(--c-accent); }
 .ch-nav__item[aria-selected="true"] svg { transform: translateY(-2px) scale(1.08); }
 .ch-nav__item:active svg { transform: scale(.9); }
+/* A phone turned sideways (#538): the bottom bar took 62px of a ~360px tall
+   screen, so the menu showed barely two rows. In a short landscape window the
+   bar becomes a rail on the reading side (right in Persian, left in English). */
+@media (orientation: landscape) and (max-height: 540px) {
+  :root { --nav-w: 76px; }
+  .ch-nav {
+    inset-inline: auto;
+    inset-inline-start: 0;
+    top: 0;
+    width: var(--nav-w);
+    flex-direction: column;
+    padding: calc(6px + var(--safe-t)) 6px calc(6px + var(--safe-b));
+    border-top: 0;
+    border-inline-end: 1px solid var(--c-line);
+  }
+  /* the notch side of a turned phone is a physical side, not a reading one */
+  [dir="ltr"] .ch-nav { width: calc(var(--nav-w) + var(--safe-l)); padding-left: calc(6px + var(--safe-l)); }
+  [dir="rtl"] .ch-nav { width: calc(var(--nav-w) + var(--safe-r)); padding-right: calc(6px + var(--safe-r)); }
+  .ch-nav__in { flex-direction: column; justify-content: center; height: 100%; max-width: none; gap: 2px; }
+  .ch-nav__item { flex: 0 1 64px; min-height: 0; }
+  /* the body makes room for the rail, so the page keeps its own width and
+     centres in what is left */
+  [dir="ltr"] body.ch-menu { padding-left: calc(var(--nav-w) + var(--safe-l)); }
+  [dir="rtl"] body.ch-menu { padding-right: calc(var(--nav-w) + var(--safe-r)); }
+  .ch-page { padding-bottom: calc(var(--s-7) + var(--safe-b)); }
+  [dir="ltr"] .ch-page { padding-left: var(--s-4); }
+  [dir="rtl"] .ch-page { padding-right: var(--s-4); }
+  .ch-update { bottom: calc(var(--s-3) + var(--safe-b)); inset-inline-start: calc(var(--nav-w) + var(--s-3) + max(var(--safe-l), var(--safe-r))); }
+}
 
 /* ------------------------------------------------- سربرگ داخل بازی‌ها */
 .ch-gamebar {

@@ -22,7 +22,7 @@ let checks = 0;
 // is no longer raised in each pull request, where it made every new-game PR conflict
 // with the last (#493); it is raised at release time. Lowering it means checks were
 // removed on purpose and must be said in the PR.
-const MIN_CHECKS = 5341;
+const MIN_CHECKS = 5446;
 
 function ok(cond, msg) {
   checks++;
@@ -3060,6 +3060,31 @@ function testFiles() {
   const cssSrc = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.css'), 'utf8');
   ok(!/C\.ui\.segmented\(C\.locales\(\)/.test(menuSrc.replace(/function langPicker[\s\S]*?\n  \}/, '')) && (menuSrc.match(/langPicker\(/g) || []).length === 3, 'both language pickers use the wrapping langPicker');
   ok(/\.ch-seg--wrap \{[^}]*flex-wrap: wrap;[^}]*width: 100%;/.test(cssSrc), 'the language picker wraps inside its card');
+  // On a phone turned sideways the bottom bar took 62px of a ~360px screen (#538)
+  const rail = (wcoCss.match(/@media \(orientation: landscape\) and \(max-height: (\d+)px\) \{([\s\S]*?)\n\}/) || []);
+  ok(+rail[1] >= 430 && +rail[1] <= 600, 'a short landscape window (a turned phone, not a desktop) gets its own nav rules');
+  const railCss = rail[2] || '';
+  ok(/\n  \.ch-nav \{[^}]*inset-inline-start: 0;[^}]*top: 0;[^}]*flex-direction: column;/.test(railCss) && /\.ch-nav__in \{[^}]*flex-direction: column;/.test(railCss), 'there the nav is a column on the reading side');
+  ok(/\[dir="rtl"\] body\.ch-menu \{[^}]*padding-right: calc\(var\(--nav-w\) \+ var\(--safe-r\)\)/.test(railCss) && /\[dir="ltr"\] body\.ch-menu \{[^}]*padding-left: calc\(var\(--nav-w\) \+ var\(--safe-l\)\)/.test(railCss), 'the menu makes room for the rail on its side in both directions');
+  ok(/\.ch-page \{ padding-bottom: calc\(var\(--s-7\) \+ var\(--safe-b\)\); \}/.test(railCss) && /\.ch-update \{ bottom: calc\(var\(--s-3\) \+ var\(--safe-b\)\);/.test(railCss), 'the page and update bar stop leaving room for a bottom bar');
+  // spend(-5) raised the balance and spend(NaN) saved it as null (#540); run the shipped coin code
+  const coinSrc = (fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8').match(/(?:  function isPrice[^\n]*\n)?  var coinsApi = \{[\s\S]*?\n  \};/) || [])[0];
+  ok(!!coinSrc, 'the coin API is found in the core');
+  const coinRun = (start, fn) => {
+    const saved = {}, box = { saved, state: { coins: start }, appStore: { get: (k, d) => k in saved ? saved[k] : d, set: (k, v) => { saved[k] = v; } },
+      mutate() {}, bump() {}, Chogan: { achievements: { check() {} }, ui: { refreshCoins() {}, coinFly() {} } } };
+    vm.createContext(box);
+    vm.runInContext(coinSrc + '\nthis.out = (' + fn + ')(coinsApi);', box);
+    return { out: box.out, coins: box.state.coins, saved: 'coins' in saved ? saved.coins : 'unsaved' };
+  };
+  const badPrices = ['0', '-5', '1.5', 'NaN', 'Infinity', '"10"', 'undefined'];
+  ok(badPrices.length === 7, 'seven bad prices are tried');
+  badPrices.forEach((n) => {
+    const r = coinRun(100, 'function (c) { return [c.can(' + n + '), c.spend(' + n + ')]; }');
+    ok(r.out[0] === false && r.out[1] === false && r.coins === 100 && r.saved === 'unsaved', 'can and spend refuse ' + n + ' and leave 100 coins untouched (got ' + JSON.stringify(r) + ')');
+  });
+  const paid = coinRun(100, 'function (c) { return [c.can(40), c.spend(40), c.can(61), c.spend(61)]; }');
+  ok(JSON.stringify(paid.out) === '[true,true,false,false]' && paid.coins === 60 && paid.saved === 60, 'a real price is still paid, and one over the balance is still refused');
   ok(man.name_localized.fa.dir === 'rtl', 'نام فارسی جهت راست‌به‌چپ دارد');
   ok(man.name_localized.fa.value !== man.name, 'نام فارسی با پیش‌فرض یکی نیست');
   const menuHtml = fs.readFileSync(path.join(ROOT, 'www/index.html'), 'utf8');
@@ -5476,6 +5501,31 @@ function testMahjong() {
 }
 
 /* ------------------------------------------------------------- شطرنج */
+// #545: two players facing each other across the phone saw Black's pieces upside down
+// for the player who had them; a face-to-face view turns them and keeps the board still
+function testChessFaceToFace() {
+  head('Chess and Chinese chess: a face-to-face view for two players (#545)');
+  const cs = fs.readFileSync(path.join(ROOT, 'www/games/chess/index.html'), 'utf8');
+  const shapes = (/^  var SHAPES = \{[\s\S]*?^  \};$/m.exec(cs) || [''])[0];
+  const fn = (/^  function pieceSvg\(p, up\) \{[\s\S]*?^  \}$/m.exec(cs) || [''])[0];
+  ok(!!shapes && !!fn, 'pieceSvg takes the face-to-face turn');
+  if (shapes && fn) {
+    const sb = {};
+    vm.runInNewContext(shapes + fn + ';this.f = pieceSvg;', sb);
+    ok(/<g transform="rotate\(180 22\.5 22\.5\)"/.test(sb.f('k', true)) && !/rotate/.test(sb.f('k', false)) && !/rotate/.test(sb.f('K')), 'a turned piece is turned inside its drawing, an upright one is not');
+  }
+  ok(/function faceUp\(p\) \{ return !isAi\(\) && !isPz\(\) && !!prefs\.face && !!p && p !== p\.toUpperCase\(\); \}/.test(cs), 'only Black turns, only with two players');
+  ok(/return prefs\.flip && !prefs\.face && S && S\.turn === 'b'/.test(cs), 'face to face never turns the board');
+  ok(/var html = p \? pieceSvg\(p, faceUp\(p\)\) : '';/.test(cs) && /html: pieceSvg\(gone\.p, faceUp\(gone\.p\)\)/.test(cs), 'the board and a taken piece both use the turn');
+  ok(/if \(prefs\.face\) prefs\.flip = false;/.test(cs) && /if \(prefs\.flip\) prefs\.face = false;/.test(cs), 'turning the board and face to face exclude each other');
+  ok(/@container game \(max-aspect-ratio: 5 \/ 4\) \{ \.cs-player--face \{ transform: rotate\(180deg\); \} \}/.test(cs), 'the row above the board turns too, only while it is above the board');
+  const xq = fs.readFileSync(path.join(ROOT, 'www/games/xiangqi/index.html'), 'utf8');
+  ok(/\.xq-face \.xq-piece--b \.xq-glyph \{ display: inline-block; transform: rotate\(180deg\); \}/.test(xq) && /board\.classList\.toggle\('xq-face', S\.mode === 'two' && prefs\.face\);/.test(xq), 'Chinese chess turns Black\'s characters face to face, with two players only');
+  ok((xq.match(/face: prefs\.face \}/g) || []).length >= 3 && /face: !!prefs\.face \}/.test(xq), 'Chinese chess remembers the choice wherever it saves its settings');
+  const keys = ['faceToFace'].every((k) => (cs.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === 5 && (xq.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === 5);
+  ok(keys, 'the option is named in all five languages in both games');
+}
+
 function testChess() {
   head('شطرنج');
   const E = loadEngine('chess', 'ChessEngineFactory');
@@ -6734,9 +6784,10 @@ function testCheckers() {
   ok(fw.every((w) => w === 1), 'with optional capture medium still beats easy in 6 of 6 games, from both sides (' + fw.join(',') + ')');
   const tfh = Date.now(); E.aiMove(E.initial(), 1, 'hard', frng(5), 'classic', true); const tFree = Date.now() - tfh;
   ok(tFree < 1500, 'a hard move from the start with optional capture takes under 1.5 s here (' + tFree + ' ms)');
-  ok(/prefs\.free = v === 'free';/.test(html) && /free = !daily && prefs\.free === true;/.test(html) && /E\.aiMove\(S\.board, 2, S\.level, rnd, S\.rules, S\.free\)/.test(html) &&
-    (html.match(/E\.moves\(S\.board, S\.turn, S\.rules, S\.free\)/g) || []).length === 4 && !/E\.moves\(S\.board, S\.turn, S\.rules\)/.test(html) &&
-    /var jump = !S\.done && !busy\(\) && !S\.free && /.test(html) && /free: !v\.daily && v\.free === true,/.test(html),
+  // (#391 Huevo: every move list also gets the state, for the Queen's edge clock, and Huevo is always optional)
+  ok(/prefs\.free = v === 'free';/.test(html) && /free = !daily && \(prefs\.free === true \|\| rules === 'huevo'\);/.test(html) && /E\.aiMove\(S\.board, 2, S\.level, rnd, S\.rules, S\.free, S\)/.test(html) &&
+    (html.match(/E\.moves\(S\.board, S\.turn, S\.rules, S\.free, S\)/g) || []).length === 3 && !/E\.moves\(S\.board, S\.turn, S\.rules\)/.test(html) && !/E\.moves\(S\.board, S\.turn, S\.rules, S\.free\)/.test(html) &&
+    /var jump = !S\.done && !busy\(\) && !S\.free && /.test(html) && /free: !v\.daily && \(v\.free === true \|\| v\.rules === 'huevo'\),/.test(html),
     'the page offers the choice, keeps the daily game forced, saves it, gives it to the AI and every move list, and drops the "must jump" note');
   ok(/prefs\.rules = v;/.test(html) && /var rules = daily \? 'classic' : prefRules\(\),/.test(html) && /E\.aiMove\(S\.board, 2, S\.level, rnd, S\.rules[,)]/.test(html), 'the page offers both rule sets, keeps the daily game classic and gives the AI the rules in play');
 
@@ -8665,6 +8716,117 @@ function testReversiMotion() {
   ok(/if \(C\.ui\.reduceMotion\(\)\) \{ anim = null; draw\(\); return; \}/.test(src), 'reduced motion draws the move still');
 }
 
+// #391: Huevo Style, a third rule set designed by HuevosKicker, rule by rule as the
+// gist states them (H1–H6, Q1–Q14)
+function testCheckersHuevo() {
+  head('Checkers: Huevo Style (#391)');
+  const t0 = Date.now();
+  const E = loadEngine('checkers', 'CheckersEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/checkers/index.html'), 'utf8');
+  const sq = (r, c) => r * 8 + c;
+  const B = (rows) => { const map = { '.': 0, x: 1, o: 2, X: 3, O: 4, q: 5, Q: 6, e: 7, E: 8 }; const b = []; rows.forEach((r) => r.split('').forEach((ch) => b.push(map[ch]))); return b; };
+  const st = (board, turn) => Object.assign(E.newState('2p', 'huevo'), { board, turn: turn || 1 });
+  const ms = (b, p, S) => E.moves(b, p, 'huevo', true, S);
+  const key = (m) => m.from + '>' + m.path.join('>');
+  const S0 = E.newState('2p', 'huevo');
+  ok(S0.board[53] === 5 && S0.board[10] === 6 && S0.free && S0.qt.join() === '0,15,15' && S0.board.filter((v) => v).length === 24, 'each side starts with a Queen in place of a man, on squares 53 and 10 (Q1), capture optional (H4)');
+  // H1, H2: a king flies to its first victim and lands right behind it; the second hop is short
+  let b = B(['........', '........', '........', '....o...', '........', '..o.....', '........', 'X.......']);
+  let k = ms(b, 1).filter((m) => m.caps.length).map(key);
+  const far = ms(B(['........', '........', '.....o..', '........', '........', '..o.....', '........', 'X.......']), 1).filter((m) => m.caps.length).map(key);
+  ok(k.join() === '56>35,56>35>21' && far.join() === '56>35', 'a king flies on the first hop only and lands right behind each piece taken (H1, H2) (' + k.join(' ') + ' | ' + far.join(' ') + ')');
+  // H3, H4: a chain may stop after any landing, and a quiet step stays legal beside a jump
+  b = B(['........', '........', '........', '....o...', '........', '..o.....', '.x......', '........']);
+  k = ms(b, 1).map(key);
+  ok(k.indexOf('49>35') >= 0 && k.indexOf('49>35>21') >= 0 && k.indexOf('49>40') >= 0, 'a chain may stop after any landing and capturing is optional (H3, H4)');
+  // Q3: the Queen steps one square any way and captures backwards like a man
+  b = B(['........', '........', '........', '........', '...q....', '..o.....', '........', '........']);
+  k = ms(b, 1).map(key);
+  ok(k.sort().join() === ['35>26', '35>28', '35>44', '35>49'].sort().join(), 'the Queen steps one square any way and captures backwards (Q3)');
+  // Q4, Q5: on the far row she becomes an Empress, who flies on every hop
+  b = B(['........', '..q.....', '........', '........', '........', '........', '........', '.......o']);
+  const promo = ms(b, 1).filter((m) => m.crown);
+  const S1 = st(b.slice()); S1.board[sq(7, 7)] = 2; E.applyMove(S1, promo[0]);
+  ok(promo.length === 2 && S1.board[promo[0].path[0]] === 7, 'a Queen on the far row becomes an Empress (Q4)');
+  b = B(['........', '........', '.....o..', '........', '........', '..o.....', '........', 'e.......']);
+  k = ms(b, 1).filter((m) => m.caps.length).map(key);
+  ok(k.indexOf('56>35') >= 0 && k.indexOf('56>35>21') < 0, 'an Empress flies on every hop: from 35 she reaches the piece two squares away (Q5)');
+  const fly2 = ms(B(['........', '........', '........', '....o...', '........', '..o.....', '........', 'e.......']), 1).filter((m) => m.caps.length).map(key);
+  ok(fly2.indexOf('56>35>21') >= 0, 'and chains on, landing right behind each piece');
+  // Q2: taking the Queen wins at once
+  let S = st(B(['........', '........', '........', '...Q....', '..x.....', '........', '........', '......q.']), 1);
+  E.applyMove(S, { from: sq(4, 2), path: [sq(2, 4)] });
+  ok(S.winner === 1 && S.reason === 'queen', 'capturing the Queen wins the game (Q2)');
+  // H5, Q8: stuck, or only the Queen can move: the count decides
+  S = st(B(['........', '........', '........', 'o.o.....', '.o.o....', '..x.....', '........', 'q.....Q.']), 1);
+  S.board[sq(6, 1)] = 0; S.board[sq(6, 3)] = 0;
+  ms(S.board, 1, S).length;
+  S.board[sq(3, 0)] = 2; S.board[sq(3, 4)] = 2;
+  E.settle(S);
+  ok(S.winner === 2 && S.reason === 'count', 'a side whose only moves are the Queen\'s is judged on the count of pieces (H5, Q8)');
+  // Q6, Q7, Q11: the edge clock
+  S = st(B(['.Q......', '......O.', '........', '....X...', '........', '........', '........', 'q.......']), 1);
+  const clock = [];
+  for (let t = 0; t < 40 && S.winner < 0; t++) {
+    const m = ms(S.board, S.turn, S);
+    if (S.turn === 1) clock.push(S.qt[1]);
+    E.applyMove(S, m.find((x) => E.isKing(S.board[x.from]) && !x.caps.length) || m[0]);
+  }
+  ok(clock.slice(0, 17).join() === '15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,15', 'a Queen on the edge has fifteen turns, then must step off, and the clock winds back (Q6, Q7) (' + clock.join(',') + ')');
+  S = st(B(['.Q......', '......O.', '........', '....X...', '........', '..o.....', '.o......', 'q.......']), 1);
+  S.qt[1] = 0; E.settle(S);
+  ok(S.winner === 2 && S.reason === 'timer', 'a Queen who cannot step off when her clock runs out loses the game (Q7)');
+  const SA = st(B(['........', '........', '........', '...q....', '....X...', '........', '......O.', '........']), 1);
+  SA.board[sq(0, 1)] = 6;
+  E.applyMove(SA, { from: sq(3, 3), path: [sq(2, 2)] });
+  E.applyMove(SA, { from: sq(6, 6), path: [sq(7, 7)] });
+  E.applyMove(SA, { from: sq(2, 2), path: [sq(1, 1)] });
+  ok(SA.qt[1] === 15, 'arriving on an edge does not start the clock (Q11)');
+  // Q9, Q10: the lone Queen's last move; two lone Queens draw
+  S = st(B(['........', '........', '........', '........', '........', '..o.....', '...O....', 'q......Q']), 1);
+  S.board[sq(6, 3)] = 0; S.board[sq(5, 2)] = 2;
+  E.settle(S);
+  const lone = S.lone === 1 && S.winner < 0;
+  E.applyMove(S, ms(S.board, 1, S).find((m) => !m.caps.length));
+  ok(lone && S.winner === 2 && S.reason === 'lone', 'a side left with only its Queen gets one last move, then loses (Q9)');
+  S = st(B(['q.......', '........', '........', '........', '........', '........', '........', '......Q.']), 1);
+  E.settle(S);
+  ok(S.winner === 0 && S.reason === 'lone', 'two lone Queens draw (Q10)');
+  // H6, Q12: sixty quiet plies draw, and a Queen's step is not progress
+  S = st(B(['.O......', '........', '.....Q..', '..q.....', '........', '........', '........', '......X.']), 1);
+  for (let i = 0; i < 70 && S.winner < 0; i++) { const m = ms(S.board, S.turn, S); E.applyMove(S, m.find((x) => !x.caps.length && !E.isRoyal(S.board[x.from])) || m.find((x) => !x.caps.length) || m[0]); }
+  ok(S.winner === 0 && S.reason === 'quiet' && S.history.length === 60, 'sixty plies without a capture or a man moving draw (H6, Q12) (' + S.history.length + ')');
+  // Undo brings back the clock
+  const SU = st(B(['.Q......', '......O.', '........', '....X...', '........', '........', '........', 'q.......']), 1);
+  // quiet king moves only: a capture here would leave Black a lone Queen and end the game
+  const quietKing = (p) => ms(SU.board, p, SU).find((x) => E.isKing(SU.board[x.from]) && !x.caps.length);
+  E.applyMove(SU, quietKing(1));
+  E.applyMove(SU, quietKing(2));
+  E.applyMove(SU, quietKing(1));
+  const before = SU.qt[1]; SU.mode = '2p'; E.takeBack(SU);
+  ok(before === 13 && SU.qt[1] === 14, 'undo winds the edge clock back (' + before + ' → ' + SU.qt[1] + ')');
+  // The bots play it: medium beats easy from either side, hard beats medium, fast enough
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  const game = (a, c, seed) => { const G = E.newState('ai', 'huevo'); const r = rng(seed); let n = 0, slow = 0;
+    while (G.winner < 0 && n < 300) { const t = Date.now(); const mv = E.aiMove(G.board, G.turn, G.turn === 1 ? a : c, r, 'huevo', true, G); slow = Math.max(slow, Date.now() - t); if (!mv) break; E.applyMove(G, mv); n++; }
+    return { w: G.winner, slow }; };
+  // a Huevo game can end in a draw on the count or the quiet rule, so the bar is wins
+  // against losses over several games, from both sides
+  const me = [0, 1, 2].map((i) => game('medium', 'easy', 100 + i)), em = [0, 1, 2].map((i) => game('easy', 'medium', 100 + i));
+  const mWin = me.filter((g) => g.w === 1).length + em.filter((g) => g.w === 2).length, mLoss = me.filter((g) => g.w === 2).length + em.filter((g) => g.w === 1).length;
+  ok(mWin >= 4 && mLoss === 0, 'medium beats easy from either side (' + mWin + ' wins, ' + mLoss + ' losses in 6)');
+  const hm = [0, 1].map((i) => game('hard', 'medium', 100 + i)), mh = [0, 1].map((i) => game('medium', 'hard', 102 + i));
+  const hWin = hm.filter((g) => g.w === 1).length + mh.filter((g) => g.w === 2).length, hLoss = hm.filter((g) => g.w === 2).length + mh.filter((g) => g.w === 1).length;
+  const slow = Math.max(...me.concat(em, hm, mh).map((g) => g.slow));
+  ok(hWin >= 3 && hWin > hLoss && slow < 1500, 'hard beats medium (' + hWin + ' wins, ' + hLoss + ' losses in 4), and no move takes 1.5 s (slowest ' + slow + ' ms)');
+  // The page: a third choice, always optional, the daily stays classic, and the rules are explained
+  ok(/\{ value: 'huevo', label: C\.t\('huevo'\) \}/.test(html) && /if \(S\.rules !== 'huevo'\) top\.appendChild/.test(html) && /var rules = daily \? 'classic' : prefRules\(\)/.test(html), 'the page offers Huevo, hides the capture choice for it, and keeps the daily game classic');
+  ok(['huevo', 'huevoNote', 'qEdge', 'qMust', 'endQueen', 'endCount', 'endTimer', 'endLone'].every((k) => (html.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === 5), 'its texts are in all five languages');
+  ok(/HuevosKicker/.test(html), 'the rules text names its designer');
+  const ms0 = Date.now() - t0;
+  ok(ms0 < 15000, 'the group runs in ' + (ms0 / 1000).toFixed(1) + ' s (limit 15 s)');
+}
+
 function testCheckersMotion() {
   head('Checkers: taken pieces fade, the crown drops on (#407)');
   // A taken piece vanished the moment the mover landed beyond it, and a new
@@ -10213,6 +10375,38 @@ function testHop() {
   const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
   ok(['hop-500', 'hop-2k', 'hop-summit'].every((id) => new RegExp("\\{ id: '" + id + "',[^\\n]*dde: '[^\\n]*des: '").test(core) && html.indexOf("unlock('" + id + "')") > 0), 'the three Hop awards exist in every language and are unlocked');
   ok(Date.now() - t0 < 10000, 'the Hop tests finish in under 10 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #544: a player asked for Simon (named Echo in English: "Simon" is a trademark)
+function testSimon() {
+  head('Echo / Simon (#544)');
+  const E = loadEngine('simon', 'SimonEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/simon/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  const a = E.sequence(rng(7)), b = E.sequence(rng(7)), c = E.sequence(rng(8));
+  ok(a.length >= 100 && a.join() === b.join() && a.join() !== c.join() && a.every((x) => x >= 0 && x < 4), 'a sequence is long, the same for the same seed (the daily), and uses the four pads');
+  const counts = [0, 1, 2, 3].map((k) => a.filter((x) => x === k).length);
+  ok(counts.every((n) => n > a.length / 8), 'every pad comes up (' + counts.join(', ') + ')');
+  // play a game right for five rounds: each round adds exactly one, keeping the start
+  const S = E.game(rng(3), 1);
+  const first = S.seq.slice(0, 5).join();
+  let okRounds = 0;
+  for (let r = 1; r <= 5; r++) {
+    const want = S.seq.slice(0, S.len);
+    let res = '';
+    for (const k of want) res = E.press(S, k);
+    if (res === 'round' && S.len === r + 1 && S.best === r && S.pos === 0) okRounds++;
+  }
+  ok(okRounds === 5 && S.seq.slice(0, 5).join() === first, 'each round repeated right adds one note to the same sequence');
+  const due = S.seq[0], wrong = (due + 1) % 4;
+  ok(E.press(S, wrong) === 'wrong' && S.over && S.best === 5 && E.press(S, due) === 'over', 'the first mistake ends the game and keeps the rounds completed');
+  const G = E.game(rng(9), 7);
+  ok(G.len === 7 && G.best === 6 && G.pos === 0, 'a saved game comes back at its round');
+  ok(E.noteMs(1) > E.noteMs(10) && E.noteMs(10) > E.noteMs(40) - 1 && E.noteMs(100) >= 260 && E.gapMs(1) > 0, 'playback quickens with the length but never below 260 ms a note');
+  ok(/C\.daily\('simon', dailyDate\)\.rng/.test(html) && ['smn-10', 'smn-20', 'smn-daily'].every((id) => html.indexOf("unlock('" + id + "')") > 0), 'the daily sequence is seeded by the day, and the three awards are unlocked');
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  ok([0, 1, 2, 3].every((i) => new RegExp('simon' + i + ': function').test(core)) && /simonWrong: function/.test(core), 'each pad has its own note in the core, and a mistake its own sound');
+  ok((html.match(/<svg viewBox="0 0 24 24" fill="#fff">' \+ SHAPES\[i\]/g) || []).length === 1 && /var SHAPES = \[/.test(html), 'each pad carries its own shape, so the four tell apart without colour');
 }
 
 // #524: the owner asked for air hockey like Neon Hockey; physics, goals and halves are

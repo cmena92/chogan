@@ -694,6 +694,13 @@
   }
 
   var SFX = {
+    // Simon's four pads (#544): a major chord, high enough for a phone speaker, each
+    // pad its own note so the sequence can be followed by ear
+    simon0: function () { tone({ freq: 392, dur: 0.32, gain: 0.24, type: 'triangle', attack: 0.01 }); },
+    simon1: function () { tone({ freq: 523.25, dur: 0.32, gain: 0.22, type: 'triangle', attack: 0.01 }); },
+    simon2: function () { tone({ freq: 659.25, dur: 0.32, gain: 0.2, type: 'triangle', attack: 0.01 }); },
+    simon3: function () { tone({ freq: 783.99, dur: 0.32, gain: 0.18, type: 'triangle', attack: 0.01 }); },
+    simonWrong: function () { tone({ freq: 196, to: 98, dur: 0.6, gain: 0.26, type: 'sawtooth' }); },
     tap: function () { tone({ freq: 620, to: 520, dur: 0.07, gain: 0.16, type: 'sine' }); },
     select: function () { tone({ freq: 880, dur: 0.06, gain: 0.13, type: 'triangle' }); },
     place: function () { tone({ freq: 300, to: 460, dur: 0.11, gain: 0.22, type: 'triangle' }); },
@@ -947,9 +954,12 @@
 
   /* =========================================================== سکه */
 
+  function isPrice(n) { return typeof n === 'number' && n > 0 && Math.floor(n) === n && n < Infinity; }
   var coinsApi = {
     get: function () { return state.coins; },
-    can: function (n) { return state.coins >= n; },
+    // spend(-5) raised the balance and spend(NaN) saved it as null (#540): only a
+    // whole positive price is a price
+    can: function (n) { return isPrice(n) && state.coins >= n; },
     add: function (n, silent) {
       n = Math.max(0, Math.round(n));
       if (!n) return state.coins;
@@ -960,6 +970,7 @@
       return state.coins;
     },
     spend: function (n) {
+      if (!isPrice(n)) return false;
       var fresh = appStore.get('coins', state.coins);
       if (typeof fresh === 'number') state.coins = fresh;
       if (state.coins < n) return false;
@@ -1095,6 +1106,9 @@
     { id: 'air-win',     icon: 'trophy',  fa: 'دروازه‌ی باز',        en: 'Open goal',         dfa: 'یک مسابقه‌ی ایرهاکی را مقابل ربات بردی', den: 'Win an Air Hockey match against the bot', zh: '空门', dzh: '对战电脑赢下一场桌上冰球比赛', de: 'Offenes Tor', dde: 'Gewinne ein Airhockey-Spiel gegen den Bot', es: 'Portería abierta', des: 'Gana una partida de Air hockey contra el bot' },
     { id: 'air-hard',    icon: 'brain',   fa: 'دست نئونی',          en: 'Neon hands',        dfa: 'ایرهاکی را مقابل ربات سخت بردی',       den: 'Beat the hard bot at Air Hockey', zh: '霓虹之手', dzh: '在桌上冰球中战胜困难电脑', de: 'Neonhände', dde: 'Schlage den starken Bot bei Airhockey', es: 'Manos de neón', des: 'Gana al bot difícil en Air hockey' },
     { id: 'air-shut',    icon: 'shield',  fa: 'دروازه‌ی بسته',       en: 'Clean sheet',       dfa: 'ایرهاکی را مقابل ربات هفت بر هیچ بردی', den: 'Win Air Hockey 7–0 against the bot', zh: '零失球', dzh: '在桌上冰球中以 7 比 0 战胜电脑', de: 'Weiße Weste', dde: 'Gewinne Airhockey 7:0 gegen den Bot', es: 'Portería a cero', des: 'Gana 7–0 al bot en Air hockey' },
+    { id: 'smn-10',      icon: 'star',    fa: 'حافظه‌ی ده‌تایی',      en: 'Ten in a row',      dfa: 'در سایمون به دور ۱۰ رسیدی',            den: 'Reach round 10 in Echo', zh: '十连', dzh: '在闪灯记忆中到达第 10 轮', de: 'Zehn am Stück', dde: 'Erreiche bei Echo Runde 10', es: 'Diez seguidos', des: 'Llega a la ronda 10 en Eco' },
+    { id: 'smn-20',      icon: 'brain',   fa: 'حافظه‌ی آهنین',       en: 'Iron memory',       dfa: 'در سایمون به دور ۲۰ رسیدی',            den: 'Reach round 20 in Echo', zh: '钢铁记忆', dzh: '在闪灯记忆中到达第 20 轮', de: 'Eisernes Gedächtnis', dde: 'Erreiche bei Echo Runde 20', es: 'Memoria de hierro', des: 'Llega a la ronda 20 en Eco' },
+    { id: 'smn-daily',   icon: 'calendar', fa: 'پژواک روز',          en: 'Echo of the day',   dfa: 'در سایمون روزانه به دور ۸ رسیدی',       den: 'Reach round 8 in a daily Echo', zh: '每日回响', dzh: '在每日闪灯记忆中到达第 8 轮', de: 'Echo des Tages', dde: 'Erreiche bei einem Tages-Echo Runde 8', es: 'Eco del día', des: 'Llega a la ronda 8 en un Eco diario' },
     { id: 'go-win',      icon: 'medal',   fa: 'زمین‌گیر',          en: 'Territory',         dfa: 'یک دست گو را مقابل ربات بردی',        den: 'Win a game of go against the AI', zh: '围地', dzh: '对战电脑赢下一局围棋', de: 'Gebietsherr', dde: 'Gewinne eine Partie Go gegen den Computer', es: 'Territorio', des: 'Gana una partida de Go contra la IA' },
     { id: 'go-hard',     icon: 'brain',   fa: 'دو چشم',            en: 'Two eyes',          dfa: 'در گو ربات سخت را شکست دادی',         den: 'Beat the hard AI at go', zh: '两只眼', dzh: '在围棋中击败困难电脑', de: 'Zwei Augen', dde: 'Schlag die schwere Go-KI', es: 'Dos ojos', des: 'Vence a la IA difícil en Go' },
     { id: 'bj-win',      icon: 'trophy',  fa: 'دیلر را بردی',      en: 'Beat the dealer',   dfa: 'یک مسابقه‌ی ده‌دستی بیست‌ویک را بردی', den: 'Win a ten-hand blackjack match', zh: '赢过庄家', dzh: '赢下一场十手的二十一点比赛', de: 'Croupier geschlagen', dde: 'Gewinne eine Blackjack-Partie aus zehn Händen', es: 'Vence a la banca', des: 'Gana una partida de Blackjack de diez manos' },
