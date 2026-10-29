@@ -431,17 +431,25 @@ async function navegador(fn) {
     await new Promise((r) => ws.addEventListener('open', r, { once: true }));
     let n = 0;
     const pendientes = {};
-    ws.addEventListener('message', (m) => { const d = JSON.parse(m.data); if (pendientes[d.id]) { pendientes[d.id](d); delete pendientes[d.id]; } });
+    const errores = [];
+    ws.addEventListener('message', (m) => {
+      const d = JSON.parse(m.data);
+      if (pendientes[d.id]) { pendientes[d.id](d); delete pendientes[d.id]; }
+      if (d.method === 'Runtime.exceptionThrown') errores.push(d.params.exceptionDetails.exception?.description || d.params.exceptionDetails.text);
+      if (d.method === 'Runtime.consoleAPICalled' && d.params.type === 'error') errores.push(d.params.args.map((x) => x.value || x.description).join(' '));
+    });
     const cdp = (method, params) => new Promise((r) => { const id = ++n; pendientes[id] = r; ws.send(JSON.stringify({ id, method, params: params || {} })); });
     const evaluar = async (expr) => (await cdp('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true })).result.result.value;
-    const abrir = async (ruta) => {
+    const abrir = async (ruta, listo) => {
       await cdp('Page.navigate', { url: 'http://127.0.0.1:' + puerto + ruta });
-      for (let i = 0; i < 50; i++) { await espera(150); if (await evaluate("document.readyState === 'complete' && !!document.querySelector('[data-seccion]')")) return true; }
+      const sel = JSON.stringify(listo || '[data-seccion]');
+      for (let i = 0; i < 50; i++) { await espera(150); if (await evaluate("document.readyState === 'complete' && !!document.querySelector(" + sel + ")")) return true; }
       return false;
       async function evaluate(e) { return evaluar(e); }
     };
     await cdp('Page.enable');
-    return await fn({ abrir, evaluar, cdp, origen: 'http://127.0.0.1:' + puerto });
+    await cdp('Runtime.enable');
+    return await fn({ abrir, evaluar, cdp, errores, origen: 'http://127.0.0.1:' + puerto });
   } finally {
     chrome.kill(); servidor.kill();
     await espera(300);
@@ -609,6 +617,173 @@ function testEstados() {
   const claves = ['cargando', 'vacio', 'sinMonedas', 'equipado'];
   for (const l of ['fa', 'en', 'zh', 'de', 'es']) ok(claves.every((k) => typeof T[l][k] === 'string' && T[l][k].length > 2), l + ': los cuatro estados tienen texto');
   ok(/juega/i.test(T.es.sinMonedas) && /play/i.test(T.en.sinMonedas), 'sin monedas dice qué hacer: jugar para ganarlas');
+}
+
+/* ------------------------------------------------ final integration (#10) */
+
+const LANGS = ['fa', 'en', 'zh', 'de', 'es'];
+const textos = () => {
+  const html = fs.readFileSync(PAGINA, 'utf8');
+  const bloque = (html.match(/\/\* ==== TEXTOS START ==== \*\/([\s\S]*?)\/\* ==== TEXTOS END ==== \*\//) || [])[1];
+  return vm.runInNewContext('(' + bloque.slice(bloque.indexOf('{'), bloque.lastIndexOf('}') + 1) + ')');
+};
+// Every chogan.app.* key, as stored
+// What a player already has: opening any game also creates the core's own league and
+// recent keys, so those are left out
+const nucleoGuardado = `JSON.stringify(['coins', 'unlocks', 'settings', 'stats', 'welcomeSeen'].map((k) => [k, localStorage.getItem('chogan.app.' + k)]).concat([['nombre', JSON.parse(localStorage.getItem('chogan.app.profile') || '{}').name]]))`;
+
+function testTextosCompletos() {
+  head('Las cadenas del compañero, completas en los cinco idiomas (#10)');
+  const T = textos();
+  const claves = Object.keys(T.es);
+  for (const l of LANGS) {
+    const faltan = claves.filter((k) => typeof T[l][k] !== 'string' || !T[l][k].trim());
+    const sobran = Object.keys(T[l]).filter((k) => !(k in T.es));
+    ok(!faltan.length && !sobran.length, l + ': las ' + claves.length + ' cadenas, ni una de más ni de menos' + (faltan.length ? ' (faltan: ' + faltan.join(', ') + ')' : '') + (sobran.length ? ' (sobran: ' + sobran.join(', ') + ')' : ''));
+  }
+  const usadas = [...new Set([...fs.readFileSync(PAGINA, 'utf8').matchAll(/C\.t\('([a-zA-Z_]+)'/g)].map((m) => m[1]))];
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  // keys built from an id, like C.t('deseo_' + id), are checked by their own groups
+  const huerfanas = usadas.filter((k) => !/_$/.test(k)).filter((k) => !(k in T.es) && !new RegExp('[{,\\s]' + k + ':').test(core));
+  ok(!huerfanas.length, 'cada C.t() de la página tiene su cadena, propia o del núcleo' + (huerfanas.length ? ' (sin texto: ' + huerfanas.join(', ') + ')' : ''));
+}
+
+function testSinRedNiPermisos() {
+  head('Sin red, sin permisos y sin rastreo nuevos (#10)');
+  const dir = path.join(ROOT, 'www/games/companero');
+  const archivos = fs.readdirSync(dir).filter((f) => /\.(js|html)$/.test(f));
+  const RED = /\bfetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon|EventSource|navigator\.(geolocation|mediaDevices)|importScripts|https?:\/\/(?!www\.w3\.org\/)/;
+  const malos = archivos.filter((f) => RED.test(fs.readFileSync(path.join(dir, f), 'utf8')));
+  ok(archivos.length >= 7 && !malos.length, 'ninguno de los ' + archivos.length + ' archivos del compañero pide nada a la red' + (malos.length ? ' (' + malos.join(', ') + ')' : ''));
+  const g = entradas().find((x) => x.id === 'companero');
+  const propios = archivos.filter((f) => f !== 'index.html').map((f) => 'games/companero/' + f);
+  ok(propios.every((f) => g.files.includes(f)), 'files lista cada módulo del compañero: el service worker los guarda para jugar sin conexión');
+  const manifiesto = fs.readFileSync(path.join(ROOT, 'android/app/src/main/AndroidManifest.xml'), 'utf8');
+  const permisos = [...manifiesto.matchAll(/uses-permission[^>]*android:name="([^"]+)"/g)].map((m) => m[1]);
+  ok(permisos.join() === 'android.permission.VIBRATE', 'el APK pide solo vibrar, como el original (' + permisos.join(', ') + ')');
+  const sw = fs.readFileSync(path.join(ROOT, 'www/sw.js'), 'utf8');
+  ok(/games\.json/.test(sw) && /files/.test(sw), 'el service worker guarda los files de cada entrada de games.json');
+}
+
+function testEconomiaDocumentada() {
+  head('La economía final, documentada en COMPANERO.md (#10)');
+  const doc = path.join(ROOT, 'COMPANERO.md');
+  ok(fs.existsSync(doc), 'COMPANERO.md existe en la raíz del fork');
+  if (!fs.existsSync(doc) || !E) return;
+  const md = fs.readFileSync(doc, 'utf8');
+  const filas = new Map([...md.matchAll(/^\|\s*`([a-z]+)`\s*\|[^|\n]*\|[^|\n]*\|\s*(\d+)\s*\|/gm)].map((m) => [m[1], +m[2]]));
+  const malos = E.CATALOGO.filter((a) => filas.get(a.id) !== a.precio);
+  ok(filas.size === E.CATALOGO.length && !malos.length, 'la tabla de precios coincide con CATALOGO, artículo por artículo (' + filas.size + ' filas)' + (malos.length ? ' (distintos: ' + malos.map((a) => a.id).join(', ') + ')' : ''));
+  const total = E.CATALOGO.filter((a) => a.tipo !== 'consumible').reduce((t, a) => t + a.precio, 0);
+  ok(new RegExp('\\*\\*' + total.toLocaleString('en-US') + ' monedas\\*\\*').test(md), 'dice el costo total de todo lo permanente: ' + total + ' monedas');
+  ok(/fuentes/i.test(md) && /sumideros/i.test(md) && /stats\.record/.test(md), 'explica de dónde salen las monedas (solo al terminar partidas) y adónde van');
+}
+
+async function testPerfilAnterior() {
+  head('Un perfil anterior no pierde nada (#10)');
+  await navegador(async ({ abrir, evaluar }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 77, unlocks: ['palette.sea', 'mascot.owl'], settings: { palette: 'sea', mascot: 'owl', theme: 'dark' } }));
+    await evaluar(`localStorage.setItem('chogan.app.stats', JSON.stringify({ plays: 40, timeMs: 9e6, byGame: { simon: { plays: 40, wins: 12, timeMs: 9e6, best: {} } }, streak: { count: 3 } })); localStorage.setItem('chogan.app.profile', JSON.stringify({ name: 'Ana' })); localStorage.setItem('chogan.app.welcomeSeen', 'true'); true`);
+    const antes = await evaluar(nucleoGuardado);
+    ok(await evaluar(`Object.keys(localStorage).every((k) => k.indexOf('chogan.companero.') < 0)`), 'el perfil viene de antes del compañero: ninguna clave chogan.companero.');
+    await abrir('/games/companero/index.html');
+    await evaluar(`document.querySelector('[data-accion="acariciar"]').click(); document.querySelector('[data-accion="jugar"]').click(); true`);
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(nucleoGuardado) === antes, 'abrirlo y cuidar al compañero deja monedas, desbloqueos, paleta, personaje, estadísticas y perfil intactos');
+    ok(await evaluar(`document.querySelector('[data-animal="owl"]').getAttribute('aria-pressed') !== null && !document.querySelector('[data-animal="owl"] .cp-precio')`), 'el búho comprado en el núcleo sigue siendo suyo en «Mi compañero»');
+  });
+}
+
+async function testPerfilNuevo() {
+  head('Un perfil nuevo: bienvenida, compañero, ropa y comida (#10)');
+  await navegador(async ({ abrir, evaluar, errores }) => {
+    await abrir('/index.html', 'body');
+    await evaluar(`localStorage.clear(); true`);
+    await abrir('/index.html', '.ch-welcome__foot .ch-btn--primary');
+    let pasos = 0;
+    while (pasos < 8 && await evaluar(`!!document.querySelector('.ch-welcome__foot .ch-btn--primary')`)) {
+      await evaluar(`document.querySelector('.ch-welcome__foot .ch-btn--primary').click(); true`);
+      await evaluar(pausa(250)); pasos++;
+    }
+    ok(await evaluar(`localStorage.getItem('chogan.app.welcomeSeen') === 'true' && !document.querySelector('.ch-welcome__foot')`), 'la bienvenida se completa (' + pasos + ' pasos)');
+    await evaluar(`localStorage.setItem('chogan.app.coins', '400'); true`);
+    await abrir('/games/companero/index.html');
+    const clic = async (sel) => {
+      await evaluar(`document.querySelector('${sel}').click(); true`); await evaluar(pausa(200));
+      if (await evaluar(`!!document.querySelector('.ch-scrim')`)) { await evaluar(aceptar); await evaluar(pausa(250)); }
+    };
+    await clic('[data-animal="conejo"]');
+    await clic('[data-diseno="medianoche"]');
+    await clic('[data-prenda-item="gorra"]');
+    await clic('[data-consumible="fruta"]');
+    const r = await evaluar(`({ eq: JSON.parse(localStorage.getItem('chogan.companero.inventario')).equipado, monedas: +localStorage.getItem('chogan.app.coins'), fruta: JSON.parse(localStorage.getItem('chogan.companero.inventario')).consumibles.fruta || 0 })`);
+    ok(r.eq.animal === 'conejo' && r.eq.diseno === 'medianoche' && r.eq.prendas.cabeza === 'gorra', 'equipa conejo, medianoche y gorra');
+    ok(r.monedas === 400 - 180 - 120 - 90 - 5 && r.fruta === 0, 'compra y usa una fruta; el saldo baja exactamente lo gastado (' + r.monedas + ')');
+    ok(!errores.length, 'ni un error en la consola' + (errores.length ? ': ' + errores.slice(0, 2).join(' | ') : ''));
+  });
+}
+
+async function testDatosCorruptos() {
+  head('Datos rotos o ids desconocidos: valores por defecto, saldo intacto (#10)');
+  await navegador(async ({ abrir, evaluar, errores }) => {
+    const casos = [
+      ['JSON roto', `localStorage.setItem('chogan.companero.inventario', '{basura'); localStorage.setItem('chogan.companero.cuidado', 'nul')`],
+      ['ids desconocidos', `localStorage.setItem('chogan.companero.inventario', JSON.stringify({ version: 1, permanentes: ['dragon', 'neon'], consumibles: { caviar: 3 }, equipado: { animal: 'dragon', diseno: 'neon', prendas: { cabeza: 'sombrero', alas: 'capa' } }, movimientos: [] })); localStorage.setItem('chogan.companero.cuidado', JSON.stringify({ version: 1, puntos: 12, ultimas: {}, deseo: { id: 'caviar' }, ultimoDeseo: 'caviar' }))`],
+      ['datos parciales', `localStorage.setItem('chogan.companero.inventario', JSON.stringify({ version: 1, permanentes: ['lazo'] })); localStorage.setItem('chogan.companero.cuidado', JSON.stringify({ version: 1, puntos: -4 }))`],
+      ['versión futura', `localStorage.setItem('chogan.companero.inventario', JSON.stringify({ version: 9 })); localStorage.setItem('chogan.companero.cuidado', JSON.stringify({ version: 9, puntos: 999 }))`],
+    ];
+    for (const [nombre, js] of casos) {
+      await abrir('/games/companero/index.html');
+      await evaluar(preparar({ monedas: 50 }));
+      await evaluar(js + '; true');
+      errores.length = 0;
+      await abrir('/games/companero/index.html');
+      const r = await evaluar(`({ monedas: +localStorage.getItem('chogan.app.coins'), cara: !!document.querySelector('.cp-compa svg'), deseo: !!(document.querySelector('[data-deseo]') || {}).dataset?.deseo, vinculo: +document.querySelector('[data-vinculo]').dataset.vinculo })`);
+      ok(r.monedas === 50 && r.cara && r.deseo && r.vinculo >= 0 && r.vinculo <= 100 && !errores.length, nombre + ': la página abre con el compañero, un deseo y el saldo de 50 intacto' + (errores.length ? ' (' + errores[0] + ')' : ''));
+    }
+  });
+}
+
+async function testRtlYAccesible() {
+  head('Persa (RTL) a 390 px y nombres accesibles (#10)');
+  await navegador(async ({ abrir, evaluar, cdp }) => {
+    await cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 900, deviceScaleFactor: 1, mobile: true });
+    for (const [l, ancho] of LANGS.map((x) => [x, 390]).concat([['de', 1280]])) {
+      await cdp('Emulation.setDeviceMetricsOverride', { width: ancho, height: 900, deviceScaleFactor: 1, mobile: ancho < 500 });
+      await abrir('/games/companero/index.html');
+      await evaluar(preparar({ lang: l, monedas: 0 }));
+      await abrir('/games/companero/index.html');
+      const r = await evaluar(`({ dir: document.documentElement.dir, ancho: document.documentElement.scrollWidth, sinNombre: [...document.querySelectorAll('button, [role=button], a[href]')].filter((b) => !(b.getAttribute('aria-label') || b.textContent).trim()).length, botones: document.querySelectorAll('button').length })`);
+      ok(r.ancho <= ancho && (l !== 'fa' || r.dir === 'rtl'), l + ': nada se sale del ancho de ' + ancho + ' px' + (l === 'fa' ? ', de derecha a izquierda' : '') + ' (' + r.ancho + ' px)');
+      ok(await evaluar(`[...document.querySelectorAll('.cp-item > span')].every((x) => { const c = x.parentElement.getBoundingClientRect(), t = x.getBoundingClientRect(); return t.left >= c.left - 1 && t.right <= c.right + 1; })`), l + ' a ' + ancho + ' px: cada nombre cabe dentro de su tarjeta');
+      ok(r.botones > 20 && r.sinNombre === 0, l + ': los ' + r.botones + ' botones tienen nombre para el lector de pantalla');
+    }
+  });
+}
+
+async function testBorrarTodo() {
+  head('«Borrar todo» en Ajustes elimina todo el compañero (#10)');
+  await navegador(async ({ abrir, evaluar }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 300 }));
+    await abrir('/games/companero/index.html');
+    await evaluar(`document.querySelector('[data-accion="acariciar"]').click(); true`);
+    await evaluar(`document.querySelector('[data-consumible="fruta"]').click(); true`); await evaluar(pausa(200)); await evaluar(aceptar);
+    ok(await evaluar(`['inventario', 'cuidado'].every((k) => localStorage.getItem('chogan.companero.' + k))`), 'antes: hay inventario y cuidado guardados');
+    await abrir('/index.html', '#navIn button');
+    // the danger button lives on one of the menu's tabs
+    const tabs = await evaluar(`document.querySelectorAll('#navIn button').length`);
+    for (let i = 0; i < tabs && !(await evaluar(`!!document.querySelector('.ch-btn--danger')`)); i++) {
+      await evaluar(`document.querySelectorAll('#navIn button')[${i}].click(); true`); await evaluar(pausa(300));
+    }
+    await evaluar(`document.querySelector('.ch-btn--danger').click(); true`); await evaluar(pausa(300));
+    // the confirmation of an erase is red, not the usual primary
+    ok(await evaluar(`(() => { const b = document.querySelector('.ch-scrim .ch-btn--danger'); if (b) b.click(); return !!b; })()`), 'pide confirmación con un botón rojo');
+    await evaluar(pausa(1500));
+    const quedan = await evaluar(`Object.keys(localStorage).filter((k) => k.indexOf('chogan.companero.') === 0)`);
+    ok(Array.isArray(quedan) && quedan.length === 0, 'después: no queda ninguna clave chogan.companero.' + (quedan && quedan.length ? ' (' + quedan.join(', ') + ')' : ''));
+  });
 }
 
 /* ------------------------------------------------ run */

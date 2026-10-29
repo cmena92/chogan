@@ -18,6 +18,8 @@
   .cp-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: var(--s-2); min-height: 44px;
     border: 2px solid transparent; border-radius: var(--r-md); background: var(--c-surface); color: inherit; font: inherit; cursor: pointer; }
   .cp-item svg { width: 56px; height: auto; }
+  /* a long name never leaves its card: it breaks at its soft hyphen (Wasser\u00ADschwein), or anywhere if it has none */
+  .cp-item > span { max-width: 100%; text-align: center; hyphens: auto; overflow-wrap: anywhere; }
   .cp-item[aria-pressed="true"] { border-color: var(--game); }
   .cp-item:focus-visible { outline: 3px solid var(--game); outline-offset: 2px; }
   .cp-nota { font-size: .8rem; opacity: .75; }
@@ -80,7 +82,7 @@
       desbloquear: 'Für {n} Münzen freischalten?', desbloquearBtn: 'Freischalten', faltan: 'Dir fehlen {n} Münzen', jugarParaGanar: 'Spiel eine Runde, um welche zu verdienen.', enPerfil: 'Im Profil freischaltbar', precio: '{n} Münzen', tuyo: 'Deins',
       monedas: 'Münzen', animales: 'Tiere', colores: 'Farben', ropa: 'Kleidung', cuidado: 'Pflege',
       cargando: 'Dein Begleiter wird vorbereitet …', vacio: 'Hier ist noch nichts.', sinMonedas: 'Du hast noch keine Münzen. Spiel eine Runde, um welche zu verdienen.', equipado: 'In Gebrauch',
-      a_fox: 'Fuchs', a_owl: 'Eule', a_cat: 'Katze', a_bear: 'Bär', a_capybara: 'Wasserschwein', a_conejo: 'Hase', a_panda: 'Panda', a_nutria: 'Otter' },
+      a_fox: 'Fuchs', a_owl: 'Eule', a_cat: 'Katze', a_bear: 'Bär', a_capybara: 'Wasser\u00ADschwein', a_conejo: 'Hase', a_panda: 'Panda', a_nutria: 'Otter' },
     es: { acariciar: 'Acariciar', cepillar: 'Cepillar', jugar: 'Jugar', c_fruta: 'Fruta', c_zanahoria: 'Zanahoria', c_pastel: 'Pastel', c_jabon: 'Jabón de burbujas', cantidad: '×{n}', vinculo: 'Vínculo: nivel {n} de {m}', deseoCumplido: '¡Gracias! Me encantó.', deseo_fruta: '¡Me gustaría probar una fruta!', deseo_zanahoria: '¡Me gustaría probar la zanahoria!', deseo_pastel: '¡Qué rico sería un pastel!', deseo_banio: '¡Me encantaría un baño de burbujas!', deseo_ropa: '¡Me vería bien con algo nuevo!', deseo_jugar: '¡Juguemos un rato!', deseo_caricias: '¿Me das unas caricias?',
       p_gorra: 'Gorra', p_corona: 'Corona', p_lentes: 'Lentes', p_lazo: 'Lazo', p_panuelo: 'Pañuelo', p_sueter: 'Suéter', p_capa: 'Capa', e_cabeza: 'Cabeza', e_cuello: 'Cuello', e_cuerpo: 'Cuerpo', ninguna: 'Ninguna', ariaPrecio: '{nombre}, {precio}', ariaTuyo: '{nombre}, tuyo', ariaEnUso: '{nombre}, en uso', ariaPerfil: '{nombre}, se desbloquea en tu perfil',
       d_natural: 'Natural', d_medianoche: 'Medianoche', d_arcoiris: 'Arcoíris suave', d_manchitas: 'Manchitas', d_rayas: 'Rayas', d_dorado: 'Dorado',
