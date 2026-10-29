@@ -285,6 +285,7 @@
       menu: 'منو', back: 'بازگشت', undo: 'برگرداندن', close: 'بستن', cancel: 'انصراف', result: 'نتیجه', seeBoard: 'دیدن صفحه‌ی بازی',
       saveImage: 'ذخیره‌ی عکس', copyText: 'کپی متن',
       updateReady: 'نسخه‌ی تازه آماده است', updateNow: 'به‌روزرسانی',
+      installReady: 'چوگان را مثل یک اپ نصب کن', installNow: 'نصب',
       confirm: 'تأیید', done: 'باشه', next: 'بعدی', skip: 'رد کردن',
       start: 'شروع', pause: 'مکث', resumeGame: 'ادامه‌ی بازی', restart: 'شروع دوباره',
       quit: 'خروج به منو', help: 'راهنما', share: 'اشتراک‌گذاری', copied: 'در حافظه کپی شد', imageSaved: 'عکس در گالری ذخیره شد',
@@ -326,6 +327,7 @@
       menu: 'Menu', back: 'Back', undo: 'Undo', close: 'Close', cancel: 'Cancel', result: 'Result', seeBoard: 'See the board',
       saveImage: 'Save image', copyText: 'Copy text',
       updateReady: 'A new version is ready', updateNow: 'Update',
+      installReady: 'Install Chogan as an app', installNow: 'Install',
       confirm: 'Confirm', done: 'OK', next: 'Next', skip: 'Skip',
       start: 'Start', pause: 'Pause', resumeGame: 'Resume', restart: 'Restart',
       quit: 'Quit to menu', help: 'Help', share: 'Share', copied: 'Copied to clipboard', imageSaved: 'Saved to your gallery',
@@ -367,6 +369,7 @@
       menu: '菜单', back: '返回', undo: '撤销', close: '关闭', cancel: '取消', result: '结果', seeBoard: '查看棋盘',
       saveImage: '保存图片', copyText: '复制文字',
       updateReady: '新版本已就绪', updateNow: '更新',
+      installReady: '将 Chogan 安装为应用', installNow: '安装',
       confirm: '确定', done: '好', next: '下一步', skip: '跳过',
       start: '开始', pause: '暂停', resumeGame: '继续游戏', restart: '重新开始',
       quit: '退出到菜单', help: '帮助', share: '分享', copied: '已复制到剪贴板', imageSaved: '已保存到相册',
@@ -408,6 +411,7 @@
       menu: 'Menü', back: 'Zurück', undo: 'Rückgängig', close: 'Schließen', cancel: 'Abbrechen', result: 'Ergebnis', seeBoard: 'Spielfeld ansehen',
       saveImage: 'Bild speichern', copyText: 'Text kopieren',
       updateReady: 'Eine neue Version ist da', updateNow: 'Aktualisieren',
+      installReady: 'Chogan als App installieren', installNow: 'Installieren',
       confirm: 'Bestätigen', done: 'OK', next: 'Weiter', skip: 'Überspringen',
       start: 'Start', pause: 'Pause', resumeGame: 'Weiter', restart: 'Neu starten',
       quit: 'Zurück zum Menü', help: 'Hilfe', share: 'Teilen', copied: 'In die Zwischenablage kopiert', imageSaved: 'In der Galerie gespeichert',
@@ -449,6 +453,7 @@
       menu: 'Menú', back: 'Atrás', undo: 'Deshacer', close: 'Cerrar', cancel: 'Cancelar', result: 'Resultado', seeBoard: 'Ver el tablero',
       saveImage: 'Guardar imagen', copyText: 'Copiar texto',
       updateReady: 'Hay una versión nueva', updateNow: 'Actualizar',
+      installReady: 'Instala Chogan como app', installNow: 'Instalar',
       confirm: 'Confirmar', done: 'OK', next: 'Siguiente', skip: 'Saltar',
       start: 'Empezar', pause: 'Pausa', resumeGame: 'Seguir', restart: 'Reiniciar',
       quit: 'Salir al menú', help: 'Ayuda', share: 'Compartir', copied: 'Copiado al portapapeles', imageSaved: 'Guardada en la galería',
@@ -1109,6 +1114,12 @@
     { id: 'smn-10',      icon: 'star',    fa: 'حافظه‌ی ده‌تایی',      en: 'Ten in a row',      dfa: 'در سایمون به دور ۱۰ رسیدی',            den: 'Reach round 10 in Echo', zh: '十连', dzh: '在闪灯记忆中到达第 10 轮', de: 'Zehn am Stück', dde: 'Erreiche bei Echo Runde 10', es: 'Diez seguidos', des: 'Llega a la ronda 10 en Eco' },
     { id: 'smn-20',      icon: 'brain',   fa: 'حافظه‌ی آهنین',       en: 'Iron memory',       dfa: 'در سایمون به دور ۲۰ رسیدی',            den: 'Reach round 20 in Echo', zh: '钢铁记忆', dzh: '在闪灯记忆中到达第 20 轮', de: 'Eisernes Gedächtnis', dde: 'Erreiche bei Echo Runde 20', es: 'Memoria de hierro', des: 'Llega a la ronda 20 en Eco' },
     { id: 'smn-daily',   icon: 'calendar', fa: 'پژواک روز',          en: 'Echo of the day',   dfa: 'در سایمون روزانه به دور ۸ رسیدی',       den: 'Reach round 8 in a daily Echo', zh: '每日回响', dzh: '在每日闪灯记忆中到达第 8 轮', de: 'Echo des Tages', dde: 'Erreiche bei einem Tages-Echo Runde 8', es: 'Eco del día', des: 'Llega a la ronda 8 en un Eco diario' },
+    { id: 'lit-perfect', icon: 'star',    fa: 'بی‌حرکت اضافه',      en: 'Not one too many',  dfa: 'یک خاموشی ۵×۵ یا بزرگ‌تر را با کمترین حرکت حل کردی', den: 'Solve a 5×5 or larger Lights Off in the fewest moves', zh: '一步不多', dzh: '用最少步数解开一道 5×5 或更大的关灯', de: 'Kein Zug zu viel', dde: 'Löse ein Lichter aus ab 5×5 mit den wenigsten Zügen', es: 'Ni uno de más', des: 'Resuelve un Apagón de 5×5 o más con el mínimo de movimientos' },
+    { id: 'lit-big',     icon: 'brain',   fa: 'شهر خاموش',          en: 'Blackout',          dfa: 'یک خاموشی ۷×۷ را حل کردی',              den: 'Solve a 7×7 Lights Off', zh: '全城熄灯', dzh: '解开一道 7×7 的关灯', de: 'Stromausfall', dde: 'Löse ein Lichter aus in 7×7', es: 'Ciudad a oscuras', des: 'Resuelve un Apagón de 7×7' },
+    { id: 'lit-daily',   icon: 'calendar', fa: 'خاموشی روز',         en: 'Lights out today',  dfa: 'خاموشی روزانه را با کمترین حرکت حل کردی', den: 'Solve the daily Lights Off in the fewest moves', zh: '今日熄灯', dzh: '用最少步数解开每日关灯', de: 'Heute alles aus', dde: 'Löse das tägliche Lichter aus mit den wenigsten Zügen', es: 'Apagón del día', des: 'Resuelve el Apagón diario con el mínimo de movimientos' },
+    { id: 'cor-win',     icon: 'trophy',  fa: 'آن طرف راهرو',       en: 'Through the corridor', dfa: 'یک بازی راهرو را مقابل ربات بردی', den: 'Win a game of Corridor against the bot', zh: '穿过走廊', dzh: '对战电脑赢下一局走廊', de: 'Durch den Korridor', dde: 'Gewinne eine Partie Korridor gegen den Bot', es: 'Al otro lado', des: 'Gana una partida de Pasillo contra el bot' },
+    { id: 'cor-hard',    icon: 'brain',   fa: 'معمار دیوارها',       en: 'Master builder',    dfa: 'راهرو را مقابل ربات سخت بردی',          den: 'Beat the hard bot at Corridor', zh: '筑墙大师', dzh: '在走廊中战胜困难电脑', de: 'Baumeister', dde: 'Schlage den starken Bot bei Korridor', es: 'Maestro de obras', des: 'Gana al bot difícil en Pasillo' },
+    { id: 'cor-flag',    icon: 'flag',    fa: 'زیر پرچم',           en: 'Under the flag',    dfa: 'یک بازی پرچم راهرو را مقابل ربات بردی',   den: 'Win a flag game of Corridor against the bot', zh: '旗下', dzh: '对战电脑赢下一局带旗子的走廊', de: 'Unter der Fahne', dde: 'Gewinne ein Fahnenspiel Korridor gegen den Bot', es: 'Bajo la bandera', des: 'Gana una partida de Pasillo con bandera contra el bot' },
     { id: 'go-win',      icon: 'medal',   fa: 'زمین‌گیر',          en: 'Territory',         dfa: 'یک دست گو را مقابل ربات بردی',        den: 'Win a game of go against the AI', zh: '围地', dzh: '对战电脑赢下一局围棋', de: 'Gebietsherr', dde: 'Gewinne eine Partie Go gegen den Computer', es: 'Territorio', des: 'Gana una partida de Go contra la IA' },
     { id: 'go-hard',     icon: 'brain',   fa: 'دو چشم',            en: 'Two eyes',          dfa: 'در گو ربات سخت را شکست دادی',         den: 'Beat the hard AI at go', zh: '两只眼', dzh: '在围棋中击败困难电脑', de: 'Zwei Augen', dde: 'Schlag die schwere Go-KI', es: 'Dos ojos', des: 'Vence a la IA difícil en Go' },
     { id: 'bj-win',      icon: 'trophy',  fa: 'دیلر را بردی',      en: 'Beat the dealer',   dfa: 'یک مسابقه‌ی ده‌دستی بیست‌ویک را بردی', den: 'Win a ten-hand blackjack match', zh: '赢过庄家', dzh: '赢下一场十手的二十一点比赛', de: 'Croupier geschlagen', dde: 'Gewinne eine Blackjack-Partie aus zehn Händen', es: 'Vence a la banca', des: 'Gana una partida de Blackjack de diez manos' },
@@ -2250,8 +2261,10 @@
 
   // نوار آپدیت. اعلان موقت به درد نمی‌خورد چون تا کاربر تصمیم نگیرد باید بماند.
   ui.updateBar = function (onGo) {
-    var existing = document.querySelector('.ch-update');
+    var existing = document.querySelector('.ch-update:not(.ch-install)');
     if (existing) return existing;
+    // a new version matters more than installing, and the two would sit on each other
+    ui.installBar.close();
     var bar = el('div', { class: 'ch-update', role: 'status' });
     var go = el('button', { class: 'ch-btn ch-btn--primary ch-btn--sm', type: 'button', text: Chogan.t('updateNow') });
     var x = el('button', { class: 'ch-iconbtn ch-iconbtn--plain', type: 'button', 'aria-label': Chogan.t('close') },
@@ -2269,6 +2282,31 @@
     bar.appendChild(x);
     document.body.appendChild(bar);
     return bar;
+  };
+
+  // The install bar (#557) looks like the update bar. onGo opens the browser's own
+  // install question and may return a promise; onNo is a tap on the cross.
+  ui.installBar = function (onGo, onNo) {
+    if (document.querySelector('.ch-update')) return null;
+    var bar = el('div', { class: 'ch-update ch-install', role: 'status' });
+    var go = el('button', { class: 'ch-btn ch-btn--primary ch-btn--sm', type: 'button', text: Chogan.t('installNow') });
+    var x = el('button', { class: 'ch-iconbtn ch-iconbtn--plain', type: 'button', 'aria-label': Chogan.t('close') },
+      [Chogan.icon('close', 18)]);
+    go.addEventListener('click', function () {
+      Chogan.feedback('tap');
+      go.disabled = true;
+      Promise.resolve(onGo && onGo()).then(ui.installBar.close, ui.installBar.close);
+    });
+    x.addEventListener('click', function () { Chogan.feedback('tap'); if (onNo) onNo(); ui.installBar.close(); });
+    bar.appendChild(el('div', { class: 'ch-update__t', text: Chogan.t('installReady') }));
+    bar.appendChild(go);
+    bar.appendChild(x);
+    document.body.appendChild(bar);
+    return bar;
+  };
+  ui.installBar.close = function () {
+    var bar = document.querySelector('.ch-install');
+    if (bar && bar.parentNode) bar.parentNode.removeChild(bar);
   };
 
   ui.toast = function (o) {
@@ -3101,6 +3139,24 @@
     document.removeEventListener('keydown', unlockAudioOnce);
   }
 
+  // Offer to install the web app from the menu (#557), only when the browser itself
+  // offers it (Chrome and Edge fire beforeinstallprompt), never inside the Android app,
+  // and a tap on the cross hides it for good.
+  Chogan.installOffer = function (win) {
+    if (!win || !win.addEventListener || win.Capacitor) return;
+    win.addEventListener('beforeinstallprompt', function (e) {
+      if (Chogan.store.get('installNo', false)) return;
+      // the browser's own mini-bar would be a second one on top of ours
+      e.preventDefault();
+      Chogan.ui.installBar(function () {
+        e.prompt();
+        return e.userChoice;
+      }, function () { Chogan.store.set('installNo', true); });
+    });
+    win.addEventListener('appinstalled', function () { Chogan.ui.installBar.close(); });
+  };
+  /* end of the install offer */
+
   Chogan.boot = function (o) {
     o = o || {};
     // صفحه‌ی منو. صفحه‌ی بازی خودش در Chogan.game عنوان دقیق‌ترش را می‌گذارد.
@@ -3127,6 +3183,7 @@
       if (mq.addEventListener) mq.addEventListener('change', onch);
       else if (mq.addListener) mq.addListener(onch);
     }
+    if (o.sw) Chogan.installOffer(global);
     // سرویس‌ورکر فقط برای نسخه‌ی وب و فقط از صفحه‌ی منو ثبت می‌شود.
     // داخل اپ اندروید فایل‌ها از قبل محلی‌اند و لایه‌ی کش لازم نیست.
     if (o.sw && !global.Capacitor && 'serviceWorker' in global.navigator &&

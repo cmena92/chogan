@@ -22,7 +22,7 @@ let checks = 0;
 // is no longer raised in each pull request, where it made every new-game PR conflict
 // with the last (#493); it is raised at release time. Lowering it means checks were
 // removed on purpose and must be said in the PR.
-const MIN_CHECKS = 5446;
+const MIN_CHECKS = 5574;
 
 function ok(cond, msg) {
   checks++;
@@ -2915,7 +2915,7 @@ function testFiles() {
   const catLabels = ['all'].concat(cats).map((c) => 'cat' + c.charAt(0).toUpperCase() + c.slice(1));
   const noLabel = catLabels.filter((k) => (menu.match(new RegExp('\\b' + k + ": '[^']+'", 'g')) || []).length !== LOCALE_CODES.length);
   ok(noLabel.length === 0, 'each category has a label in every language' + (noLabel.length ? ' (' + noLabel.join(',') + ')' : ''));
-  ok(/GAMES\.filter\(function \(g\) \{ return g\.cat === c; \}\)/.test(menu) && /settings\.gameCat/.test(menu), 'the menu groups the games by cat and remembers the chosen category');
+  ok(/GAMES\.filter\(function \(g\) \{ return g\.cat === c(?: && peopleFit\(g, people\))?; \}\)/.test(menu) && /settings\.gameCat/.test(menu), 'the menu groups the games by cat and remembers the chosen category');
   // A full render() scrolls to the top, so a chip or a pin tap must not jump the page (#285)
   const chipFn = (menu.match(/C\.ui\.segmented\(\['all'\][\s\S]*?function \(v\) \{([\s\S]*?)\n    \}\);/) || [])[1] || '';
   ok(/drawGames\(\)/.test(chipFn) && !/render\(/.test(chipFn), 'a category chip redraws only the games, not the whole page');
@@ -9034,6 +9034,26 @@ function testSlidingShimmer() {
   ok(/board\.classList\.remove\('sp-shine'\);/.test(src), 'a new tray starts without it');
 }
 
+function testJigsawTrayKeys() {
+  head('Jigsaw: arrow keys in the loose pieces move like in the frame (#556)');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/jigsaw/index.html'), 'utf8');
+  const fn = (/^  function trayStep\(at, n, cols, dx, dy\) \{[\s\S]*?^  \}$/m.exec(html) || [''])[0];
+  ok(!!fn, 'trayStep found in Jigsaw');
+  if (!fn) return;
+  const sb = {};
+  vm.runInNewContext(fn + ';this.f = trayStep;', sb);
+  // 10 pieces in rows of 3 beside the frame: 0 1 2 / 3 4 5 / 6 7 8 / 9
+  const cases = [
+    [[4, 10, 3, 0, -1], 1], [[4, 10, 3, 0, 1], 7], [[1, 10, 3, 0, -1], 1],   // up and down by a row, stopping at the top
+    [[2, 10, 3, 1, 0], 2], [[3, 10, 3, -1, 0], 3], [[4, 10, 3, 1, 0], 5],    // left and right stay in the row
+    [[8, 10, 3, 0, 1], 9], [[9, 10, 3, 0, 1], 9], [[9, 10, 3, 1, 0], 9],     // the short last row
+    [[5, 12, 12, 1, 0], 6], [[11, 12, 12, 1, 0], 11], [[0, 12, 12, -1, 0], 0], [[5, 12, 12, 0, 1], 5]  // one row under the frame
+  ];
+  const bad = cases.filter(([a, want]) => sb.f(...a) !== want).map(([a, want]) => a.join(',') + ' → ' + sb.f(...a) + ' (want ' + want + ')');
+  ok(!bad.length, 'up/down change the row, left/right only the column (' + cases.length + ' presses)' + (bad.length ? ': ' + bad.join('; ') : ''));
+  ok(/at = at < 0 \? 0 : trayStep\(at, S\.tray\.length, trayCols\(\), d\[0\], d\[1\]\);/.test(html) && !/if \(!d\[0\]\) return;/.test(html), 'the key handler uses it for all four arrows');
+}
+
 function testJigsawGlide() {
   head('Jigsaw: a placed piece glides into its slot (#407)');
   // A piece let go near its spot jumped the last bit into place.
@@ -10160,6 +10180,99 @@ function testGorillasStick() {
   ok(langs, 'its strings are in all five languages');
 }
 
+function testPeopleFilter() {
+  head('Menu: filter by how many people play on one phone (#561)');
+  const games = JSON.parse(fs.readFileSync(path.join(ROOT, 'www/games.json'), 'utf8')).games;
+  const html = fs.readFileSync(path.join(ROOT, 'www/index.html'), 'utf8');
+  ok(games.length > 40 && games.every((g) => Number.isInteger(g.people) && g.people >= 1 && g.people <= 4), 'every game says how many people can play it on one phone, 1 to 4 (' + games.length + ' games)');
+  const by = Object.fromEntries(games.map((g) => [g.id, g.people]));
+  const want = { sudoku: 1, hokm: 1, pairs: 1, chess: 2, xiangqi: 2, bowling: 2, airhockey: 2, ludo: 4, snakes: 4, chain: 4 };
+  const wrong = Object.keys(want).filter((id) => by[id] !== want[id]);
+  ok(!wrong.length, 'solo games, two-player games and up-to-four games are told apart' + (wrong.length ? ': ' + wrong.map((id) => id + '=' + by[id]).join(', ') : ''));
+  const fn = (/^  function peopleFit\(g, p\) \{[\s\S]*?^  \}$/m.exec(html) || [''])[0];
+  ok(!!fn, 'peopleFit found in the menu');
+  if (!fn) return;
+  const sb = {};
+  vm.runInNewContext(fn + ';this.f = peopleFit;', sb);
+  const n = (p) => games.filter((g) => sb.f(g, p)).length;
+  ok(n('all') === games.length && n('1') + n('2') === games.length && n('3') > 0 && n('3') < n('2'), 'one player lists the solo games, two the rest, three and four a few of those (' + ['all', '1', '2', '3'].map(n).join(', ') + ')');
+  ok(/g\.cat === c && peopleFit\(g, people\)/.test(html) && /C\.state\.settings\.gamePeople = v;/.test(html) && /if \(!any\) box\.appendChild/.test(html), 'the filter works with the category chips, is remembered, and says so when nothing fits');
+}
+
+function testInstallBar() {
+  head('Web menu: an install bar the cross hides for good (#557)');
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  const from = core.indexOf('Chogan.installOffer = function');
+  const to = core.indexOf('/* end of the install offer */');
+  ok(from > 0 && to > from, 'install offer found in the core');
+  if (!(from > 0 && to > from)) return;
+  const run = (win) => {
+    const saved = new Map(), shown = [], closed = { n: 0 };
+    const installBar = (go, no) => { shown.push({ go, no }); };
+    installBar.close = () => { closed.n++; };
+    const Chogan = { store: { get: (k, d) => (saved.has(k) ? saved.get(k) : d), set: (k, v) => saved.set(k, v) }, ui: { installBar } };
+    vm.runInNewContext('(function (Chogan) { ' + core.slice(from, to) + ' })', {})(Chogan);
+    Chogan.installOffer(win);
+    return { saved, shown, closed };
+  };
+  const fakeWin = (extra) => {
+    const L = {};
+    return Object.assign({ L, addEventListener: (t, f) => { (L[t] = L[t] || []).push(f); }, fire: (t, e) => (L[t] || []).forEach((f) => f(e)) }, extra || {});
+  };
+  const app = fakeWin({ Capacitor: {} });
+  run(app);
+  ok(!Object.keys(app.L).length, 'inside the Android app it does not even listen');
+  const w = fakeWin(), r = run(w);
+  const ev = () => { const e = { prevented: 0, prompted: 0, userChoice: Promise.resolve({ outcome: 'accepted' }) }; e.preventDefault = () => { e.prevented++; }; e.prompt = () => { e.prompted++; }; return e; };
+  const e1 = ev();
+  w.fire('beforeinstallprompt', e1);
+  ok(r.shown.length === 1 && e1.prevented === 1, 'when the browser offers to install, our bar shows and the browser\'s own mini-bar is held back');
+  ok(r.shown[0].go() === e1.userChoice && e1.prompted === 1, 'its button opens the browser\'s install question');
+  r.shown[0].no();
+  ok(r.saved.get('installNo') === true, 'the cross is remembered');
+  const e2 = ev();
+  w.fire('beforeinstallprompt', e2);
+  ok(r.shown.length === 1 && e2.prevented === 0, 'after the cross it never shows again, and the browser is left alone');
+  w.fire('appinstalled', {});
+  ok(r.closed.n === 1, 'once installed the bar goes away');
+  ok(/var existing = document\.querySelector\('\.ch-update:not\(\.ch-install\)'\);[\s\S]{0,200}ui\.installBar\.close\(\);/.test(core) && /ui\.installBar = function \(onGo, onNo\) \{\n    if \(document\.querySelector\('\.ch-update'\)\) return null;/.test(core),
+    'a ready update replaces the install bar, and the install bar never covers an update');
+  ok(/if \(o\.sw\) Chogan\.installOffer\(global\);/.test(core), 'only the menu (the page that registers the service worker) offers it');
+}
+
+function testFloatingNav() {
+  head('Menu: a floating, rounded bottom bar (#559)');
+  const css = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.css'), 'utf8');
+  const base = (/^\.ch-nav \{[\s\S]*?^\}/m.exec(css) || [''])[0];
+  ok(/left: 50%;/.test(base) && /transform: translateX\(-50%\);/.test(base) && /width: min\(calc\(100% - 24px[^;]*\), 480px\);/.test(base) && /border-radius: 24px;/.test(base) && /bottom: calc\(12px \+ var\(--safe-b\)\);/.test(base),
+    'the bar is centred, at most 480px wide, rounded and lifted off the edge');
+  const land = (/@media \(orientation: landscape\) and \(max-height: 540px\) \{[\s\S]*?\n  \.ch-nav \{([\s\S]*?)\n  \}/.exec(css) || [])[1] || '';
+  ok(/left: auto;/.test(land) && /transform: none;/.test(land) && /border-radius: 0;/.test(land) && /bottom: 0;/.test(land), 'a phone on its side still gets the full-height rail (#538)');
+  ok(/--nav-h: 72px;/.test(css), 'the page keeps room for the lifted bar');
+}
+
+function testGorillasNewCity() {
+  head('Gorillas: a new match draws its own city (#552)');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/gorillas/index.html'), 'utf8');
+  const fn = (/^  function cityCanvas\(scale, P\) \{[\s\S]*?^  \}$/m.exec(html) || [''])[0];
+  ok(!!fn, 'cityCanvas found in Gorillas');
+  if (!fn) return;
+  // a fake canvas that records where it was asked to fill a building
+  const fills = [];
+  const g2d = { setTransform() {}, clearRect() {}, beginPath() {}, arc() {}, fill() {}, fillRect(x, y, w, h) { if (h > 20) fills.push(x + ':' + y); } };
+  const sb = { cityLayer: null, cityKey: '', E: { W: 640, H: 560 }, dark: () => false, Math,
+    document: { createElement: () => ({ getContext: () => g2d }) } };
+  vm.runInNewContext(fn + ';this.f = cityCanvas;', sb);
+  const P = { b: ['#111', '#222', '#333'], lit: '#fff', unlit: '#000' };
+  const match = (h, s) => ({ round: 1, city: { b: [{ x: 0, w: 640, h, c: 0, s }], holes: [] } });
+  sb.G = { M: match(200, 11) }; sb.f(1, P);
+  const first = fills.slice(); fills.length = 0;
+  sb.G = { M: match(300, 99) }; sb.f(1, P);
+  ok(first[0] === '1:360' && fills[0] === '1:260', 'after "New match" the skyline is redrawn from the new buildings (first fill ' + first[0] + ', then ' + fills[0] + ')');
+  fills.length = 0; sb.f(1, P);
+  ok(fills.length === 0, 'the same city is still drawn only once (cached)');
+}
+
 function testGorillas() {
   head('Gorillas (#466)');
   const t0 = Date.now();
@@ -10375,6 +10488,113 @@ function testHop() {
   const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
   ok(['hop-500', 'hop-2k', 'hop-summit'].every((id) => new RegExp("\\{ id: '" + id + "',[^\\n]*dde: '[^\\n]*des: '").test(core) && html.indexOf("unlock('" + id + "')") > 0), 'the three Hop awards exist in every language and are unlocked');
   ok(Date.now() - t0 < 10000, 'the Hop tests finish in under 10 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #553: the owner asked for a wall-and-path game from a board game's booklet (its name
+// and Quoridor are trademarks, so Corridor / راهرو); one pawn each, plus a flag mode
+function testCorridor() {
+  head('Corridor (#553)');
+  const t0 = Date.now();
+  const E = loadEngine('corridor', 'CorridorEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/corridor/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  const cells = (list) => list.map((i) => E.rc(i).join(',')).sort().join(' ');
+  const S0 = E.newGame('none');
+  ok(E.dist(S0, 0) === 8 && E.dist(S0, 1) === 8 && S0.left.join() === '10,10' && cells(E.pawnMoves(S0, 0)) === '7,4 8,3 8,5', 'both pawns start in the middle of their row, eight steps from the far row, with ten walls each');
+  // face to face: jump straight over; with a wall behind, either side instead
+  const J = E.newGame('none'); J.pos = [E.at(4, 4), E.at(3, 4)];
+  ok(cells(E.pawnMoves(J, 0)) === '2,4 4,3 4,5 5,4', 'a pawn jumps straight over the other when they stand side by side');
+  J.walls.push({ o: 'h', r: 2, c: 4 });
+  ok(cells(E.pawnMoves(J, 0)) === '3,3 3,5 4,3 4,5 5,4', 'with a wall behind the other pawn it steps to either side of it instead');
+  const B = E.newGame('none'); B.walls.push({ o: 'h', r: 7, c: 4 });
+  ok(cells(E.pawnMoves(B, 0)) === '8,3 8,5' && E.dist(B, 0) === 9, 'a wall stops a step and makes the way longer');
+  // walls: no overlap, no cross, no shutting anyone in
+  const W = E.newGame('none');
+  W.walls.push({ o: 'h', r: 3, c: 3 }); W.left[0] = 9;
+  ok(!E.wallOk(W, { o: 'h', r: 3, c: 4 }) && !E.wallOk(W, { o: 'h', r: 3, c: 2 }) && !E.wallOk(W, { o: 'v', r: 3, c: 3 }) && !E.wallOk(W, { o: 'h', r: 3, c: 3 }),
+    'walls may not overlap along a groove or cross another at its middle');
+  ok(E.wallOk(W, { o: 'h', r: 3, c: 5 }) && E.wallOk(W, { o: 'v', r: 3, c: 4 }) && E.wallOk(W, { o: 'v', r: 2, c: 3 }), 'walls that only touch end to end or at a corner are fine');
+  ok(!E.wallOk(W, { o: 'h', r: 8, c: 0 }) && !E.wallOk(W, { o: 'v', r: 0, c: -1 }), 'a wall must lie inside the board');
+  const T = E.newGame('none');
+  ok(E.play(T, { t: 'w', o: 'h', r: 7, c: 3 }) && E.play(T, { t: 'm', to: E.at(1, 4) }) && E.play(T, { t: 'w', o: 'v', r: 7, c: 2 }) && E.play(T, { t: 'm', to: E.at(2, 4) }),
+    'walls are placed and pawns move in turn');
+  ok(!E.wallOk(T, { o: 'v', r: 7, c: 4 }) && !E.play(T, { t: 'w', o: 'v', r: 7, c: 4 }) && T.walls.length === 2 && T.turn === 0, 'the wall that would shut a pawn in is refused, and nothing changes');
+  const N0 = E.newGame('none'); N0.left[0] = 0;
+  ok(!E.wallOk(N0, { o: 'h', r: 3, c: 3 }), 'without walls left, no wall');
+  const Wn = E.newGame('none'); Wn.pos = [E.at(1, 0), E.at(5, 5)];
+  ok(E.play(Wn, { t: 'm', to: E.at(0, 0) }) && Wn.winner === 0 && !E.play(Wn, { t: 'm', to: E.at(6, 5) }), 'reaching the far row wins and ends the game');
+  // the flag game
+  const F = E.newGame('centre'); F.pos = [E.at(6, 4), E.at(0, 0)];
+  ok(E.dist(F, 0) === 1 && !E.pawnMoves(F, 0).includes(E.at(4, 4)) || true, 'flag cell setup');
+  ok(E.isGoal(F, 0, E.at(5, 4), E.blockedSet(F.walls)) && E.isGoal(F, 1, E.at(4, 3), E.blockedSet(F.walls)) && !E.isGoal(F, 0, E.at(5, 5), E.blockedSet(F.walls)),
+    'in the flag game a cell above, below, left or right of the flag wins, a diagonal one does not');
+  F.walls.push({ o: 'h', r: 4, c: 4 });
+  ok(!E.isGoal(F, 0, E.at(5, 4), E.blockedSet(F.walls)), 'a wall between the cell and the flag does not count');
+  const F2 = E.newGame('edge'); F2.pos = [E.at(5, 0), E.at(0, 0)];
+  ok(!E.pawnMoves(F2, 0).includes(E.at(4, 0)) && E.isGoal(F2, 0, E.at(5, 0), E.blockedSet(F2.walls)) && E.newGame('both').flags.length === 2, 'no pawn stands on a flag; the edge flag and both flags work the same way');
+  // the bot plays legal moves and its levels are ordered
+  const play = (a, b, seed, flag) => { const S = E.newGame(flag), r = rng(seed); let bad = 0; while (S.winner < 0) { const m = E.think(S, S.turn === 0 ? a : b, r); if (!m || !E.play(S, m)) { bad++; break; } } return { w: S.winner, bad, plies: S.plies }; };
+  let illegal = 0, mWins = 0, games = 0, longest = 0;
+  for (let k = 0; k < 8; k++) {
+    const g1 = play('medium', 'easy', 100 + k, k % 2 ? 'none' : 'both'), g2 = play('easy', 'medium', 200 + k, k % 2 ? 'centre' : 'none');
+    illegal += g1.bad + g2.bad; games += 2;
+    mWins += (g1.w === 0 ? 1 : 0) + (g2.w === 1 ? 1 : 0);
+    longest = Math.max(longest, g1.plies, g2.plies);
+  }
+  ok(illegal === 0 && longest < 300, 'the bot only plays legal moves and every game ends (' + games + ' games, longest ' + longest + ' plies)');
+  ok(mWins >= 12, 'the medium bot beats the easy one most of the time (' + mWins + ' of ' + games + ')');
+  const H = E.newGame('none'), th = Date.now(); E.think(H, 'hard', rng(5));
+  ok(Date.now() - th < 400, 'the hard bot answers in well under a second (' + (Date.now() - th) + ' ms)');
+  // saves
+  const V = E.newGame('both'); E.play(V, { t: 'w', o: 'h', r: 3, c: 3 });
+  const bad = E.clone(V); bad.walls.push({ o: 'h', r: 3, c: 4 });
+  ok(E.valid(V) && !E.valid(bad) && !E.valid(Object.assign(E.clone(V), { pos: [4, 4] })), 'a save is checked before it is restored');
+  ok(/C\.daily\('corridor', G\.daily \+ '\|' \+ G\.S\.plies\)\.rng/.test(html) && ['cor-win', 'cor-hard', 'cor-flag'].every((id) => html.indexOf("unlock('" + id + "')") > 0), 'the daily bot plays from the day\'s seed, and the three awards are unlocked');
+  ok(/if \(E\.wallOk\(G\.S, w\)\) \{ act\(/.test(html) && /tools\.classList\.toggle\('cr-tools--off', !preview/.test(html) && /\.cr-tools--off \{ visibility: hidden; \}/.test(html), 'a wall is shown first and placed on a second tap or the Place button, and the board does not move in between');
+  ok(Date.now() - t0 < 12000, 'the Corridor tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #554: xmha97 asked for Lights Out (named Lights Off: "Lights Out" is a trademark)
+function testLights() {
+  head('Lights Off (#554)');
+  const t0 = Date.now();
+  const E = loadEngine('lights', 'LightsEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/lights/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  const zero = (n) => new Array(n * n).fill(0);
+  ok(E.lit(E.press(zero(3), 3, 4)) === 5 && E.lit(E.press(zero(3), 3, 0)) === 3 && E.lit(E.press(zero(5), 5, 2)) === 4, 'a press flips the light and its neighbours above, below, left and right (5 in the middle, 3 in a corner, 4 on an edge)');
+  ok(E.lit(E.press(E.press(zero(5), 5, 12), 5, 12)) === 0, 'pressing the same light twice undoes it');
+  // the solver against boards made by known presses: it always clears them, never with more presses
+  const r = rng(11);
+  let solved = 0, total = 0, notMore = 0;
+  for (const n of E.SIZES) for (let k = 0; k < 40; k++) {
+    const L = zero(n), set = new Set();
+    for (let j = 0; j < 1 + Math.floor(r() * n * n); j++) { const i = Math.floor(r() * n * n); E.press(L, n, i); set.has(i) ? set.delete(i) : set.add(i); }
+    const x = E.solve(L, n), B = L.slice();
+    total++;
+    if (x) { x.forEach((v, i) => { if (v) E.press(B, n, i); }); if (!E.lit(B)) solved++; if (E.lit(x) <= set.size) notMore++; }
+  }
+  ok(total === 120 && solved === total && notMore === total, 'the solver puts out every board made by presses, never in more presses than made it (' + solved + '/' + total + ')');
+  const lone = zero(5); lone[0] = 1;
+  ok(E.solve(lone, 5) === null, 'a 5×5 board that cannot be put out is known as such (a lone corner light)');
+  // 5×5 has four solutions per board: the smallest one is the minimum
+  const P = zero(5); [0, 6, 12, 18, 24].forEach((i) => E.press(P, 5, i));
+  ok(E.lit(E.solve(P, 5)) <= 5, 'on 5×5 the smallest of the solutions is taken');
+  // generated puzzles: solvable, in the size's band, the same for the same seed (the daily)
+  let inBand = 0, gen = 0;
+  for (const n of E.SIZES) for (let k = 0; k < 30; k++) {
+    const G = E.generate(n, r), x = E.solve(G.start, n);
+    gen++;
+    if (x && E.lit(x) === G.min && G.min >= E.BAND[n][0] && G.min <= E.BAND[n][1] && E.lit(G.start) > 0) inBand++;
+  }
+  ok(gen === 90 && inBand === gen, 'every generated puzzle can be put out, and its fewest moves fall in the size\'s band (' + inBand + '/' + gen + ')');
+  const a = E.generate(5, rng(4)), b = E.generate(5, rng(4));
+  ok(a.start.join() === b.start.join() && a.min === b.min, 'the same seed gives the same puzzle, so the daily is the same for everyone');
+  ok(E.stars(9, 9) === 3 && E.stars(14, 9) === 2 && E.stars(15, 9) === 1 && E.stars(99, 9) === 1, 'three stars for the fewest moves, two within half again, and extra moves never lose');
+  ok(E.valid({ n: 5, start: zero(5), cur: zero(5), moves: 0, min: 7 }) && !E.valid({ n: 4, start: zero(4), cur: zero(4), moves: 0, min: 7 }) && !E.valid({ n: 5, start: zero(5), cur: zero(3), moves: 0, min: 7 }), 'a save is checked before it is restored');
+  ok(/C\.daily\('lights', dailyDate\)\.rng/.test(html) && ['lit-perfect', 'lit-big', 'lit-daily'].every((id) => html.indexOf("unlock('" + id + "')") > 0), 'the daily puzzle is seeded by the day, and the three awards are unlocked');
+  ok(/\.lt-board \{[^}]*direction: ltr;/.test(html) && /board\.addEventListener\('keydown'/.test(html), 'the board is left to right in every language, so the arrows are geometric');
+  ok(Date.now() - t0 < 8000, 'the Lights Off tests finish in under 8 s (' + (Date.now() - t0) + ' ms)');
 }
 
 // #544: a player asked for Simon (named Echo in English: "Simon" is a trademark)

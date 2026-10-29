@@ -3,6 +3,7 @@
     {
       "id": "tower-defence",
       "cat": "skill",
+      "people": 1,
       "name": {
         "fa": "دفاع از برج",
         "en": "Tower Defence",
@@ -27,6 +28,7 @@
     {
       "id": "sudoku",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "سودوکو",
         "en": "Sudoku",
@@ -51,6 +53,7 @@
     {
       "id": "minesweeper",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "مین‌روب",
         "en": "Minesweeper",
@@ -75,6 +78,7 @@
     {
       "id": "dots",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "نقطه‌بازی",
         "en": "Dots and Boxes",
@@ -99,6 +103,7 @@
     {
       "id": "nonogram",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "نونوگرام",
         "en": "Nonogram",
@@ -123,6 +128,7 @@
     {
       "id": "mancala",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "منقله",
         "en": "Mancala",
@@ -147,6 +153,7 @@
     {
       "id": "freecell",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "فری‌سل",
         "en": "FreeCell",
@@ -171,6 +178,7 @@
     {
       "id": "peg",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "میخ‌پران",
         "en": "Peg Solitaire",
@@ -195,6 +203,7 @@
     {
       "id": "reversi",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "ریورسی",
         "en": "Reversi",
@@ -219,6 +228,7 @@
     {
       "id": "backgammon",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "تخته‌نرد",
         "en": "Backgammon",
@@ -243,6 +253,7 @@
     {
       "id": "companero",
       "cat": "skill",
+      "people": 1,
       "name": { "fa": "همراه من", "en": "My companion", "zh": "我的伙伴", "de": "Mein Begleiter", "es": "Mi compañero" },
       "summary": {
         "fa": "حیوان همراهت را انتخاب کن و از آن مراقبت کن؛ بدون عجله و بدون جریمه.",
@@ -261,6 +272,7 @@
     {
       "id": "morris",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "دوز",
         "en": "Nine Men's Morris",
@@ -285,6 +297,7 @@
     {
       "id": "battleship",
       "cat": "board",
+      "people": 1,
       "name": {
         "fa": "نبرد دریایی",
         "en": "Battleship",
@@ -309,6 +322,7 @@
     {
       "id": "bridges",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "پل‌ها",
         "en": "Bridges",
@@ -333,6 +347,7 @@
     {
       "id": "mastermind",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "رمزشکن",
         "en": "Code Breaker",
@@ -357,6 +372,7 @@
     {
       "id": "breakout",
       "cat": "skill",
+      "people": 1,
       "name": {
         "fa": "آجرشکن",
         "en": "Breakout",
@@ -381,6 +397,7 @@
     {
       "id": "pasur",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "پاسور",
         "en": "Pasur",
@@ -405,6 +422,7 @@
     {
       "id": "mahjong",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "ماهجونگ",
         "en": "Mahjong Solitaire",
@@ -429,6 +447,7 @@
     {
       "id": "chess",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "شطرنج",
         "en": "Chess",
@@ -453,6 +472,7 @@
     {
       "id": "hokm",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "حکم",
         "en": "Hokm",
@@ -477,6 +497,7 @@
     {
       "id": "blockdrop",
       "cat": "skill",
+      "people": 1,
       "name": {
         "fa": "بلوک‌ریز",
         "en": "Block Drop",
@@ -501,6 +522,7 @@
     {
       "id": "gomoku",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "گوموکو",
         "en": "Gomoku",
@@ -525,6 +547,7 @@
     {
       "id": "go",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "گو",
         "en": "Go",
@@ -549,6 +572,7 @@
     {
       "id": "wayout",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "راه دررو",
         "en": "Way Out",
@@ -573,6 +597,7 @@
     {
       "id": "blackjack",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "بیست‌ویک",
         "en": "Blackjack",
@@ -597,6 +622,7 @@
     {
       "id": "eightball",
       "cat": "skill",
+      "people": 2,
       "name": {
         "fa": "بیلیارد",
         "en": "8-Ball Pool",
@@ -621,6 +647,7 @@
     {
       "id": "snooker",
       "cat": "skill",
+      "people": 2,
       "name": {
         "fa": "اسنوکر",
         "en": "Snooker",
@@ -645,6 +672,7 @@
     {
       "id": "gridlock",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "راه‌بندان",
         "en": "Gridlock",
@@ -669,6 +697,7 @@
     {
       "id": "chain",
       "cat": "board",
+      "people": 4,
       "name": {
         "fa": "واکنش زنجیره‌ای",
         "en": "Chain Reaction",
@@ -693,6 +722,7 @@
     {
       "id": "ludo",
       "cat": "board",
+      "people": 4,
       "name": {
         "fa": "منچ",
         "en": "Ludo",
@@ -717,6 +747,7 @@
     {
       "id": "snakes",
       "cat": "board",
+      "people": 4,
       "daily": false,
       "name": {
         "fa": "مار و پله",
@@ -742,6 +773,7 @@
     {
       "id": "darts",
       "cat": "skill",
+      "people": 2,
       "name": {
         "fa": "دارت",
         "en": "Darts",
@@ -766,6 +798,7 @@
     {
       "id": "bowling",
       "cat": "skill",
+      "people": 2,
       "name": {
         "fa": "بولینگ",
         "en": "Bowling",
@@ -790,6 +823,7 @@
     {
       "id": "sliding",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "پازل کشویی",
         "en": "Sliding Puzzle",
@@ -814,6 +848,7 @@
     {
       "id": "jigsaw",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "جورچین",
         "en": "Jigsaw",
@@ -838,6 +873,7 @@
     {
       "id": "checkers",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "چکرز",
         "en": "Checkers",
@@ -862,6 +898,7 @@
     {
       "id": "klondike",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "سالیتر",
         "en": "Klondike",
@@ -886,6 +923,7 @@
     {
       "id": "crazyeights",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "هفت خبیث",
         "en": "Crazy Eights",
@@ -910,6 +948,7 @@
     {
       "id": "ginrummy",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "جین رامی",
         "en": "Gin Rummy",
@@ -934,6 +973,7 @@
     {
       "id": "shelem",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "شلم",
         "en": "Shelem",
@@ -958,6 +998,7 @@
     {
       "id": "spider",
       "cat": "cards",
+      "people": 1,
       "name": {
         "fa": "عنکبوت",
         "en": "Spider",
@@ -982,6 +1023,7 @@
     {
       "id": "pairs",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "جفت‌ها",
         "en": "Pairs",
@@ -1006,6 +1048,7 @@
     {
       "id": "gorillas",
       "cat": "skill",
+      "people": 2,
       "name": {
         "fa": "گوریل‌ها",
         "en": "Gorillas",
@@ -1030,6 +1073,7 @@
     {
       "id": "hop",
       "cat": "skill",
+      "people": 1,
       "name": {
         "fa": "جهش",
         "en": "Hop",
@@ -1054,6 +1098,7 @@
     {
       "id": "tanks",
       "cat": "skill",
+      "people": 2,
       "name": {
         "fa": "تانک‌ها",
         "en": "Tanks",
@@ -1078,6 +1123,7 @@
     {
       "id": "xiangqi",
       "cat": "board",
+      "people": 2,
       "name": {
         "fa": "شطرنج چینی",
         "en": "Chinese chess",
@@ -1102,6 +1148,7 @@
     {
       "id": "pingpong",
       "cat": "skill",
+      "people": 2,
       "name": {
         "fa": "پینگ‌پنگ",
         "en": "Ping Pong",
@@ -1126,6 +1173,7 @@
     {
       "id": "airhockey",
       "cat": "skill",
+      "people": 2,
       "name": {
         "fa": "ایرهاکی",
         "en": "Air Hockey",
@@ -1150,6 +1198,7 @@
     {
       "id": "simon",
       "cat": "puzzle",
+      "people": 1,
       "name": {
         "fa": "سایمون",
         "en": "Echo",
@@ -1169,6 +1218,56 @@
       "color": "#2C64FC",
       "soft": "#E3EBFE",
       "added": "2026-10-27",
+      "files": []
+    },
+    {
+      "id": "lights",
+      "cat": "puzzle",
+      "people": 1,
+      "name": {
+        "fa": "خاموشی",
+        "en": "Lights Off",
+        "zh": "关灯",
+        "de": "Lichter aus",
+        "es": "Apagón"
+      },
+      "summary": {
+        "fa": "هر چراغ خودش و چهار همسایه‌اش را عوض می‌کند؛ همه را خاموش کن.",
+        "en": "Each light switches itself and its four neighbours; put them all out.",
+        "zh": "每盏灯会切换自己和四个邻居；把灯全部熄灭。",
+        "de": "Jedes Licht schaltet sich und seine vier Nachbarn um; lösche alle.",
+        "es": "Cada luz cambia ella y sus cuatro vecinas; apágalas todas."
+      },
+      "path": "games/lights/index.html",
+      "icon": "games/lights/icon.svg",
+      "color": "#B45309",
+      "soft": "#FDEBD3",
+      "added": "2026-10-28",
+      "files": []
+    },
+    {
+      "id": "corridor",
+      "cat": "board",
+      "people": 2,
+      "name": {
+        "fa": "راهرو",
+        "en": "Corridor",
+        "zh": "走廊",
+        "de": "Korridor",
+        "es": "Pasillo"
+      },
+      "summary": {
+        "fa": "مهره‌ات را به آن طرف برسان و با دیوار راه حریف را دور کن.",
+        "en": "Get your pawn across, and lengthen the other way with walls.",
+        "zh": "把棋子走到对面，用墙让对手绕远路。",
+        "de": "Bring deine Figur hinüber und verlängere den Weg des anderen mit Wänden.",
+        "es": "Lleva tu ficha al otro lado y alarga el camino del otro con muros."
+      },
+      "path": "games/corridor/index.html",
+      "icon": "games/corridor/icon.svg",
+      "color": "#E80450",
+      "soft": "#FDE2EA",
+      "added": "2026-10-28",
       "files": []
     }
   ]
