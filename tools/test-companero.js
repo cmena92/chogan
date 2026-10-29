@@ -183,7 +183,7 @@ function testEntrada() {
   ok(g.path === 'games/companero/index.html' && fs.existsSync(PAGINA), 'su página existe');
   ok(fs.existsSync(path.join(ROOT, 'www', g.icon)), 'su ícono existe');
   ok(['fa', 'en', 'zh', 'de', 'es'].every((l) => g.name[l] && g.summary[l]), 'nombre y resumen en los cinco idiomas');
-  ok(['games/companero/economia.js', 'games/companero/arte.js', 'games/companero/disenos.js', 'games/companero/prendas.js'].every((f) => g.files.includes(f) && fs.existsSync(path.join(ROOT, 'www', f))), 'files lista economia.js, arte.js, disenos.js y prendas.js, y existen: el service worker los guarda');
+  ok(['games/companero/economia.js', 'games/companero/arte.js', 'games/companero/disenos.js', 'games/companero/prendas.js', 'games/companero/expresiones.js', 'games/companero/cuidado.js'].every((f) => g.files.includes(f) && fs.existsSync(path.join(ROOT, 'www', f))), 'files lista todos los módulos del compañero, y existen: el service worker los guarda');
   const html = fs.existsSync(PAGINA) ? fs.readFileSync(PAGINA, 'utf8') : '';
   ok(['fa', 'en', 'zh', 'de', 'es'].every((l) => html.includes(JSON.stringify(g.name[l]).slice(1, -1))), 'la página usa el mismo nombre que games.json en cada idioma');
 }
@@ -300,6 +300,114 @@ async function testRopaPagina() {
   });
 }
 
+/* ------------------------------------------------ care, kind wishes and expressions (#9) */
+
+const CUIDADO = path.join(ROOT, 'www/games/companero/cuidado.js');
+const K = fs.existsSync(CUIDADO) ? require(CUIDADO) : null;
+
+// A companion with its economy and its care, over one store, with the clock and the dice in hand
+function companero(o) {
+  o = o || {};
+  const x = nuevo({ saldo: o.saldo === undefined ? 500 : o.saldo, datos: o.datos });
+  let t = o.t || 1e12;
+  let dado = o.dado || (() => 0);
+  const crearCuidado = () => K.crear({ store: x.s, economia: x.eco, ahora: () => t, azar: () => dado() });
+  const c = crearCuidado();
+  return Object.assign(x, { c, crearCuidado, pasar(ms) { t += ms; }, dado(f) { dado = f; } });
+}
+
+function testCuidadoLogica() {
+  head('Cuidado: acciones, vínculo y deseos (#9)');
+  ok(!!K && typeof K.crear === 'function', 'www/games/companero/cuidado.js exporta crear()');
+  if (!K) return;
+  ok(K.DESEOS.map((d) => d.id).join() === 'fruta,zanahoria,pastel,banio,ropa,jugar,caricias', 'los deseos son los de la tabla de #9');
+  ok(K.NIVELES.join() === '0,10,25,50,100' && K.MAXIMO === 100, 'cinco niveles, a los 0, 10, 25, 50 y 100 puntos (el máximo)');
+
+  const x = companero({ saldo: 100 });
+  const r = x.c.hecho({ accion: 'acariciar' });
+  ok(r.ok && x.c.vinculo().puntos === 1 && x.m.saldo() === 100, 'acariciar es gratis y suma 1 de vínculo');
+  x.pasar(10 * 1000); x.c.hecho({ accion: 'acariciar' });
+  ok(x.c.vinculo().puntos === 1, 'repetir la misma acción gratuita dentro de 30 s no vuelve a sumar');
+  x.pasar(25 * 1000); x.c.hecho({ accion: 'acariciar' });
+  ok(x.c.vinculo().puntos === 2, 'pasados 30 s, vuelve a sumar');
+  x.c.hecho({ accion: 'cepillar' });
+  ok(x.c.vinculo().puntos === 3, 'otra acción gratuita suma aparte');
+
+  ok(!x.c.alimentar('zanahoria').ok, 'sin zanahorias no se alimenta');
+  x.eco.comprar('zanahoria');
+  ok(x.m.saldo() === 92 && x.eco.cantidad('zanahoria') === 1, 'comprar una zanahoria cuesta 8 y la suma al inventario');
+  ok(x.c.alimentar('zanahoria').ok && x.eco.cantidad('zanahoria') === 0 && x.c.vinculo().puntos === 4, 'alimentar usa una unidad y suma 1 de vínculo');
+}
+
+function testDeseos() {
+  head('Deseos amables: uno por visita, distinto, opcional');
+  if (!K) return ok(false, 'sin módulo');
+  const x = companero({ saldo: 100 });
+  x.dado(() => 0.85); // the dice point at «jugar»
+  const d1 = x.c.visitar();
+  ok(d1 && d1.id === 'jugar' && !d1.cumplido, 'al abrir hay exactamente un deseo de la tabla (jugar)');
+  const r = x.c.hecho({ accion: 'jugar' });
+  ok(r.cumplioDeseo && x.c.vinculo().puntos === 4 && x.c.deseo().cumplido, 'cumplirlo suma 1 por el cuidado y 3 por el deseo');
+  ok(!x.c.hecho({ accion: 'jugar' }).cumplioDeseo, 'un deseo se cumple una sola vez');
+  const d2 = x.crearCuidado().visitar();
+  ok(d2.id !== 'jugar', 'en la visita siguiente el deseo es otro, aunque el dado repita (' + d2.id + ')');
+
+  const y = companero({ saldo: 100 });
+  y.dado(() => 0.15); // «zanahoria»
+  ok(y.c.visitar().id === 'zanahoria', 'un deseo de comida');
+  y.eco.comprar('fruta'); y.pasar(500);
+  ok(!y.c.alimentar('fruta').cumplioDeseo && !y.c.deseo().cumplido, 'otra comida no cumple el deseo de zanahoria');
+  y.eco.comprar('zanahoria');
+  ok(y.c.alimentar('zanahoria').cumplioDeseo, 'la zanahoria sí lo cumple');
+
+  const z = companero(); z.dado(() => 0.6);
+  ok(z.c.visitar().id === 'ropa' && z.c.hecho({ equipar: 'prenda' }).cumplioDeseo, 'equipar una prenda cumple el deseo de ropa');
+  const w = companero(); w.dado(() => 0.45);
+  ok(w.c.visitar().id === 'banio', 'el deseo del baño de burbujas');
+  const sinCumplir = w.c.vinculo().puntos;
+  w.crearCuidado().visitar();
+  ok(w.c.vinculo().puntos === sinCumplir, 'no cumplir un deseo no cambia nada');
+}
+
+function testSinCastigo() {
+  head('Sin castigo: el tiempo fuera no cambia nada');
+  if (!K) return ok(false, 'sin módulo');
+  const abrir = (ms) => {
+    const x = companero({ saldo: 100 });
+    x.c.visitar(); x.c.hecho({ accion: 'acariciar' }); x.c.hecho({ accion: 'jugar' });
+    x.pasar(ms);
+    x.dado(() => 0.3);
+    const c = x.crearCuidado();
+    const d = c.visitar();
+    return JSON.stringify({ vinculo: c.vinculo(), deseo: d.id, expresion: c.expresionAlAbrir(), saldo: x.m.saldo() });
+  };
+  const sinAusencia = abrir(60 * 1000);
+  for (const [nombre, ms] of [['1 hora', 36e5], ['30 días', 30 * 864e5], ['1 año', 365 * 864e5]]) {
+    ok(abrir(ms) === sinAusencia, 'tras ' + nombre + ' fuera, vínculo, deseo, expresión y saldo son los mismos que sin ausencia');
+  }
+  const x = companero({ saldo: 1000 });
+  for (let i = 0; i < 200; i++) { x.pasar(31 * 1000); x.c.hecho({ accion: ['acariciar', 'cepillar', 'jugar'][i % 3] }); }
+  ok(x.c.vinculo().puntos === 100 && x.c.vinculo().nivel === 5, 'el vínculo llega a 100 (nivel 5 de 5) y no pasa de ahí');
+  ok(x.c.expresionAlAbrir() === 'antojado' || x.c.expresionAlAbrir() === 'contento', 'al abrir, la expresión es antojado o contento: nunca dormido ni triste');
+  ok(x.s.escritas.every((k) => k === 'inventario' || k === 'cuidado'), 'el cuidado guarda solo en su clave «cuidado» (bajo chogan.companero., que «Borrar todos los datos» elimina)');
+}
+
+function testExpresionesFuente() {
+  head('Las expresiones: una sola fuente para la app y el arte (#9)');
+  const X = path.join(ROOT, 'www/games/companero/expresiones.js');
+  const A = fs.existsSync(ARTE) ? require(ARTE) : null;
+  ok(fs.existsSync(X) && !!A && !!A.expresiones, 'expresiones.js existe y arte.js trae sus datos');
+  if (!fs.existsSync(X) || !A || !A.expresiones) return;
+  const { expresar, EXPRESIONES } = require(X);
+  const dir = path.join(ROOT, 'design/companero/expresiones');
+  let iguales = 0, total = 0;
+  for (const id of Object.keys(A.cuerpos)) for (const e of EXPRESIONES) {
+    total++;
+    if (expresar(A.cuerpos[id], id, e, A.expresiones) === fs.readFileSync(path.join(dir, id + '-' + e + '.svg'), 'utf8')) iguales++;
+  }
+  ok(total === 40 && iguales === 40, 'la app dibuja las 40 expresiones idénticas a las aprobadas en design/companero/expresiones/ (' + iguales + ' de ' + total + ')');
+}
+
 // Chrome driven over its DevTools protocol, with Node's own fetch and WebSocket: no dependency
 async function navegador(fn) {
   const { spawn } = require('child_process');
@@ -333,7 +441,7 @@ async function navegador(fn) {
       async function evaluate(e) { return evaluar(e); }
     };
     await cdp('Page.enable');
-    return await fn({ abrir, evaluar, origen: 'http://127.0.0.1:' + puerto });
+    return await fn({ abrir, evaluar, cdp, origen: 'http://127.0.0.1:' + puerto });
   } finally {
     chrome.kill(); servidor.kill();
     await espera(300);
@@ -360,7 +468,7 @@ async function testPagina() {
         equipado: (document.querySelector('[data-animal][aria-pressed="true"]') || {}).dataset?.animal,
         foco: [...document.querySelectorAll('[data-seccion]:not([hidden]) button')].every((b) => b.tabIndex >= 0 && !b.disabled) }; })()`);
     ok(r.todas === 'animales,colores,cuidado,ropa', 'hay cuatro regiones identificables: animales, colores, ropa y cuidado');
-    ok(r.visibles === 'animales,colores,ropa', 'animales, colores y ropa están visibles; cuidado espera a su issue');
+    ok(r.visibles === 'animales,colores,ropa,cuidado', 'las cuatro regiones están visibles');
     ok(r.compa, 'se ve el compañero equipado');
     ok(r.animales === 'capybara,fox,owl,cat,bear,conejo,panda,nutria', 'muestra los ocho animales, el capibara primero');
     ok(await evaluar(`[...document.querySelectorAll('[data-animal][data-tiene="1"]')].map((b) => b.dataset.animal).join()`) === 'capybara,fox,owl', 'son del jugador: el capibara (gratis), el zorro (siempre) y el búho (lo desbloqueó)');
@@ -423,6 +531,71 @@ async function testAnimales() {
   });
   const html = fs.readFileSync(PAGINA, 'utf8');
   ok(!/coins\.add|achievements\.unlock/.test(html), 'la página nunca suma monedas ni da logros: ningún animal es una ventaja');
+}
+
+function testDeseosSinCarencia() {
+  head('Ningún texto de deseo expresa carencia, en los cinco idiomas (#9)');
+  if (!fs.existsSync(PAGINA)) return ok(false, 'la página no existe todavía');
+  const html = fs.readFileSync(PAGINA, 'utf8');
+  const bloque = (html.match(/\/\* ==== TEXTOS START ==== \*\/([\s\S]*?)\/\* ==== TEXTOS END ==== \*\//) || [])[1];
+  const T = vm.runInNewContext('(' + bloque.slice(bloque.indexOf('{'), bloque.lastIndexOf('}') + 1) + ')');
+  const PROHIBIDAS = {
+    es: ['hambre', 'hambrient', 'triste', 'sucio', 'sucia', 'solo', 'sola', 'extraño', 'extrañ', 'abandon'],
+    en: ['hungry', 'hunger', 'sad', 'dirty', 'lonely', 'alone', 'miss', 'starv', 'abandon'],
+    de: ['hunger', 'hungrig', 'traurig', 'schmutzig', 'einsam', 'allein', 'vermiss'],
+    zh: ['饿', '伤心', '难过', '脏', '孤单', '寂寞', '想你'],
+    fa: ['گرسنه', 'غمگین', 'ناراحت', 'کثیف', 'تنها', 'دلتنگ'],
+  };
+  const claves = (K ? K.DESEOS.map((d) => 'deseo_' + d.id) : []).concat(['deseoCumplido']);
+  for (const l of Object.keys(PROHIBIDAS)) {
+    const textos = claves.map((k) => T[l] && T[l][k]);
+    ok(textos.every((x) => typeof x === 'string' && x.length > 2), l + ': cada deseo tiene su texto');
+    const malas = textos.filter((x) => typeof x === 'string' && PROHIBIDAS[l].some((p) => x.toLowerCase().includes(p)));
+    ok(!malas.length, l + ': ningún deseo dice carencia' + (malas.length ? ' (' + malas.join(' | ') + ')' : ''));
+  }
+}
+
+async function testCuidadoPagina() {
+  head('Cuidado en la página: el globo, cuidar y cumplir el deseo (#9)');
+  if (!fs.existsSync(PAGINA)) return ok(false, 'la página no existe todavía');
+  await navegador(async ({ abrir, evaluar, cdp }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 300 }));
+    await abrir('/games/companero/index.html');
+    const inicio = await evaluar(`({ deseo: (document.querySelector('[data-deseo]') || {}).dataset?.deseo, texto: (document.querySelector('[data-deseo]') || {}).textContent, expr: document.querySelector('.cp-compa').dataset.expresion, vinculo: +document.querySelector('[data-vinculo]').dataset.vinculo })`);
+    ok(!!inicio.deseo && inicio.texto.length > 5, 'al abrir hay un globo con un deseo (' + inicio.deseo + ')');
+    ok(inicio.expr === 'antojado', 'mientras el deseo espera, el compañero está antojado');
+    ok(await evaluar(`[...document.querySelectorAll('[data-accion]')].map((b) => b.dataset.accion).join()`) === 'acariciar,cepillar,jugar', 'tres acciones gratuitas: acariciar, cepillar y jugar');
+    ok(await evaluar(`[...document.querySelectorAll('[data-consumible]')].map((b) => b.dataset.consumible).join()`) === 'fruta,zanahoria,pastel,jabon', 'cuatro consumibles: fruta, zanahoria, pastel y jabón');
+
+    const libre = inicio.deseo === 'caricias' ? 'jugar' : 'acariciar';
+    await evaluar(`document.querySelector('[data-accion="${libre}"]').click()`);
+    const tras = await evaluar(`({ monedas: +localStorage.getItem('chogan.app.coins'), vinculo: +document.querySelector('[data-vinculo]').dataset.vinculo, expr: document.querySelector('.cp-compa').dataset.expresion })`);
+    ok(tras.monedas === 300 && tras.vinculo === inicio.vinculo + 1 && tras.expr === 'feliz', 'una acción gratuita no cobra, suma 1 de vínculo y pone feliz al compañero');
+
+    // fulfil whatever the visit wished for
+    const cumplir = {
+      fruta: ['consumible', 'fruta'], zanahoria: ['consumible', 'zanahoria'], pastel: ['consumible', 'pastel'], banio: ['consumible', 'jabon'],
+      ropa: ['prenda-item', 'lazo'], jugar: ['accion', 'jugar'], caricias: ['accion', 'cepillar'],
+    }[inicio.deseo];
+    await evaluar(pausa(200));
+    await evaluar(`document.querySelector('[data-${cumplir[0]}="${cumplir[1]}"]').click()`);
+    await evaluar(pausa(250));
+    if (await evaluar(`!!document.querySelector('.ch-scrim')`)) { await evaluar(aceptar); await evaluar(pausa(250)); }
+    const fin = await evaluar(`({ cumplido: (document.querySelector('[data-deseo]') || {}).dataset?.cumplido, vinculo: +document.querySelector('[data-vinculo]').dataset.vinculo, expr: document.querySelector('.cp-compa').dataset.expresion })`);
+    ok(fin.cumplido === '1' && fin.expr === 'feliz', 'cumplir el deseo (' + inicio.deseo + ') lo marca cumplido y pone feliz al compañero');
+    ok(fin.vinculo >= tras.vinculo + 3, 'cumplir el deseo suma al menos 3 de vínculo (' + tras.vinculo + ' → ' + fin.vinculo + ')');
+
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(`+document.querySelector('[data-vinculo]').dataset.vinculo`) === fin.vinculo, 'el vínculo persiste al recargar');
+    const otra = await evaluar(`(document.querySelector('[data-deseo]') || {}).dataset?.deseo`);
+    ok(otra && otra !== inicio.deseo, 'la visita siguiente trae otro deseo (' + otra + ')');
+
+    await cdp('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await abrir('/games/companero/index.html');
+    await evaluar(`document.querySelector('[data-accion="cepillar"]').click()`);
+    ok(await evaluar(`document.querySelector('.cp-compa').dataset.expresion === 'feliz' && !document.querySelector('.cp-compa .cp-salto, .cp-compa.cp-salto')`), 'con movimiento reducido, la reacción es la misma cara feliz, sin salto');
+  });
 }
 
 function testEstados() {

@@ -4,6 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { datosPrendas } from "./prendas.mjs";
+import { datosExpresiones } from "./expresiones.mjs";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const dir = path.join(here, "cuerpos");
@@ -25,10 +26,11 @@ fs.writeFileSync(
 (function (root) {
   var ARTE = { cuerpos: ${JSON.stringify(cuerpos, null, 2).replace(/\n/g, "\n  ")},
     disenos: ${JSON.stringify(datos, null, 2).replace(/\n/g, "\n  ")},
-    prendas: ${JSON.stringify(datosPrendas, null, 2).replace(/\n/g, "\n  ")} };
+    prendas: ${JSON.stringify(datosPrendas, null, 2).replace(/\n/g, "\n  ")},
+    expresiones: ${JSON.stringify(datosExpresiones, null, 2).replace(/\n/g, "\n  ")} };
   if (typeof module === 'object' && module.exports) module.exports = ARTE;
   else root.CompaneroArte = ARTE;
 })(this);
 `,
 );
-console.log(`arte.js: ${Object.keys(cuerpos).length} cuerpos, ${disenos.length} diseños, ${datosPrendas.catalogo.length} prendas`);
+console.log(`arte.js: ${Object.keys(cuerpos).length} cuerpos, ${disenos.length} diseños, ${datosPrendas.catalogo.length} prendas, ${Object.keys(datosExpresiones.animales).length} caras con expresiones`);

@@ -9,6 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { chrome } from "./prendas.mjs";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
@@ -16,66 +17,18 @@ const datos = JSON.parse(fs.readFileSync(path.join(here, "expresiones.json"), "u
 const anclajes = JSON.parse(fs.readFileSync(path.join(here, "anclajes.json"), "utf8")).animales;
 export const expresiones = datos.expresiones;
 
-const n = (x) => +x.toFixed(2);
-const trazo = (d, color, ancho = 2.8) => `<path data-expr="1" d="${d}" stroke="${color}" stroke-width="${ancho}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
-const punto = (x, y, r, color) => `<circle data-expr="1" cx="${n(x)}" cy="${n(y)}" r="${n(r)}" fill="${color}"/>`;
-const arriba = (x, y, r, color, a) => trazo(`M${n(x - r)} ${n(y + r * 0.4)}q${n(r)} ${n(-r * 1.8)} ${n(2 * r)} 0`, color, a); // ∩: closed in joy
-const abajo = (x, y, r, color, a) => trazo(`M${n(x - r)} ${n(y)}q${n(r)} ${n(r * 0.9)} ${n(2 * r)} 0`, color, a); // ∪: asleep
-const brillo = (x, y, r) => punto(x - r * 0.35, y - r * 0.35, r * 0.3, "#FFFFFF");
-
-function ojos(a, e) {
-  const out = [];
-  a.ojos.forEach(([x, y, r], i) => {
-    if (a.tipo === "panda") {
-      const [px, py, pr] = a.pupilas[i];
-      if (e === "feliz") out.push(arriba(x, y, r, a.color, 2.4));
-      else if (e === "dormido") out.push(abajo(x, y, r, a.color, 2.4));
-      else if (e === "antojado") out.push(punto(x, y, r, a.color), punto(px + 1.4, py - 0.9, pr, a.pupila), brillo(px + 1.4, py - 0.9, pr * 1.6));
-      else if (e === "sorprendido") out.push(punto(x, y, r * 1.3, a.color), punto(x, y, pr, a.pupila));
-    } else {
-      // punto: a dark eye; pupila: the owl's pupil on its light disc, which stays
-      if (e === "feliz") out.push(arriba(x, y, r, a.color, a.tipo === "pupila" ? 3.4 : 2.8));
-      else if (e === "dormido") out.push(abajo(x, y, r, a.color, a.tipo === "pupila" ? 3.4 : 2.8));
-      else if (e === "antojado") out.push(punto(x + r * 0.5, y - r * 0.35, r, a.color), brillo(x + r * 0.5, y - r * 0.35, r)); // eager: up, aside, shining
-      else if (e === "sorprendido") {
-        const rr = a.tipo === "pupila" ? r * 0.6 : r * 1.3; // wide eyes: a bigger dot, or a smaller pupil
-        out.push(punto(x, y, rr, a.color), brillo(x, y, rr));
-      }
-    }
-  });
-  return out.join("");
-}
-
-function boca(a, e) {
-  const b = a.boca;
-  if (!b) return "";
-  const c = b.color || a.color, w = b.ancho, { cx, cy } = b;
-  const pre = b.prefijo ? trazo(b.prefijo, c, 3) : "";
-  if (e === "feliz") return pre + `<path data-expr="1" d="M${n(cx - w / 2)} ${n(cy - 1.5)}h${w}c0 ${n(w * 0.55)}-${w} ${n(w * 0.55)}-${w} 0z" fill="${c}"/>`;
-  if (e === "antojado") // a small smile with the tip of the tongue out
-    return pre + `<ellipse data-expr="1" cx="${n(cx + w * 0.12)}" cy="${n(cy + 2.4)}" rx="2.6" ry="3" fill="#E8697A"/>` + trazo(`M${n(cx - w * 0.3)} ${n(cy)}c1.2 1.8 ${n(w * 0.6 - 1.2)} 1.8 ${n(w * 0.6)} 0`, c, 3);
-  if (e === "dormido") return pre + trazo(`M${n(cx - w * 0.2)} ${n(cy + 0.5)}h${n(w * 0.4)}`, c, 3);
-  if (e === "sorprendido") return pre + `<ellipse data-expr="1" cx="${cx}" cy="${n(cy + 1)}" rx="2.6" ry="3.2" fill="${c}"/>`;
-  return "";
-}
-
-// Takes the face's own eyes and mouth out, whatever fill they inherit, by their exact coordinates
-function quitarRasgos(svg, a) {
-  const circulos = [...a.ojos, ...(a.pupilas || [])];
-  for (const [x, y, r] of circulos) svg = svg.replace(new RegExp(`<circle cx="${x}" cy="${y}" r="${r}"[^>]*/>`, "g"), "");
-  if (a.boca) svg = svg.split(`<path d="${a.boca.d}"`).map((p, i) => (i ? p.replace(/^[^>]*\/>/, "") : p)).join("");
-  return svg;
-}
-const sinExpresion = (svg) => svg.replace(/<(path|circle|ellipse|g)[^>]*data-expr="1"[^>]*\/>/g, "");
-
+// The logic itself lives in the app (www/games/companero/expresiones.js), so the browser and this
+// check share one source; this script only feeds it the data.
+const require = createRequire(import.meta.url);
+const app = require("../../www/games/companero/expresiones.js");
+export const datosExpresiones = {
+  animales: datos.animales,
+  cabeza: Object.fromEntries(Object.entries(anclajes).map(([id, a]) => [id, a.cabeza.y])),
+};
+const quitarRasgos = app.quitarRasgos;
+const sinExpresion = app.sinExpresion;
 export function expresar(svg, animal, e) {
-  if (e === "contento") return svg;
-  const a = datos.animales[animal];
-  const top = anclajes[animal].cabeza.y;
-  const zeta = e === "dormido" ? trazo(`M84 ${top - 4}h5l-5 6h5M92 ${top - 12}h3.5l-3.5 4.5h3.5`, "#8A8F9C", 1.8) : "";
-  const nuevo = ojos(a, e) + boca(a, e) + zeta;
-  // the new features go at the end of the face, over everything the face draws
-  return quitarRasgos(svg, a).replace(/<\/g>\s*<\/svg>\s*$/, `${nuevo}</g>\n</svg>\n`);
+  return app.expresar(svg, animal, e, datosExpresiones);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
