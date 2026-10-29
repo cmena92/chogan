@@ -9,6 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { chrome } from "./prendas.mjs";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
@@ -16,47 +17,13 @@ const { disenos, ojos } = JSON.parse(fs.readFileSync(path.join(here, "disenos.js
 const anclajes = JSON.parse(fs.readFileSync(path.join(here, "anclajes.json"), "utf8")).animales;
 export { disenos };
 
-const PATRONES = {
-  manchitas: (id, c) =>
-    `<pattern id="${id}" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="3.4" fill="${c}" opacity="0.85"/><circle cx="13" cy="12" r="2.8" fill="${c}" opacity="0.85"/></pattern>`,
-  rayas: (id, c) => `<pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="4" fill="${c}" opacity="0.45"/></pattern>`,
-  brillitos: (id) =>
-    `<pattern id="${id}" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M5 2.5 5.8 5.2 8.5 6 5.8 6.8 5 9.5 4.2 6.8 1.5 6 4.2 5.2z" fill="#FFFFFF" opacity="0.85"/><circle cx="16" cy="16" r="1.2" fill="#FFFFFF" opacity="0.8"/></pattern>`,
-};
-
-const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-// fills and strokes alike: the cat's tail and the owl's brows are strokes in the dark colour
-const reemplazar = (s, de, a) => s.replace(new RegExp(`(fill|stroke)="${esc(de)}"`, "gi"), (m, attr) => `${attr}="${a}"`);
-
+// The logic itself lives in the app (www/games/companero/disenos.js), so the browser and these
+// checks share one source; this script only feeds it the data.
+const require = createRequire(import.meta.url);
+const { aplicar: aplicarDatos } = require("../../www/games/companero/disenos.js");
+const colores = Object.fromEntries(Object.entries(anclajes).map(([id, a]) => [id, a.colores]));
 export function aplicar(svg, animal, disenoId) {
-  const d = disenos.find((x) => x.id === disenoId);
-  if (!d || d.id === "natural") return svg;
-  const nat = anclajes[animal].colores;
-  const uid = `${animal}-${d.id}`;
-  let defs = "";
-  let base = nat.base;
-  if (d.colores) {
-    const c = d.colores;
-    if (Array.isArray(c.base)) {
-      const paradas = c.base.map((col, i) => `<stop offset="${(i / (c.base.length - 1)).toFixed(2)}" stop-color="${col}"/>`).join("");
-      defs += `<linearGradient id="g-${uid}" x1="0" y1="0" x2="0" y2="170" gradientUnits="userSpaceOnUse">${paradas}</linearGradient>`;
-      base = `url(#g-${uid})`;
-    } else base = c.base;
-    // dark and light first: a design colour must never be picked up again as a natural one
-    svg = reemplazar(reemplazar(svg, nat.oscuro, "@@OSCURO@@"), nat.claro, "@@CLARO@@");
-    svg = reemplazar(svg, nat.base, base);
-    svg = svg.replace(/"@@OSCURO@@"/g, `"${c.oscuro}"`).replace(/"@@CLARO@@"/g, `"${c.claro}"`);
-  }
-  if (d.patron) {
-    const pid = `p-${uid}`;
-    defs += PATRONES[d.patron](pid, (d.colores && d.colores.oscuro) || nat.oscuro);
-    // a twin of each base-coloured shape, right after it, filled with the pattern
-    svg = svg.replace(new RegExp(`<(path|ellipse|circle)\\b([^>]*?)fill="${esc(base)}"([^>]*?)/>`, "g"), (m, tag, a, b) => {
-      const sinId = (a + b).replace(/\sid="[^"]*"/g, "");
-      return `${m}<${tag}${sinId.replace(/\s+$/, "")} fill="url(#${pid})" data-patron="${d.patron}"/>`;
-    });
-  }
-  return defs ? svg.replace(/(<svg[^>]*>)/, `$1<defs>${defs}</defs>`) : svg;
+  return aplicarDatos(svg, animal, disenoId, { disenos, colores });
 }
 
 // WCAG relative luminance and contrast
