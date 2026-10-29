@@ -10,6 +10,106 @@
     "nutria": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 120 170\" width=\"120\" height=\"170\">\n  <g id=\"cola\"><path d=\"M84 150c16 4 28-2 32-12-8 2-20 2-30 0z\" fill=\"#9C80C2\"/></g>\n  <g id=\"cuerpo\">\n    <ellipse cx=\"60\" cy=\"130\" rx=\"30\" ry=\"30\" fill=\"#B59BD6\"/>\n    <ellipse id=\"panza\" cx=\"60\" cy=\"136\" rx=\"18\" ry=\"19\" fill=\"#F1E9FA\"/>\n    <g id=\"brazos\"><ellipse cx=\"32\" cy=\"124\" rx=\"7\" ry=\"11\" transform=\"rotate(20 32 124)\" fill=\"#9C80C2\"/><ellipse cx=\"88\" cy=\"124\" rx=\"7\" ry=\"11\" transform=\"rotate(-20 88 124)\" fill=\"#9C80C2\"/></g>\n    <g id=\"patas\" fill=\"#9C80C2\"><ellipse cx=\"46\" cy=\"160\" rx=\"10\" ry=\"6\"/><ellipse cx=\"74\" cy=\"160\" rx=\"10\" ry=\"6\"/></g>\n  </g>\n  <g id=\"cara\"><g id=\"orejas\" fill=\"#9C80C2\"><circle cx=\"26\" cy=\"50\" r=\"8\"/><circle cx=\"94\" cy=\"50\" r=\"8\"/></g>\n  <path id=\"cabeza\" d=\"M60 24c22 0 36 16 36 38s-14 38-36 38S24 84 24 62s14-38 36-38z\" fill=\"#B59BD6\"/>\n  <path id=\"hocico\" d=\"M60 66c15 0 26 7 26 16s-11 16-26 16-26-7-26-16 11-16 26-16z\" fill=\"#F1E9FA\"/>\n  <g id=\"rasgos\" fill=\"#3A2E4A\">\n    <circle cx=\"46\" cy=\"56\" r=\"5\"/><circle cx=\"74\" cy=\"56\" r=\"5\"/>\n    <path d=\"M60 76c3.6 0 6.4-2.2 6.4-4.6S63.6 68 60 68s-6.4 1.2-6.4 3.4 2.8 4.6 6.4 4.6z\"/>\n    <path d=\"M60 76v4M54 85c2 2.6 10 2.6 12 0\" stroke=\"#3A2E4A\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>\n    <circle cx=\"44\" cy=\"80\" r=\"1.6\"/><circle cx=\"40\" cy=\"84\" r=\"1.6\"/><circle cx=\"76\" cy=\"80\" r=\"1.6\"/><circle cx=\"80\" cy=\"84\" r=\"1.6\"/>\n  </g></g>\n</svg>\n",
     "owl": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 120 170\" width=\"120\" height=\"170\">\n  <g id=\"cola\"></g>\n  <g id=\"cuerpo\">\n    <ellipse cx=\"60\" cy=\"130\" rx=\"30\" ry=\"30\" fill=\"#6A8CBF\"/>\n    <ellipse id=\"panza\" cx=\"60\" cy=\"136\" rx=\"18\" ry=\"19\" fill=\"#FBEDE6\"/>\n    <g id=\"brazos\"><path d=\"M32 112c-10 8-12 26-4 34 6-6 10-18 8-34z\" fill=\"#4E6C97\"/><path d=\"M88 112c10 8 12 26 4 34-6-6-10-18-8-34z\" fill=\"#4E6C97\"/></g>\n    <g id=\"patas\" fill=\"#4E6C97\"><ellipse cx=\"46\" cy=\"160\" rx=\"10\" ry=\"6\"/><ellipse cx=\"74\" cy=\"160\" rx=\"10\" ry=\"6\"/></g>\n  </g>\n  <g id=\"cara\"><path d=\"M60 20c22 0 36 18 36 40s-14 40-36 40S24 82 24 60 38 20 60 20z\" fill=\"#6A8CBF\"/><circle cx=\"45\" cy=\"52\" r=\"15\" fill=\"#FBEDE6\"/><circle cx=\"75\" cy=\"52\" r=\"15\" fill=\"#FBEDE6\"/><circle cx=\"45\" cy=\"52\" r=\"6.5\" fill=\"#2C2620\"/><circle cx=\"75\" cy=\"52\" r=\"6.5\" fill=\"#2C2620\"/><path d=\"M60 60 52 70h16z\" fill=\"#D9A441\"/><path d=\"M34 30c4-8 10-10 14-6M86 30c-4-8-10-10-14-6\" stroke=\"#4E6C97\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M44 88c6 6 26 6 32 0\" stroke=\"#4E6C97\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/></g>\n</svg>\n",
     "panda": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 120 170\" width=\"120\" height=\"170\">\n  <g id=\"cola\"></g>\n  <g id=\"cuerpo\">\n    <ellipse cx=\"60\" cy=\"130\" rx=\"30\" ry=\"30\" fill=\"#F4F1EA\"/>\n    <ellipse id=\"panza\" cx=\"60\" cy=\"136\" rx=\"18\" ry=\"19\" fill=\"#FFFFFF\"/>\n    <g id=\"brazos\"><ellipse cx=\"32\" cy=\"124\" rx=\"7\" ry=\"11\" transform=\"rotate(20 32 124)\" fill=\"#4A4E5C\"/><ellipse cx=\"88\" cy=\"124\" rx=\"7\" ry=\"11\" transform=\"rotate(-20 88 124)\" fill=\"#4A4E5C\"/></g>\n    <g id=\"patas\" fill=\"#4A4E5C\"><ellipse cx=\"46\" cy=\"160\" rx=\"10\" ry=\"6\"/><ellipse cx=\"74\" cy=\"160\" rx=\"10\" ry=\"6\"/></g>\n  </g>\n  <g id=\"cara\"><g id=\"orejas\" fill=\"#4A4E5C\"><circle cx=\"32\" cy=\"34\" r=\"13\"/><circle cx=\"88\" cy=\"34\" r=\"13\"/></g>\n  <circle id=\"cabeza\" cx=\"60\" cy=\"62\" r=\"36\" fill=\"#F4F1EA\"/>\n  <g id=\"manchas\" fill=\"#4A4E5C\">\n    <ellipse cx=\"45\" cy=\"57\" rx=\"9\" ry=\"11\" transform=\"rotate(25 45 57)\"/>\n    <ellipse cx=\"75\" cy=\"57\" rx=\"9\" ry=\"11\" transform=\"rotate(-25 75 57)\"/>\n  </g>\n  <g id=\"rasgos\">\n    <circle cx=\"46\" cy=\"56\" r=\"4\" fill=\"#FBEDE6\"/><circle cx=\"74\" cy=\"56\" r=\"4\" fill=\"#FBEDE6\"/>\n    <circle cx=\"46.5\" cy=\"56.5\" r=\"2.2\" fill=\"#2C2620\"/><circle cx=\"73.5\" cy=\"56.5\" r=\"2.2\" fill=\"#2C2620\"/>\n    <path d=\"M60 74c3.4 0 6-2 6-4.4s-2.6-3.6-6-3.6-6 1.2-6 3.6 2.6 4.4 6 4.4z\" fill=\"#4A4E5C\"/>\n    <path d=\"M60 74v4M54 82c2 2.6 10 2.6 12 0\" stroke=\"#4A4E5C\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>\n  </g></g>\n</svg>\n"
+  },
+    disenos: {
+    "disenos": [
+      {
+        "id": "natural",
+        "nombre": "Natural",
+        "precio": 0
+      },
+      {
+        "id": "medianoche",
+        "nombre": "Medianoche",
+        "precio": 120,
+        "colores": {
+          "base": "#7880DD",
+          "oscuro": "#3E4595",
+          "claro": "#D9DCF7"
+        },
+        "patron": "brillitos"
+      },
+      {
+        "id": "arcoiris",
+        "nombre": "Arcoíris suave",
+        "precio": 150,
+        "colores": {
+          "base": [
+            "#F6B3C6",
+            "#F9D7A0",
+            "#BFE3B4",
+            "#B3D4F2",
+            "#D3BDF0"
+          ],
+          "oscuro": "#6E58A8",
+          "claro": "#FFF8FB"
+        }
+      },
+      {
+        "id": "manchitas",
+        "nombre": "Manchitas",
+        "precio": 180,
+        "patron": "manchitas"
+      },
+      {
+        "id": "rayas",
+        "nombre": "Rayas",
+        "precio": 180,
+        "patron": "rayas"
+      },
+      {
+        "id": "dorado",
+        "nombre": "Dorado",
+        "precio": 300,
+        "colores": {
+          "base": "#E7B43C",
+          "oscuro": "#8A6210",
+          "claro": "#FFF1C2"
+        }
+      }
+    ],
+    "colores": {
+      "fox": {
+        "base": "#EE9070",
+        "oscuro": "#E07A5F",
+        "claro": "#FBEDE6"
+      },
+      "owl": {
+        "base": "#6A8CBF",
+        "oscuro": "#4E6C97",
+        "claro": "#FBEDE6"
+      },
+      "cat": {
+        "base": "#F0BC70",
+        "oscuro": "#E4A853",
+        "claro": "#FBEDE6"
+      },
+      "bear": {
+        "base": "#94C398",
+        "oscuro": "#7BAE7F",
+        "claro": "#E7F2E4"
+      },
+      "capybara": {
+        "base": "#C9935F",
+        "oscuro": "#A9744A",
+        "claro": "#E6BE92"
+      },
+      "conejo": {
+        "base": "#F2B3C8",
+        "oscuro": "#E59AB4",
+        "claro": "#FCE9EF"
+      },
+      "panda": {
+        "base": "#F4F1EA",
+        "oscuro": "#4A4E5C",
+        "claro": "#FFFFFF"
+      },
+      "nutria": {
+        "base": "#B59BD6",
+        "oscuro": "#9C80C2",
+        "claro": "#F1E9FA"
+      }
+    }
   } };
   if (typeof module === 'object' && module.exports) module.exports = ARTE;
   else root.CompaneroArte = ARTE;

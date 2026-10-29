@@ -183,7 +183,7 @@ function testEntrada() {
   ok(g.path === 'games/companero/index.html' && fs.existsSync(PAGINA), 'su página existe');
   ok(fs.existsSync(path.join(ROOT, 'www', g.icon)), 'su ícono existe');
   ok(['fa', 'en', 'zh', 'de', 'es'].every((l) => g.name[l] && g.summary[l]), 'nombre y resumen en los cinco idiomas');
-  ok(['games/companero/economia.js', 'games/companero/arte.js'].every((f) => g.files.includes(f) && fs.existsSync(path.join(ROOT, 'www', f))), 'files lista economia.js y arte.js, y existen: el service worker los guarda');
+  ok(['games/companero/economia.js', 'games/companero/arte.js', 'games/companero/disenos.js'].every((f) => g.files.includes(f) && fs.existsSync(path.join(ROOT, 'www', f))), 'files lista economia.js, arte.js y disenos.js, y existen: el service worker los guarda');
   const html = fs.existsSync(PAGINA) ? fs.readFileSync(PAGINA, 'utf8') : '';
   ok(['fa', 'en', 'zh', 'de', 'es'].every((l) => html.includes(JSON.stringify(g.name[l]).slice(1, -1))), 'la página usa el mismo nombre que games.json en cada idioma');
 }
@@ -196,6 +196,57 @@ function testArte() {
   const dir = path.join(ROOT, 'design/companero/cuerpos');
   const ids = fs.readdirSync(dir).filter((f) => f.endsWith('.svg')).map((f) => f.slice(0, -4));
   ok(ids.length === 8 && ids.every((id) => A.cuerpos[id] === fs.readFileSync(path.join(dir, id + '.svg'), 'utf8')), 'los ocho cuerpos son idénticos a design/companero/cuerpos/ (si no, correr design/companero/exportar.mjs)');
+}
+
+function testDisenosFuente() {
+  head('Los diseños: una sola fuente para la app y el arte (#7)');
+  const D = path.join(ROOT, 'www/games/companero/disenos.js');
+  const A = fs.existsSync(ARTE) ? require(ARTE) : null;
+  ok(fs.existsSync(D), 'www/games/companero/disenos.js existe');
+  if (!fs.existsSync(D) || !A || !A.disenos) return ok(false, 'arte.js trae los datos de los diseños');
+  const json = JSON.parse(fs.readFileSync(path.join(ROOT, 'design/companero/disenos.json'), 'utf8')).disenos;
+  const anc = JSON.parse(fs.readFileSync(path.join(ROOT, 'design/companero/anclajes.json'), 'utf8')).animales;
+  ok(JSON.stringify(A.disenos.disenos) === JSON.stringify(json), 'arte.js trae los mismos diseños que design/companero/disenos.json');
+  ok(Object.keys(anc).every((id) => JSON.stringify(A.disenos.colores[id]) === JSON.stringify(anc[id].colores)), 'y los mismos colores de cada animal');
+  // the app's own code gives, byte for byte, the 48 pairs the design checks approved (#17)
+  const { aplicar } = require(D);
+  const dir = path.join(ROOT, 'design/companero/disenos');
+  let iguales = 0, total = 0;
+  for (const id of Object.keys(A.cuerpos)) for (const d of json) {
+    total++;
+    if (aplicar(A.cuerpos[id], id, d.id, A.disenos) === fs.readFileSync(path.join(dir, id + '-' + d.id + '.svg'), 'utf8')) iguales++;
+  }
+  ok(total === 48 && iguales === 48, 'la app dibuja las 48 combinaciones idénticas a las aprobadas en design/companero/disenos/ (' + iguales + ' de ' + total + ')');
+  ok(aplicar(A.cuerpos.fox, 'fox', 'inexistente', A.disenos) === A.cuerpos.fox, 'un diseño desconocido deja al animal en Natural');
+}
+
+async function testDisenosPagina() {
+  head('Diseños en la página: comprar, ver, cambiar de animal (#7)');
+  if (!fs.existsSync(PAGINA)) return ok(false, 'la página no existe todavía');
+  await navegador(async ({ abrir, evaluar }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 300, settings: { palette: 'sea' } }));
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(`[...document.querySelectorAll('[data-diseno]')].map((b) => b.dataset.diseno).join()`) === 'natural,medianoche,arcoiris,manchitas,rayas,dorado', 'la región de colores muestra los seis diseños');
+    ok(await evaluar(`document.querySelector('[data-diseno="natural"]').dataset.tiene === '1' && document.querySelector('[data-diseno="natural"]').getAttribute('aria-pressed') === 'true'`), 'Natural es de todos y está en uso');
+    ok(/120/.test(await evaluar(`(document.querySelector('[data-diseno="medianoche"] [data-precio]') || {}).textContent || ''`)), 'Medianoche muestra su precio (120)');
+    await evaluar(`document.querySelector('[data-diseno="medianoche"]').click()`);
+    await evaluar(pausa(300));
+    ok(await evaluar(aceptar), 'comprar Medianoche pide confirmación y se acepta');
+    await evaluar(pausa(300));
+    ok(await evaluar(`+localStorage.getItem('chogan.app.coins') === 180 && /#7880DD/i.test(document.querySelector('.cp-compa').innerHTML)`), 'cuesta 120 una vez (300 → 180) y el compañero se ve en Medianoche');
+    await evaluar(`document.querySelector('[data-animal="capybara"]').click()`);
+    ok(await evaluar(`/#7880DD/i.test(document.querySelector('.cp-compa').innerHTML) && document.querySelector('[data-diseno="medianoche"]').getAttribute('aria-pressed') === 'true'`), 'al cambiar al capibara, el diseño se conserva');
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(`/#7880DD/i.test(document.querySelector('.cp-compa').innerHTML) && +localStorage.getItem('chogan.app.coins') === 180`), 'el diseño y la compra persisten al recargar');
+    await evaluar(`document.querySelector('[data-diseno="medianoche"]').click()`);
+    await evaluar(pausa(200));
+    ok(await evaluar(`!document.querySelector('.ch-scrim') && +localStorage.getItem('chogan.app.coins') === 180`), 'tocar un diseño que ya se tiene no cobra ni pregunta');
+    ok(await evaluar(`JSON.parse(localStorage.getItem('chogan.app.settings')).palette === 'sea'`), 'la paleta del menú no cambia');
+    await evaluar(`document.querySelector('[data-diseno="dorado"]').click()`);
+    await evaluar(pausa(300));
+    ok(await evaluar(`!document.querySelector('.ch-scrim') && +localStorage.getItem('chogan.app.coins') === 180`), 'sin saldo para Dorado (300), no hay compra ni cobro');
+  });
 }
 
 // Chrome driven over its DevTools protocol, with Node's own fetch and WebSocket: no dependency
@@ -258,7 +309,7 @@ async function testPagina() {
         equipado: (document.querySelector('[data-animal][aria-pressed="true"]') || {}).dataset?.animal,
         foco: [...document.querySelectorAll('[data-seccion]:not([hidden]) button')].every((b) => b.tabIndex >= 0 && !b.disabled) }; })()`);
     ok(r.todas === 'animales,colores,cuidado,ropa', 'hay cuatro regiones identificables: animales, colores, ropa y cuidado');
-    ok(r.visibles === 'animales', 'solo animales está visible; las demás esperan a su issue');
+    ok(r.visibles === 'animales,colores', 'animales y colores están visibles; ropa y cuidado esperan a su issue');
     ok(r.compa, 'se ve el compañero equipado');
     ok(r.animales === 'capybara,fox,owl,cat,bear,conejo,panda,nutria', 'muestra los ocho animales, el capibara primero');
     ok(await evaluar(`[...document.querySelectorAll('[data-animal][data-tiene="1"]')].map((b) => b.dataset.animal).join()`) === 'capybara,fox,owl', 'son del jugador: el capibara (gratis), el zorro (siempre) y el búho (lo desbloqueó)');
