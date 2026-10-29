@@ -256,7 +256,7 @@
       "color": "#E9B486",
       "soft": "#FAEEDF",
       "added": "2026-10-28",
-      "files": ["games/companero/economia.js", "games/companero/arte.js", "games/companero/disenos.js", "games/companero/prendas.js"]
+      "files": ["games/companero/economia.js", "games/companero/arte.js", "games/companero/disenos.js", "games/companero/prendas.js", "games/companero/expresiones.js", "games/companero/cuidado.js"]
     },
     {
       "id": "morris",
