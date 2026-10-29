@@ -183,7 +183,7 @@ function testEntrada() {
   ok(g.path === 'games/companero/index.html' && fs.existsSync(PAGINA), 'su página existe');
   ok(fs.existsSync(path.join(ROOT, 'www', g.icon)), 'su ícono existe');
   ok(['fa', 'en', 'zh', 'de', 'es'].every((l) => g.name[l] && g.summary[l]), 'nombre y resumen en los cinco idiomas');
-  ok(['games/companero/economia.js', 'games/companero/arte.js', 'games/companero/disenos.js'].every((f) => g.files.includes(f) && fs.existsSync(path.join(ROOT, 'www', f))), 'files lista economia.js, arte.js y disenos.js, y existen: el service worker los guarda');
+  ok(['games/companero/economia.js', 'games/companero/arte.js', 'games/companero/disenos.js', 'games/companero/prendas.js'].every((f) => g.files.includes(f) && fs.existsSync(path.join(ROOT, 'www', f))), 'files lista economia.js, arte.js, disenos.js y prendas.js, y existen: el service worker los guarda');
   const html = fs.existsSync(PAGINA) ? fs.readFileSync(PAGINA, 'utf8') : '';
   ok(['fa', 'en', 'zh', 'de', 'es'].every((l) => html.includes(JSON.stringify(g.name[l]).slice(1, -1))), 'la página usa el mismo nombre que games.json en cada idioma');
 }
@@ -249,6 +249,57 @@ async function testDisenosPagina() {
   });
 }
 
+async function testPrendasFuente() {
+  head('La ropa: una sola fuente para la app y el arte (#8)');
+  const P = path.join(ROOT, 'www/games/companero/prendas.js');
+  const A = fs.existsSync(ARTE) ? require(ARTE) : null;
+  ok(fs.existsSync(P), 'www/games/companero/prendas.js existe');
+  if (!fs.existsSync(P) || !A || !A.prendas) return ok(false, 'arte.js trae los datos de la ropa');
+  const diseno = await import(path.join(ROOT, 'design/companero/prendas.mjs'));
+  ok(JSON.stringify(A.prendas) === JSON.stringify(diseno.datosPrendas), 'arte.js trae las mismas prendas, catálogo y anclajes que design/companero/');
+  const { componer } = require(P);
+  let iguales = 0, total = 0;
+  for (const id of Object.keys(A.cuerpos)) for (const p of A.prendas.catalogo) {
+    total++;
+    if (componer(A.cuerpos[id], id, [p.id], A.prendas) === diseno.componer(id, [p.id])) iguales++;
+  }
+  ok(total === 56 && iguales === 56, 'la app viste las 56 combinaciones igual que el arte que mide Chrome (' + iguales + ' de ' + total + ')');
+  const solo = componer(A.cuerpos.fox, 'fox', [], A.prendas);
+  ok(componer(A.cuerpos.fox, 'fox', ['dragon', 'gorra'], A.prendas) === componer(A.cuerpos.fox, 'fox', ['gorra'], A.prendas) && componer(A.cuerpos.fox, 'fox', ['dragon'], A.prendas) === solo, 'una prenda desconocida se omite sin romper al animal');
+}
+
+async function testRopaPagina() {
+  head('La ropa en la página: comprar, reemplazar, quitar, cambiar de animal (#8)');
+  if (!fs.existsSync(PAGINA)) return ok(false, 'la página no existe todavía');
+  await navegador(async ({ abrir, evaluar }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 500 }));
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(`[...document.querySelectorAll('[data-espacio]')].map((g) => g.dataset.espacio).join()`) === 'cabeza,cuello,cuerpo', 'la ropa tiene los tres espacios: cabeza, cuello y cuerpo');
+    ok(await evaluar(`[...document.querySelectorAll('[data-prenda-item]')].map((b) => b.dataset.prendaItem).join()`) === 'gorra,corona,lentes,lazo,panuelo,sueter,capa', 'aparecen las siete prendas');
+    ok(await evaluar(`document.querySelectorAll('[data-ninguna]').length === 3`), 'cada espacio tiene su opción «Ninguna»');
+    ok(/80/.test(await evaluar(`document.querySelector('[data-prenda-item="lazo"]').getAttribute('aria-label') || ''`)), 'el lector de pantalla anuncia el nombre y el precio de una prenda que no se tiene');
+
+    const comprar = async (id) => { await evaluar(`document.querySelector('[data-prenda-item="${id}"]').click()`); await evaluar(pausa(250)); await evaluar(aceptar); await evaluar(pausa(250)); };
+    await comprar('lazo');
+    ok(await evaluar(`+localStorage.getItem('chogan.app.coins') === 420 && !!document.querySelector('.cp-compa [data-prenda="lazo"]')`), 'el lazo cuesta 80 una vez (500 → 420) y el compañero lo lleva puesto');
+    await comprar('gorra');
+    await comprar('corona');
+    const cabeza = await evaluar(`({ monedas: +localStorage.getItem('chogan.app.coins'), corona: !!document.querySelector('.cp-compa [data-prenda="corona"]'), gorra: !!document.querySelector('.cp-compa [data-prenda="gorra"]'), lazo: !!document.querySelector('.cp-compa [data-prenda="lazo"]') })`);
+    ok(cabeza.monedas === 110 && cabeza.corona && !cabeza.gorra && cabeza.lazo, 'una prenda por espacio: la corona reemplaza a la gorra y el lazo sigue (500 → 110)');
+    await evaluar(`document.querySelector('[data-ninguna="cabeza"]').click()`);
+    ok(await evaluar(`!document.querySelector('.cp-compa [data-prenda="corona"]') && !!document.querySelector('.cp-compa [data-prenda="lazo"]') && +localStorage.getItem('chogan.app.coins') === 110`), '«Ninguna» quita la de la cabeza, sin costo y sin tocar las demás');
+    await evaluar(`document.querySelector('[data-prenda-item="gorra"]').click()`);
+    await evaluar(pausa(200));
+    ok(await evaluar(`!document.querySelector('.ch-scrim') && !!document.querySelector('.cp-compa [data-prenda="gorra"]') && +localStorage.getItem('chogan.app.coins') === 110`), 'volver a ponerse una prenda que ya se tiene no cobra ni pregunta');
+    ok(/en uso/i.test(await evaluar(`document.querySelector('[data-prenda-item="gorra"]').getAttribute('aria-label') || ''`)), 'el lector de pantalla anuncia que la gorra está en uso');
+    await evaluar(`document.querySelector('[data-animal="capybara"]').click()`);
+    ok(await evaluar(`!!document.querySelector('.cp-compa [data-prenda="gorra"]') && !!document.querySelector('.cp-compa [data-prenda="lazo"]')`), 'al cambiar al capibara, el atuendo se conserva');
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(`!!document.querySelector('.cp-compa [data-prenda="gorra"]') && !!document.querySelector('.cp-compa [data-prenda="lazo"]') && +localStorage.getItem('chogan.app.coins') === 110`), 'el atuendo y las compras persisten al recargar');
+  });
+}
+
 // Chrome driven over its DevTools protocol, with Node's own fetch and WebSocket: no dependency
 async function navegador(fn) {
   const { spawn } = require('child_process');
@@ -309,7 +360,7 @@ async function testPagina() {
         equipado: (document.querySelector('[data-animal][aria-pressed="true"]') || {}).dataset?.animal,
         foco: [...document.querySelectorAll('[data-seccion]:not([hidden]) button')].every((b) => b.tabIndex >= 0 && !b.disabled) }; })()`);
     ok(r.todas === 'animales,colores,cuidado,ropa', 'hay cuatro regiones identificables: animales, colores, ropa y cuidado');
-    ok(r.visibles === 'animales,colores', 'animales y colores están visibles; ropa y cuidado esperan a su issue');
+    ok(r.visibles === 'animales,colores,ropa', 'animales, colores y ropa están visibles; cuidado espera a su issue');
     ok(r.compa, 'se ve el compañero equipado');
     ok(r.animales === 'capybara,fox,owl,cat,bear,conejo,panda,nutria', 'muestra los ocho animales, el capibara primero');
     ok(await evaluar(`[...document.querySelectorAll('[data-animal][data-tiene="1"]')].map((b) => b.dataset.animal).join()`) === 'capybara,fox,owl', 'son del jugador: el capibara (gratis), el zorro (siempre) y el búho (lo desbloqueó)');

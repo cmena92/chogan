@@ -23,6 +23,8 @@
   .cp-nota { font-size: .8rem; opacity: .75; }
   .cp-item--falta svg { opacity: .55; filter: grayscale(.4); }
   .cp-precio { font-weight: 600; opacity: 1; }
+  .cp-ropa { display: flex; flex-direction: column; gap: var(--s-2); }
+  .cp-subtitulo { margin: var(--s-2) 0 0; font-size: .9rem; opacity: .8; }
 </style>
 </head>
 <body>
@@ -31,6 +33,7 @@
 <script src="economia.js"></script>
 <script src="arte.js"></script>
 <script src="disenos.js"></script>
+<script src="prendas.js"></script>
 <script>
 (function () {
   'use strict';
@@ -38,27 +41,32 @@
 
   /* ==== TEXTOS START ==== */
   var TEXTOS = {
-    fa: { d_natural: 'طبیعی', d_medianoche: 'نیمه‌شب', d_arcoiris: 'رنگین‌کمان', d_manchitas: 'خال‌خالی', d_rayas: 'راه‌راه', d_dorado: 'طلایی',
+    fa: { p_gorra: 'کلاه', p_corona: 'تاج', p_lentes: 'عینک', p_lazo: 'پاپیون', p_panuelo: 'دستمال گردن', p_sueter: 'پلیور', p_capa: 'شنل', e_cabeza: 'سر', e_cuello: 'گردن', e_cuerpo: 'بدن', ninguna: 'هیچ‌کدام', ariaPrecio: '{nombre}، {precio}', ariaTuyo: '{nombre}، مال توست', ariaEnUso: '{nombre}، در حال استفاده', ariaPerfil: '{nombre}، در نمایه باز می‌شود',
+      d_natural: 'طبیعی', d_medianoche: 'نیمه‌شب', d_arcoiris: 'رنگین‌کمان', d_manchitas: 'خال‌خالی', d_rayas: 'راه‌راه', d_dorado: 'طلایی',
       desbloquear: 'با {n} سکه باز شود؟', desbloquearBtn: 'باز کردن', faltan: '{n} سکه کم داری', jugarParaGanar: 'یک بازی کن تا سکه بگیری.', enPerfil: 'در نمایه باز می‌شود', precio: '{n} سکه', tuyo: 'مال توست',
       monedas: 'سکه', animales: 'حیوان‌ها', colores: 'رنگ‌ها', ropa: 'لباس‌ها', cuidado: 'مراقبت',
       cargando: 'همراهت را آماده می‌کنیم…', vacio: 'هنوز اینجا چیزی نیست.', sinMonedas: 'هنوز سکه نداری. یک بازی کن تا سکه بگیری.', equipado: 'در حال استفاده',
       a_fox: 'روباه', a_owl: 'جغد', a_cat: 'گربه', a_bear: 'خرس', a_capybara: 'کاپیبارا', a_conejo: 'خرگوش', a_panda: 'پاندا', a_nutria: 'سمور آبی' },
-    en: { d_natural: 'Natural', d_medianoche: 'Midnight', d_arcoiris: 'Soft rainbow', d_manchitas: 'Spots', d_rayas: 'Stripes', d_dorado: 'Golden',
+    en: { p_gorra: 'Cap', p_corona: 'Crown', p_lentes: 'Glasses', p_lazo: 'Bow', p_panuelo: 'Bandana', p_sueter: 'Sweater', p_capa: 'Cape', e_cabeza: 'Head', e_cuello: 'Neck', e_cuerpo: 'Body', ninguna: 'None', ariaPrecio: '{nombre}, {precio}', ariaTuyo: '{nombre}, yours', ariaEnUso: '{nombre}, in use', ariaPerfil: '{nombre}, unlocked in your profile',
+      d_natural: 'Natural', d_medianoche: 'Midnight', d_arcoiris: 'Soft rainbow', d_manchitas: 'Spots', d_rayas: 'Stripes', d_dorado: 'Golden',
       desbloquear: 'Unlock for {n} coins?', desbloquearBtn: 'Unlock', faltan: 'You need {n} more coins', jugarParaGanar: 'Play a game to earn some.', enPerfil: 'Unlocked in your profile', precio: '{n} coins', tuyo: 'Yours',
       monedas: 'Coins', animales: 'Animals', colores: 'Colours', ropa: 'Clothes', cuidado: 'Care',
       cargando: 'Getting your companion ready…', vacio: 'Nothing here yet.', sinMonedas: 'You have no coins yet. Play a game to earn some.', equipado: 'In use',
       a_fox: 'Fox', a_owl: 'Owl', a_cat: 'Cat', a_bear: 'Bear', a_capybara: 'Capybara', a_conejo: 'Rabbit', a_panda: 'Panda', a_nutria: 'Otter' },
-    zh: { d_natural: '自然', d_medianoche: '午夜', d_arcoiris: '柔和彩虹', d_manchitas: '斑点', d_rayas: '条纹', d_dorado: '金色',
+    zh: { p_gorra: '鸭舌帽', p_corona: '王冠', p_lentes: '眼镜', p_lazo: '蝴蝶结', p_panuelo: '领巾', p_sueter: '毛衣', p_capa: '斗篷', e_cabeza: '头部', e_cuello: '颈部', e_cuerpo: '身体', ninguna: '不穿', ariaPrecio: '{nombre}，{precio}', ariaTuyo: '{nombre}，已拥有', ariaEnUso: '{nombre}，使用中', ariaPerfil: '{nombre}，在个人资料中解锁',
+      d_natural: '自然', d_medianoche: '午夜', d_arcoiris: '柔和彩虹', d_manchitas: '斑点', d_rayas: '条纹', d_dorado: '金色',
       desbloquear: '花 {n} 金币解锁？', desbloquearBtn: '解锁', faltan: '还差 {n} 金币', jugarParaGanar: '玩一局就能赚到。', enPerfil: '在个人资料中解锁', precio: '{n} 金币', tuyo: '已拥有',
       monedas: '金币', animales: '动物', colores: '颜色', ropa: '服装', cuidado: '照顾',
       cargando: '正在准备你的伙伴……', vacio: '这里还没有东西。', sinMonedas: '你还没有金币。玩一局就能赚到。', equipado: '使用中',
       a_fox: '狐狸', a_owl: '猫头鹰', a_cat: '猫', a_bear: '熊', a_capybara: '水豚', a_conejo: '兔子', a_panda: '熊猫', a_nutria: '水獭' },
-    de: { d_natural: 'Natur', d_medianoche: 'Mitternacht', d_arcoiris: 'Sanfter Regenbogen', d_manchitas: 'Tupfen', d_rayas: 'Streifen', d_dorado: 'Golden',
+    de: { p_gorra: 'Kappe', p_corona: 'Krone', p_lentes: 'Brille', p_lazo: 'Schleife', p_panuelo: 'Halstuch', p_sueter: 'Pullover', p_capa: 'Umhang', e_cabeza: 'Kopf', e_cuello: 'Hals', e_cuerpo: 'Körper', ninguna: 'Nichts', ariaPrecio: '{nombre}, {precio}', ariaTuyo: '{nombre}, gehört dir', ariaEnUso: '{nombre}, in Gebrauch', ariaPerfil: '{nombre}, im Profil freischaltbar',
+      d_natural: 'Natur', d_medianoche: 'Mitternacht', d_arcoiris: 'Sanfter Regenbogen', d_manchitas: 'Tupfen', d_rayas: 'Streifen', d_dorado: 'Golden',
       desbloquear: 'Für {n} Münzen freischalten?', desbloquearBtn: 'Freischalten', faltan: 'Dir fehlen {n} Münzen', jugarParaGanar: 'Spiel eine Runde, um welche zu verdienen.', enPerfil: 'Im Profil freischaltbar', precio: '{n} Münzen', tuyo: 'Deins',
       monedas: 'Münzen', animales: 'Tiere', colores: 'Farben', ropa: 'Kleidung', cuidado: 'Pflege',
       cargando: 'Dein Begleiter wird vorbereitet …', vacio: 'Hier ist noch nichts.', sinMonedas: 'Du hast noch keine Münzen. Spiel eine Runde, um welche zu verdienen.', equipado: 'In Gebrauch',
       a_fox: 'Fuchs', a_owl: 'Eule', a_cat: 'Katze', a_bear: 'Bär', a_capybara: 'Wasserschwein', a_conejo: 'Hase', a_panda: 'Panda', a_nutria: 'Otter' },
-    es: { d_natural: 'Natural', d_medianoche: 'Medianoche', d_arcoiris: 'Arcoíris suave', d_manchitas: 'Manchitas', d_rayas: 'Rayas', d_dorado: 'Dorado',
+    es: { p_gorra: 'Gorra', p_corona: 'Corona', p_lentes: 'Lentes', p_lazo: 'Lazo', p_panuelo: 'Pañuelo', p_sueter: 'Suéter', p_capa: 'Capa', e_cabeza: 'Cabeza', e_cuello: 'Cuello', e_cuerpo: 'Cuerpo', ninguna: 'Ninguna', ariaPrecio: '{nombre}, {precio}', ariaTuyo: '{nombre}, tuyo', ariaEnUso: '{nombre}, en uso', ariaPerfil: '{nombre}, se desbloquea en tu perfil',
+      d_natural: 'Natural', d_medianoche: 'Medianoche', d_arcoiris: 'Arcoíris suave', d_manchitas: 'Manchitas', d_rayas: 'Rayas', d_dorado: 'Dorado',
       desbloquear: '¿Desbloquear por {n} monedas?', desbloquearBtn: 'Desbloquear', faltan: 'Te faltan {n} monedas', jugarParaGanar: 'Juega una partida para ganarlas.', enPerfil: 'Se desbloquea en tu perfil', precio: '{n} monedas', tuyo: 'Tuyo',
       monedas: 'Monedas', animales: 'Animales', colores: 'Colores', ropa: 'Ropa', cuidado: 'Cuidado',
       cargando: 'Preparando a tu compañero…', vacio: 'Todavía no hay nada aquí.', sinMonedas: 'Todavía no tienes monedas. Juega una partida para ganarlas.', equipado: 'En uso',
@@ -92,6 +100,20 @@
   var NUCLEO = ['fox', 'owl', 'cat', 'bear'];
   var DISENOS = window.CompaneroArte.disenos;
   var aplicar = function (svg, animal, diseno) { return window.CompaneroDisenos.aplicar(svg, animal, diseno, DISENOS); };
+  var PRENDAS = window.CompaneroArte.prendas;
+  var ESPACIOS = ['cabeza', 'cuello', 'cuerpo'];
+  // the design first and the clothes after, so a design never recolours a garment
+  var vestir = function (animal, diseno, prendas) {
+    var ids = ESPACIOS.map(function (e) { return prendas[e]; }).filter(Boolean);
+    return window.CompaneroPrendas.componer(aplicar(ARTE.cuerpos[animal] || ARTE.cuerpos.fox, animal, diseno), animal, ids, PRENDAS);
+  };
+  // What a card announces to a screen reader: its name, and its price or that it is yours and in use
+  var etiqueta = function (nombre, tiene, puesto, precio, perfil) {
+    if (puesto) return C.t('ariaEnUso', { nombre: nombre });
+    if (tiene) return C.t('ariaTuyo', { nombre: nombre });
+    if (perfil) return C.t('ariaPerfil', { nombre: nombre });
+    return C.t('ariaPrecio', { nombre: nombre, precio: C.t('precio', { n: C.num(precio) }) });
+  };
   var precioDe = {};
   window.CompaneroEconomia.CATALOGO.forEach(function (a) { precioDe[a.id] = a.precio; });
 
@@ -100,6 +122,7 @@
   var sinMonedas = el('p', { class: 'cp-aviso', 'data-estado': 'sin-monedas', hidden: true, text: C.t('sinMonedas') });
   var grid = el('div', { class: 'cp-grid' });
   var gridDisenos = el('div', { class: 'cp-grid' });
+  var ropa = el('div', { class: 'cp-ropa' });
 
   function seccion(id, contenido, visible) {
     var titulo = el('h2', { id: 'cp-' + id, text: C.t(id) });
@@ -114,7 +137,7 @@
     estado, compa, sinMonedas,
     seccion('animales', [grid], true),
     seccion('colores', [gridDisenos], true),
-    seccion('ropa', [vacio()], false),
+    seccion('ropa', [ropa], true),
     seccion('cuidado', [vacio()], false)
   ]);
   ctx.stat('monedas', C.t('monedas'));
@@ -123,7 +146,7 @@
 
   function render() {
     var eq = E.equipado();
-    compa.innerHTML = aplicar(ARTE.cuerpos[eq.animal] || ARTE.cuerpos.fox, eq.animal, eq.diseno);
+    compa.innerHTML = vestir(eq.animal, eq.diseno, eq.prendas);
     var svg = compa.querySelector('svg');
     if (svg) { svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', C.t('a_' + eq.animal)); }
 
@@ -133,6 +156,7 @@
       var b = el('button', { class: 'cp-item', type: 'button', 'data-animal': id, 'data-tiene': tiene ? '1' : '0',
         'aria-pressed': puesto ? 'true' : 'false' });
       if (!tiene && delNucleo) b.setAttribute('data-bloqueado', 'perfil');
+      b.setAttribute('aria-label', etiqueta(C.t('a_' + id), tiene, puesto, precioDe[id], !tiene && delNucleo));
       b.innerHTML = ARTE.cuerpos[id];
       var dibujo = b.querySelector('svg');
       if (dibujo) dibujo.setAttribute('aria-hidden', 'true');
@@ -150,6 +174,7 @@
       var tiene = E.poseido(d.id), puesto = eq.diseno === d.id;
       var b = el('button', { class: 'cp-item', type: 'button', 'data-diseno': d.id, 'data-tiene': tiene ? '1' : '0',
         'aria-pressed': puesto ? 'true' : 'false' });
+      b.setAttribute('aria-label', etiqueta(C.t('d_' + d.id), tiene, puesto, precioDe[d.id], false));
       b.innerHTML = aplicar(ARTE.cuerpos[eq.animal] || ARTE.cuerpos.fox, eq.animal, d.id);
       var dibujo = b.querySelector('svg');
       if (dibujo) dibujo.setAttribute('aria-hidden', 'true');
@@ -160,6 +185,36 @@
       b.addEventListener('click', function () { tocar(d.id, gridDisenos, 'data-diseno'); });
       gridDisenos.appendChild(b);
     });
+
+    // Clothes: one group per slot, a «None» card first, and each garment drawn on the companion
+    // as it would look with that garment in its slot
+    ropa.innerHTML = '';
+    ESPACIOS.forEach(function (espacio) {
+      var g = el('div', { class: 'cp-grid', 'data-espacio': espacio, role: 'group', 'aria-label': C.t('e_' + espacio) });
+      var nada = el('button', { class: 'cp-item', type: 'button', 'data-ninguna': espacio, 'aria-pressed': eq.prendas[espacio] ? 'false' : 'true' });
+      var sinPrenda = {}; ESPACIOS.forEach(function (e) { if (e !== espacio && eq.prendas[e]) sinPrenda[e] = eq.prendas[e]; });
+      nada.innerHTML = vestir(eq.animal, eq.diseno, sinPrenda);
+      nada.appendChild(el('span', { text: C.t('ninguna') }));
+      nada.addEventListener('click', function () { E.quitar(espacio); C.feedback('tap'); render(); enfocar(ropa, 'data-ninguna', espacio); });
+      g.appendChild(nada);
+      PRENDAS.catalogo.filter(function (p) { return p.espacio === espacio; }).forEach(function (p) {
+        var tiene = E.poseido(p.id), puesto = eq.prendas[espacio] === p.id;
+        var b = el('button', { class: 'cp-item', type: 'button', 'data-prenda-item': p.id, 'data-tiene': tiene ? '1' : '0',
+          'aria-pressed': puesto ? 'true' : 'false', 'aria-label': etiqueta(C.t('p_' + p.id), tiene, puesto, precioDe[p.id], false) });
+        var conEsta = {}; ESPACIOS.forEach(function (e) { if (eq.prendas[e]) conEsta[e] = eq.prendas[e]; });
+        conEsta[espacio] = p.id;
+        b.innerHTML = vestir(eq.animal, eq.diseno, conEsta);
+        if (!tiene) b.classList.add('cp-item--falta');
+        b.appendChild(el('span', { text: C.t('p_' + p.id) }));
+        if (puesto) b.appendChild(el('span', { class: 'cp-nota', text: C.t('equipado') }));
+        else if (!tiene) b.appendChild(el('span', { class: 'cp-nota cp-precio', 'data-precio': String(precioDe[p.id]), text: C.t('precio', { n: C.num(precioDe[p.id]) }) }));
+        b.addEventListener('click', function () { tocar(p.id, ropa, 'data-prenda-item'); });
+        g.appendChild(b);
+      });
+      ropa.appendChild(el('h3', { class: 'cp-subtitulo', text: C.t('e_' + espacio) }));
+      ropa.appendChild(g);
+    });
+    ropa.querySelectorAll('.cp-item svg').forEach(function (x) { x.setAttribute('aria-hidden', 'true'); });
 
     var monedas = C.coins.get();
     ctx.setStat('monedas', C.num ? C.num(monedas) : monedas);

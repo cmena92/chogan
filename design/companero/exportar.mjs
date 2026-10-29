@@ -3,6 +3,7 @@
 // Usage: node design/companero/exportar.mjs
 import fs from "node:fs";
 import path from "node:path";
+import { datosPrendas } from "./prendas.mjs";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const dir = path.join(here, "cuerpos");
@@ -23,10 +24,11 @@ fs.writeFileSync(
    change the art in design/ and run the exporter again. */
 (function (root) {
   var ARTE = { cuerpos: ${JSON.stringify(cuerpos, null, 2).replace(/\n/g, "\n  ")},
-    disenos: ${JSON.stringify(datos, null, 2).replace(/\n/g, "\n  ")} };
+    disenos: ${JSON.stringify(datos, null, 2).replace(/\n/g, "\n  ")},
+    prendas: ${JSON.stringify(datosPrendas, null, 2).replace(/\n/g, "\n  ")} };
   if (typeof module === 'object' && module.exports) module.exports = ARTE;
   else root.CompaneroArte = ARTE;
 })(this);
 `,
 );
-console.log(`arte.js: ${Object.keys(cuerpos).length} cuerpos, ${disenos.length} diseños`);
+console.log(`arte.js: ${Object.keys(cuerpos).length} cuerpos, ${disenos.length} diseños, ${datosPrendas.catalogo.length} prendas`);

@@ -110,6 +110,367 @@
         "claro": "#F1E9FA"
       }
     }
+  },
+    prendas: {
+    "catalogo": [
+      {
+        "id": "gorra",
+        "espacio": "cabeza",
+        "nombre": "Gorra"
+      },
+      {
+        "id": "corona",
+        "espacio": "cabeza",
+        "nombre": "Corona"
+      },
+      {
+        "id": "lentes",
+        "espacio": "cabeza",
+        "anclaje": "ojos",
+        "nombre": "Lentes"
+      },
+      {
+        "id": "lazo",
+        "espacio": "cuello",
+        "nombre": "Lazo"
+      },
+      {
+        "id": "panuelo",
+        "espacio": "cuello",
+        "nombre": "Pañuelo"
+      },
+      {
+        "id": "sueter",
+        "espacio": "cuerpo",
+        "nombre": "Suéter"
+      },
+      {
+        "id": "capa",
+        "espacio": "cuerpo",
+        "nombre": "Capa"
+      }
+    ],
+    "piezas": {
+      "gorra": {
+        "frente": "<g id=\"prenda\">\n    <path d=\"M-21 8c0-17 9-26 21-26s21 9 21 26z\" fill=\"#2F6FDE\"/>\n    <path d=\"M-21 4h47c4 0 4 6 0 6h-47z\" fill=\"#2457B8\"/>\n    <circle cx=\"0\" cy=\"-18\" r=\"3\" fill=\"#2457B8\"/>\n  </g>",
+        "atras": ""
+      },
+      "corona": {
+        "frente": "<g id=\"prenda\">\n    <path d=\"M-17 8V-10l8.5 8L0-14l8.5 12 8.5-8V8z\" fill=\"#F4C430\"/>\n    <rect x=\"-17\" y=\"2\" width=\"34\" height=\"6\" fill=\"#E0A800\"/>\n    <circle cx=\"0\" cy=\"-3\" r=\"2.6\" fill=\"#D7263D\"/><circle cx=\"-9\" cy=\"2\" r=\"1.8\" fill=\"#2F6FDE\"/><circle cx=\"9\" cy=\"2\" r=\"1.8\" fill=\"#2F6FDE\"/>\n  </g>",
+        "atras": ""
+      },
+      "lentes": {
+        "frente": "<g id=\"prenda\" fill=\"rgba(255,255,255,0.18)\" stroke=\"#2C2620\" stroke-width=\"2.5\">\n    <circle cx=\"-14\" cy=\"0\" r=\"8.5\"/><circle cx=\"14\" cy=\"0\" r=\"8.5\"/>\n    <path d=\"M-5.5 0h11\" fill=\"none\"/>\n  </g>",
+        "atras": ""
+      },
+      "lazo": {
+        "frente": "<g id=\"prenda\">\n    <path d=\"M0 4-15-2v12zM0 4 15-2v12z\" fill=\"#D7263D\"/>\n    <circle cx=\"0\" cy=\"4\" r=\"4\" fill=\"#B51F33\"/>\n  </g>",
+        "atras": ""
+      },
+      "panuelo": {
+        "frente": "<g id=\"prenda\">\n    <path d=\"M-20-2h40L0 16z\" fill=\"#1B998B\"/>\n    <path d=\"M-20-2h40v4h-40z\" fill=\"#147A6F\"/>\n    <circle cx=\"-6\" cy=\"6\" r=\"1.4\" fill=\"#FFFFFF\"/><circle cx=\"6\" cy=\"6\" r=\"1.4\" fill=\"#FFFFFF\"/><circle cx=\"0\" cy=\"11\" r=\"1.4\" fill=\"#FFFFFF\"/>\n  </g>",
+        "atras": ""
+      },
+      "sueter": {
+        "frente": "<g id=\"prenda\">\n    <path d=\"M-25.4 16A30 30 0 1 1 25.4 16z\" fill=\"#4F5BD5\"/>\n    <path d=\"M-28.9-8h57.8l.8 4h-59.4z\" fill=\"#FFFFFF\" opacity=\"0.9\"/>\n    <path d=\"M-25.4 16h50.8l2.2-4.3h-55.2z\" fill=\"#3B47B8\"/>\n  </g>",
+        "atras": ""
+      },
+      "capa": {
+        "frente": "<g id=\"prenda-frente\"><circle cx=\"0\" cy=\"-27\" r=\"3.5\" fill=\"#F4C430\"/></g>",
+        "atras": "<g id=\"prenda-atras\"><path d=\"M-18-29h36q6 4 10 14l16 43q-44 10-88 0l16-43q4-10 10-14z\" fill=\"#8C1C3A\"/><path d=\"M-18-29h36q-18 8-36 0z\" fill=\"#6E1530\"/></g>"
+      }
+    },
+    "anclajes": {
+      "fox": {
+        "cabeza": {
+          "x": 60,
+          "y": 26
+        },
+        "cuello": {
+          "x": 60,
+          "y": 100,
+          "ancho": 40
+        },
+        "cuerpo": {
+          "x": 60,
+          "y": 130,
+          "ancho": 56,
+          "alto": 44
+        },
+        "ojos": {
+          "izq": 46,
+          "der": 74,
+          "y": 58,
+          "r": 5
+        },
+        "rasgos": {
+          "x0": 41,
+          "y0": 53,
+          "x1": 79,
+          "y1": 86
+        },
+        "ajustes": {},
+        "colores": {
+          "base": "#EE9070",
+          "oscuro": "#E07A5F",
+          "claro": "#FBEDE6"
+        }
+      },
+      "owl": {
+        "cabeza": {
+          "x": 60,
+          "y": 20
+        },
+        "cuello": {
+          "x": 60,
+          "y": 100,
+          "ancho": 40
+        },
+        "cuerpo": {
+          "x": 60,
+          "y": 130,
+          "ancho": 56,
+          "alto": 44
+        },
+        "ojos": {
+          "izq": 45,
+          "der": 75,
+          "y": 52,
+          "r": 6.5
+        },
+        "rasgos": {
+          "x0": 30,
+          "y0": 37,
+          "x1": 90,
+          "y1": 93
+        },
+        "ajustes": {
+          "cabeza": {
+            "dy": 4
+          }
+        },
+        "colores": {
+          "base": "#6A8CBF",
+          "oscuro": "#4E6C97",
+          "claro": "#FBEDE6"
+        }
+      },
+      "cat": {
+        "cabeza": {
+          "x": 60,
+          "y": 28
+        },
+        "cuello": {
+          "x": 60,
+          "y": 100,
+          "ancho": 40
+        },
+        "cuerpo": {
+          "x": 60,
+          "y": 130,
+          "ancho": 56,
+          "alto": 44
+        },
+        "ojos": {
+          "izq": 47,
+          "der": 73,
+          "y": 58,
+          "r": 5.5
+        },
+        "rasgos": {
+          "x0": 41,
+          "y0": 52,
+          "x1": 79,
+          "y1": 83
+        },
+        "ajustes": {},
+        "colores": {
+          "base": "#F0BC70",
+          "oscuro": "#E4A853",
+          "claro": "#FBEDE6"
+        }
+      },
+      "bear": {
+        "cabeza": {
+          "x": 60,
+          "y": 26
+        },
+        "cuello": {
+          "x": 60,
+          "y": 100,
+          "ancho": 40
+        },
+        "cuerpo": {
+          "x": 60,
+          "y": 130,
+          "ancho": 56,
+          "alto": 44
+        },
+        "ojos": {
+          "izq": 47,
+          "der": 73,
+          "y": 56,
+          "r": 5
+        },
+        "rasgos": {
+          "x0": 40,
+          "y0": 51,
+          "x1": 80,
+          "y1": 90
+        },
+        "ajustes": {},
+        "colores": {
+          "base": "#94C398",
+          "oscuro": "#7BAE7F",
+          "claro": "#E7F2E4"
+        }
+      },
+      "capybara": {
+        "cabeza": {
+          "x": 60,
+          "y": 26
+        },
+        "cuello": {
+          "x": 60,
+          "y": 100,
+          "ancho": 40
+        },
+        "cuerpo": {
+          "x": 60,
+          "y": 130,
+          "ancho": 56,
+          "alto": 44
+        },
+        "ojos": {
+          "izq": 44,
+          "der": 76,
+          "y": 53,
+          "r": 5
+        },
+        "rasgos": {
+          "x0": 33,
+          "y0": 48,
+          "x1": 87,
+          "y1": 96
+        },
+        "ajustes": {},
+        "colores": {
+          "base": "#C9935F",
+          "oscuro": "#A9744A",
+          "claro": "#E6BE92"
+        }
+      },
+      "conejo": {
+        "cabeza": {
+          "x": 60,
+          "y": 36
+        },
+        "cuello": {
+          "x": 60,
+          "y": 100,
+          "ancho": 40
+        },
+        "cuerpo": {
+          "x": 60,
+          "y": 130,
+          "ancho": 56,
+          "alto": 44
+        },
+        "ojos": {
+          "izq": 47,
+          "der": 73,
+          "y": 63,
+          "r": 5
+        },
+        "rasgos": {
+          "x0": 42,
+          "y0": 58,
+          "x1": 78,
+          "y1": 95
+        },
+        "ajustes": {
+          "cabeza": {
+            "dy": 2,
+            "escala": 0.75
+          }
+        },
+        "colores": {
+          "base": "#F2B3C8",
+          "oscuro": "#E59AB4",
+          "claro": "#FCE9EF"
+        }
+      },
+      "panda": {
+        "cabeza": {
+          "x": 60,
+          "y": 26
+        },
+        "cuello": {
+          "x": 60,
+          "y": 100,
+          "ancho": 40
+        },
+        "cuerpo": {
+          "x": 60,
+          "y": 130,
+          "ancho": 56,
+          "alto": 44
+        },
+        "ojos": {
+          "izq": 45,
+          "der": 75,
+          "y": 57,
+          "r": 11
+        },
+        "rasgos": {
+          "x0": 34,
+          "y0": 45,
+          "x1": 86,
+          "y1": 86
+        },
+        "ajustes": {},
+        "colores": {
+          "base": "#F4F1EA",
+          "oscuro": "#4A4E5C",
+          "claro": "#FFFFFF"
+        }
+      },
+      "nutria": {
+        "cabeza": {
+          "x": 60,
+          "y": 24
+        },
+        "cuello": {
+          "x": 60,
+          "y": 100,
+          "ancho": 40
+        },
+        "cuerpo": {
+          "x": 60,
+          "y": 130,
+          "ancho": 56,
+          "alto": 44
+        },
+        "ojos": {
+          "izq": 46,
+          "der": 74,
+          "y": 56,
+          "r": 5
+        },
+        "rasgos": {
+          "x0": 34,
+          "y0": 51,
+          "x1": 86,
+          "y1": 98
+        },
+        "ajustes": {},
+        "colores": {
+          "base": "#B59BD6",
+          "oscuro": "#9C80C2",
+          "claro": "#F1E9FA"
+        }
+      }
+    }
   } };
   if (typeof module === 'object' && module.exports) module.exports = ARTE;
   else root.CompaneroArte = ARTE;

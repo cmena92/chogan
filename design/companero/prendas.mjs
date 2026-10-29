@@ -6,6 +6,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const leer = (...p) => fs.readFileSync(path.join(here, ...p), "utf8");
@@ -20,39 +21,15 @@ const piezas = Object.fromEntries(
   }),
 );
 
-// The glasses follow each animal's eyes: one ring per eye, 3.5 units wider than the eye
-function lentes(o) {
-  const R = o.r + 3.5;
-  const puente = o.der - o.izq - 2 * R > 0 ? `<path d="M${o.izq + R} ${o.y}H${o.der - R}" fill="none"/>` : "";
-  return `<g data-prenda="lentes" fill="rgba(255,255,255,0.18)" stroke="#2C2620" stroke-width="2.5"><circle cx="${o.izq}" cy="${o.y}" r="${R}"/><circle cx="${o.der}" cy="${o.y}" r="${R}"/>${puente}</g>`;
-}
+// The logic itself lives in the app (www/games/companero/prendas.js), so the browser and this
+// check share one source; this script only feeds it the data and measures the result.
+const require = createRequire(import.meta.url);
+const { componer: componerDatos } = require("../../www/games/companero/prendas.js");
+export const datosPrendas = { catalogo, piezas, anclajes };
 
-function colocar(animal, prenda, capa) {
-  const a = anclajes[animal];
-  const p = catalogo.find((x) => x.id === prenda);
-  if (p.anclaje === "ojos") return capa === "frente" ? lentes(a.ojos) : "";
-  const punto = a[p.espacio];
-  const aj = (a.ajustes && a.ajustes[p.espacio]) || {};
-  const dibujo = piezas[prenda][capa];
-  if (!dibujo) return "";
-  return `<g data-prenda="${prenda}" transform="translate(${punto.x} ${punto.y + (aj.dy || 0)}) scale(${aj.escala || 1})">${dibujo}</g>`;
-}
-
-// The companion with the given garments: capes behind the body, sweaters over the belly and under
-// the arms, everything else over the face, and the glasses last
+// The companion with the given garments, on its body from cuerpos/ (the preview's signature)
 export function componer(animal, prendas = []) {
-  let s = leer("cuerpos", animal + ".svg");
-  const por = (espacio) => prendas.filter((id) => catalogo.find((p) => p.id === id).espacio === espacio);
-  const atras = prendas.map((id) => colocar(animal, id, "atras")).join("");
-  const sueter = por("cuerpo").filter((id) => !piezas[id].atras).map((id) => colocar(animal, id, "frente")).join("");
-  const frente = prendas
-    .filter((id) => !(por("cuerpo").includes(id) && !piezas[id].atras))
-    .sort((x, y) => (x === "lentes") - (y === "lentes"))
-    .map((id) => colocar(animal, id, "frente"))
-    .join("");
-  s = s.replace('<g id="cuerpo">', `${atras}<g id="cuerpo">`);
-  s = s.replace('<g id="brazos">', `${sueter}<g id="brazos">`);
-  return s.replace(/<\/svg>\s*$/, `${frente}</svg>\n`);
+  return componerDatos(leer("cuerpos", animal + ".svg"), animal, prendas, datosPrendas);
 }
 
 export function chrome() {
