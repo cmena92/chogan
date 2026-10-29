@@ -260,7 +260,8 @@ async function testPagina() {
     ok(r.todas === 'animales,colores,cuidado,ropa', 'hay cuatro regiones identificables: animales, colores, ropa y cuidado');
     ok(r.visibles === 'animales', 'solo animales está visible; las demás esperan a su issue');
     ok(r.compa, 'se ve el compañero equipado');
-    ok(r.animales === 'fox,owl', 'lista los animales que el jugador tiene (zorro siempre, búho porque lo desbloqueó)');
+    ok(r.animales === 'capybara,fox,owl,cat,bear,conejo,panda,nutria', 'muestra los ocho animales, el capibara primero');
+    ok(await evaluar(`[...document.querySelectorAll('[data-animal][data-tiene="1"]')].map((b) => b.dataset.animal).join()`) === 'capybara,fox,owl', 'son del jugador: el capibara (gratis), el zorro (siempre) y el búho (lo desbloqueó)');
     ok(r.foco, 'todos los botones visibles se alcanzan con el teclado');
     await evaluar(`document.querySelector('[data-animal="owl"]').click()`);
     await abrir('/games/companero/index.html');
@@ -278,6 +279,48 @@ async function testPagina() {
     const g = entradas().find((x) => x.id === 'companero');
     ok(fa.dir === 'rtl' && fa.titulo === g.name.fa, 'en persa la página va de derecha a izquierda, con su nombre persa');
   });
+}
+
+// Waits inside the page, so a dialog or a toast has time to appear
+const pausa = (ms) => `new Promise((r) => setTimeout(() => r(true), ${ms}))`;
+const aceptar = `(() => { const b = [...document.querySelectorAll('.ch-scrim button')].find((x) => /primary/.test(x.className)); if (b) b.click(); return !!b; })()`;
+
+async function testAnimales() {
+  head('Los ocho animales: comprar, saldo insuficiente y los del núcleo (#6)');
+  if (!fs.existsSync(PAGINA)) return ok(false, 'la página no existe todavía');
+  await navegador(async ({ abrir, evaluar }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ unlocks: [], monedas: 200 }));
+    await abrir('/games/companero/index.html');
+    const precio = await evaluar(`(document.querySelector('[data-animal="conejo"] [data-precio]') || {}).textContent || ''`);
+    ok(/180/.test(precio), 'el conejo, que no se tiene, muestra su precio (180)');
+    ok(await evaluar(`!!document.querySelector('[data-animal="owl"][data-bloqueado="perfil"]')`), 'el búho del núcleo, sin desbloquear, aparece bloqueado y remite al perfil');
+
+    await evaluar(`document.querySelector('[data-animal="conejo"]').click()`);
+    await evaluar(pausa(300));
+    ok(await evaluar(`!!document.querySelector('.ch-scrim')`), 'tocar el conejo pide confirmación');
+    ok(await evaluar(aceptar), 'se acepta la compra');
+    await evaluar(pausa(300));
+    const tras = await evaluar(`({ monedas: +localStorage.getItem('chogan.app.coins'), tiene: document.querySelector('[data-animal="conejo"]').dataset.tiene, puesto: document.querySelector('[data-animal="conejo"]').getAttribute('aria-pressed') })`);
+    ok(tras.monedas === 20 && tras.tiene === '1' && tras.puesto === 'true', 'el conejo cuesta 180 una sola vez (200 → 20), queda del jugador y equipado');
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(`document.querySelector('[data-animal="conejo"]').getAttribute('aria-pressed') === 'true' && +localStorage.getItem('chogan.app.coins') === 20`), 'la compra y la elección persisten al recargar');
+
+    await evaluar(`document.querySelector('[data-animal="panda"]').click()`);
+    await evaluar(pausa(300));
+    const sin = await evaluar(`({ dialogo: !!document.querySelector('.ch-scrim'), monedas: +localStorage.getItem('chogan.app.coins'), aviso: (document.querySelector('.ch-toast, [class*="toast"]') || {}).textContent || '' })`);
+    ok(!sin.dialogo && sin.monedas === 20, 'sin saldo para el panda (260), no hay compra ni cobro');
+    ok(/240/.test(sin.aviso), 'el aviso dice cuánto falta (240 monedas)');
+
+    await evaluar(`document.querySelector('[data-animal="owl"]').click()`);
+    await evaluar(pausa(300));
+    ok(await evaluar(`!document.querySelector('.ch-scrim') && JSON.parse(localStorage.getItem('chogan.app.unlocks')).length === 0 && +localStorage.getItem('chogan.app.coins') === 20`), 'el búho del núcleo no se compra aquí: sin diálogo, sin cobro y sin tocar los desbloqueos');
+
+    await evaluar(`document.querySelector('[data-animal="capybara"]').click()`);
+    ok(await evaluar(`document.querySelector('[data-animal="capybara"]').getAttribute('aria-pressed') === 'true' && +localStorage.getItem('chogan.app.coins') === 20`), 'el capibara se elige gratis');
+  });
+  const html = fs.readFileSync(PAGINA, 'utf8');
+  ok(!/coins\.add|achievements\.unlock/.test(html), 'la página nunca suma monedas ni da logros: ningún animal es una ventaja');
 }
 
 function testEstados() {
