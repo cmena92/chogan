@@ -476,7 +476,7 @@ async function testPagina() {
         equipado: (document.querySelector('[data-animal][aria-pressed="true"]') || {}).dataset?.animal,
         foco: [...document.querySelectorAll('[data-seccion]:not([hidden]) button')].every((b) => b.tabIndex >= 0 && !b.disabled) }; })()`);
     ok(r.todas === 'animales,colores,cuidado,ropa', 'hay cuatro regiones identificables: animales, colores, ropa y cuidado');
-    ok(r.visibles === 'animales,colores,ropa,cuidado', 'las cuatro regiones están visibles');
+    ok(r.visibles === 'cuidado,animales,colores,ropa', 'las cuatro regiones están visibles, con Cuidado primero (#31)');
     ok(r.compa, 'se ve el compañero equipado');
     ok(r.animales === 'capybara,fox,owl,cat,bear,conejo,panda,nutria', 'muestra los ocho animales, el capibara primero');
     ok(await evaluar(`[...document.querySelectorAll('[data-animal][data-tiene="1"]')].map((b) => b.dataset.animal).join()`) === 'capybara,fox,owl', 'son del jugador: el capibara (gratis), el zorro (siempre) y el búho (lo desbloqueó)');
@@ -783,6 +783,57 @@ async function testBorrarTodo() {
     await evaluar(pausa(1500));
     const quedan = await evaluar(`Object.keys(localStorage).filter((k) => k.indexOf('chogan.companero.') === 0)`);
     ok(Array.isArray(quedan) && quedan.length === 0, 'después: no queda ninguna clave chogan.companero.' + (quedan && quedan.length ? ' (' + quedan.join(', ') + ')' : ''));
+  });
+}
+
+/* ------------------------------------------------ the fixed stage and the sliding rows (#31) */
+
+async function testEscenario() {
+  head('Escenario fijo, cuidado primero y filas deslizables (#31)');
+  await navegador(async ({ abrir, evaluar, cdp }) => {
+    await cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 740, deviceScaleFactor: 1, mobile: true });
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 300 }));
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(`[...document.querySelectorAll('[data-seccion]')].map((x) => x.dataset.seccion).join()`) === 'cuidado,animales,colores,ropa', 'las secciones van en el orden Cuidado, Animales, Colores, Ropa');
+
+    const enPantalla = `(() => { const v = (s) => { const r = document.querySelector(s).getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight && r.height > 40; }; return v('.cp-compa') && v('.ch-gamebar'); })()`;
+    await evaluar(`document.querySelector('.ch-gamemain').scrollTop = 1e6; true`); await evaluar(pausa(150));
+    ok(await evaluar(`document.querySelector('.ch-gamemain').scrollTop > 100`), 'la página se desplaza (hay opciones debajo del escenario)');
+    ok(await evaluar(enPantalla), 'desplazada hasta la Ropa, el compañero y la barra con las monedas siguen enteros en 390 × 740');
+    ok(await evaluar(`Math.abs(document.querySelector('.cp-escenario').getBoundingClientRect().top - document.querySelector('.ch-gamebar').getBoundingClientRect().bottom) < 1`), 'el escenario queda pegado a la barra, sin un hueco por donde se asomen las opciones');
+    await evaluar(`document.querySelector('.ch-gamemain').scrollTop = 0; true`);
+    await evaluar(`document.querySelector('[data-accion="acariciar"]').click(); true`);
+    ok(await evaluar(enPantalla) && await evaluar(`document.querySelector('.cp-compa').dataset.expresion === 'feliz'`), 'al acariciar, la reacción se ve sin desplazar');
+
+    const filas = await evaluar(`[...document.querySelectorAll('.cp-fila')].map((f) => ({ id: f.closest('[data-seccion]').dataset.seccion, sobra: f.scrollWidth > f.clientWidth + 1, snap: getComputedStyle(f).scrollSnapType, linea: [...f.children].every((c) => Math.abs(c.getBoundingClientRect().top - f.children[0].getBoundingClientRect().top) < 1), items: f.children.length }))`);
+    ok(filas.length === 6, 'seis filas: cuidado, animales, colores y las tres de ropa (' + filas.length + ')');
+    ok(filas.every((f) => f.snap.indexOf('x') === 0 && f.linea), 'cada fila es una sola línea que encaja por tarjeta');
+    ok(filas.filter((f) => f.id !== 'ropa').every((f) => f.sobra), 'cuidado, animales y colores se deslizan de lado a 390 px');
+    ok(await evaluar(`document.documentElement.scrollWidth <= 390 && document.querySelector('.ch-gamemain').scrollWidth <= 390`), 'la página no se ensancha más allá de la pantalla');
+    await evaluar(`(() => { const f = document.querySelector('[data-seccion="animales"] .cp-fila'); f.scrollLeft = 150; return true; })()`); await evaluar(pausa(700));
+    ok(await evaluar(`(() => { const f = document.querySelector('[data-seccion="animales"] .cp-fila'), r = f.getBoundingClientRect(); return [...f.children].some((c) => Math.abs(c.getBoundingClientRect().left - r.left - parseFloat(getComputedStyle(f).scrollPaddingLeft || 0)) < 3); })()`), 'al soltar, la fila encaja con una tarjeta al borde');
+  });
+}
+
+async function testGlobo() {
+  head('El globo del deseo se va solo y vuelve al tocar al compañero (#31)');
+  await navegador(async ({ abrir, evaluar }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 300 }));
+    await abrir('/games/companero/index.html');
+    const visible = `(() => { const g = document.querySelector('[data-deseo]'); return g.dataset.visible === '1' && getComputedStyle(g).visibility !== 'hidden'; })()`;
+    const deseo = await evaluar(`document.querySelector('[data-deseo]').dataset.deseo`);
+    ok(await evaluar(visible), 'al abrir, el globo se ve');
+    await evaluar(pausa(4400));
+    ok(!(await evaluar(visible)), 'a los 4 s se oculta solo');
+    const alto = await evaluar(`document.querySelector('.cp-compa').getBoundingClientRect().top`);
+    ok(await evaluar(`document.querySelector('.cp-compa').getAttribute('role') === 'button' && !!document.querySelector('.cp-compa').getAttribute('aria-label')`), 'el compañero se puede tocar y tiene nombre para el lector de pantalla');
+    await evaluar(`document.querySelector('.cp-compa').click(); true`); await evaluar(pausa(100));
+    ok(await evaluar(visible) && await evaluar(`document.querySelector('[data-deseo]').dataset.deseo`) === deseo, 'tocar al compañero lo muestra otra vez, con el mismo deseo (' + deseo + ')');
+    ok(await evaluar(`document.querySelector('.cp-compa').getBoundingClientRect().top`) === alto, 'mostrar u ocultar el globo no mueve al compañero');
+    await evaluar(`document.querySelector('.cp-compa').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); true`);
+    ok(await evaluar(visible), 'con el teclado (Enter) también');
   });
 }
 
