@@ -31,6 +31,10 @@
     { id: 'fruta', tipo: 'consumible', precio: 5 },
     { id: 'zanahoria', tipo: 'consumible', precio: 8 },
     { id: 'pastel', tipo: 'consumible', precio: 15 },
+    { id: 'sandia', tipo: 'consumible', precio: 6 },
+    { id: 'galleta', tipo: 'consumible', precio: 7 },
+    { id: 'helado', tipo: 'consumible', precio: 12 },
+    { id: 'te', tipo: 'consumible', precio: 9 },
     { id: 'jabon', tipo: 'consumible', precio: 10 }
   ].map(function (a) { a.estado = 'activo'; return a; });
 
