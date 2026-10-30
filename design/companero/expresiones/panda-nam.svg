@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 170" width="120" height="170">
+  <g id="cola"></g>
+  <g id="cuerpo">
+    <ellipse cx="60" cy="130" rx="30" ry="30" fill="#F4F1EA"/>
+    <ellipse id="panza" cx="60" cy="136" rx="18" ry="19" fill="#FFFFFF"/>
+    <g id="brazos"><ellipse cx="32" cy="124" rx="7" ry="11" transform="rotate(20 32 124)" fill="#4A4E5C"/><ellipse cx="88" cy="124" rx="7" ry="11" transform="rotate(-20 88 124)" fill="#4A4E5C"/></g>
+    <g id="patas" fill="#4A4E5C"><ellipse cx="46" cy="160" rx="10" ry="6"/><ellipse cx="74" cy="160" rx="10" ry="6"/></g>
+  </g>
+  <g id="cara"><g id="orejas" fill="#4A4E5C"><circle cx="32" cy="34" r="13"/><circle cx="88" cy="34" r="13"/></g>
+  <circle id="cabeza" cx="60" cy="62" r="36" fill="#F4F1EA"/>
+  <g id="manchas" fill="#4A4E5C">
+    <ellipse cx="45" cy="57" rx="9" ry="11" transform="rotate(25 45 57)"/>
+    <ellipse cx="75" cy="57" rx="9" ry="11" transform="rotate(-25 75 57)"/>
+  </g>
+  <g id="rasgos">
+    
+    
+    <path d="M60 74c3.4 0 6-2 6-4.4s-2.6-3.6-6-3.6-6 1.2-6 3.6 2.6 4.4 6 4.4z" fill="#4A4E5C"/>
+    
+  </g><path data-expr="1" d="M42 57.6q4 -7.2 8 0" stroke="#FBEDE6" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path data-expr="1" d="M70 57.6q4 -7.2 8 0" stroke="#FBEDE6" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path data-expr="1" d="M60 74v4" stroke="#4A4E5C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path data-expr="1" d="M54 82q3 3.5 6 0q3 3.5 6 0" stroke="#4A4E5C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>

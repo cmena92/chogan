@@ -410,7 +410,10 @@ function testExpresionesFuente() {
     total++;
     if (expresar(A.cuerpos[id], id, e, A.expresiones) === fs.readFileSync(path.join(dir, id + '-' + e + '.svg'), 'utf8')) iguales++;
   }
-  ok(total === 40 && iguales === 40, 'la app dibuja las 40 expresiones idénticas a las aprobadas en design/companero/expresiones/ (' + iguales + ' de ' + total + ')');
+  ok(total === 72 && iguales === 72, 'la app dibuja las 72 expresiones idénticas a las aprobadas en design/companero/expresiones/ (' + iguales + ' de ' + total + ')');
+  ok(['guino', 'sonrojado', 'mareado', 'nam'].every((e) => EXPRESIONES.includes(e)), 'las cuatro de #33: guiño, sonrojado, mareado y ñam');
+  const r = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'design/companero/expresiones.mjs')], { encoding: 'utf8' });
+  ok(r.status === 0 && /72 expresiones, 0 diferencias fuera de rasgos/.test(r.stdout), 'design/companero/expresiones.mjs: ' + (r.stdout.trim() || r.stderr.trim().split('\n')[0]));
 }
 
 // Chrome driven over its DevTools protocol, with Node's own fetch and WebSocket: no dependency
@@ -824,13 +827,26 @@ async function testEscenario() {
 
 async function testGlobo() {
   head('El globo del deseo se va solo y vuelve al tocar al compañero (#31)');
-  await navegador(async ({ abrir, evaluar }) => {
+  await navegador(async ({ abrir, evaluar, cdp }) => {
     await abrir('/games/companero/index.html');
     await evaluar(preparar({ monedas: 300 }));
     await abrir('/games/companero/index.html');
     const visible = `(() => { const g = document.querySelector('[data-deseo]'); return g.dataset.visible === '1' && getComputedStyle(g).visibility !== 'hidden'; })()`;
-    const deseo = await evaluar(`document.querySelector('[data-deseo]').dataset.deseo`);
+    let deseo = await evaluar(`document.querySelector('[data-deseo]').dataset.deseo`);
     ok(await evaluar(visible), 'al abrir, el globo se ve');
+    // every wish and the thanks, in the five languages, at 390 px: the bubble stays above the drawing
+    const T = textos(), tapan = [];
+    await cdp('Emulation.setDeviceMetricsOverride', { width: 390, height: 740, deviceScaleFactor: 1, mobile: true });
+    for (const l of LANGS) {
+      await evaluar(preparar({ lang: l, monedas: 300 })); await abrir('/games/companero/index.html');
+      for (const k of Object.keys(T[l]).filter((x) => /^deseo/.test(x))) {
+        const pisa = await evaluar(`(() => { const g = document.querySelector('[data-deseo]'); g.textContent = ${JSON.stringify(T[l][k])}; return g.getBoundingClientRect().bottom > document.querySelector('.cp-dibujo svg').getBoundingClientRect().top + 1; })()`);
+        if (pisa) tapan.push(l + ':' + k);
+      }
+    }
+    ok(!tapan.length, 'ningún deseo, en ningún idioma, tapa al compañero a 390 px' + (tapan.length ? ' (' + tapan.join(', ') + ')' : ''));
+    await evaluar(preparar({ monedas: 300 })); await abrir('/games/companero/index.html');
+    deseo = await evaluar(`document.querySelector('[data-deseo]').dataset.deseo`);
     await evaluar(pausa(4400));
     ok(!(await evaluar(visible)), 'a los 4 s se oculta solo');
     const alto = await evaluar(`document.querySelector('.cp-compa').getBoundingClientRect().top`);
@@ -893,6 +909,59 @@ async function testEscenasPagina() {
     await comprar('galleta');
     c = await evaluar(capa);
     ok(c && c.escena === 'comer' && c.comida === 'galleta' && c.anima === 0, 'con movimiento reducido, la galleta aparece quieta junto a la boca, sin animación');
+  });
+}
+
+/* ------------------------------------------------ touching it, and four new faces (#33) */
+
+function testToqueLogica() {
+  head('Tocar al compañero: vínculo con la regla de 30 s, sin monedas (#33)');
+  if (!K) return ok(false, 'sin módulo');
+  const x = companero({ saldo: 40 });
+  ok(x.c.hecho({ accion: 'tocar' }).ok && x.c.vinculo().puntos === 1 && x.m.saldo() === 40, 'tocarlo suma 1 de vínculo y no toca el saldo');
+  x.pasar(5000); x.c.hecho({ accion: 'tocar' });
+  ok(x.c.vinculo().puntos === 1, 'tocarlo otra vez dentro de 30 s no vuelve a sumar');
+  ok(!K.ACCIONES.includes('tocar'), 'tocar no es un botón más de Cuidado: es el compañero mismo');
+}
+
+async function testToques() {
+  head('Tocar al compañero: una reacción distinta cada vez, y mareado con cinco toques (#33)');
+  await navegador(async ({ abrir, evaluar, cdp }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 80 }));
+    await abrir('/games/companero/index.html');
+    const estado = `({ r: document.querySelector('.cp-compa').dataset.reaccion, e: document.querySelector('.cp-compa').dataset.expresion, v: +document.querySelector('[data-vinculo]').dataset.vinculo, m: +localStorage.getItem('chogan.app.coins') })`;
+    const tocar = async () => { await evaluar(`document.querySelector('.cp-compa').click(); true`); await evaluar(pausa(300)); return evaluar(estado); };
+    const v0 = await evaluar(`+document.querySelector('[data-vinculo]').dataset.vinculo`);
+    const vistos = [];
+    for (let i = 0; i < 4; i++) vistos.push(await tocar());
+    const CARA = { feliz: 'feliz', guino: 'guino', sonrojado: 'sonrojado', giro: 'feliz' };
+    ok(vistos.every((x) => CARA[x.r] && x.e === CARA[x.r]), 'cada toque da risa, guiño, sonrojado o un giro, con su cara (' + vistos.map((x) => x.r).join(', ') + ')');
+    ok(vistos.every((x, i) => !i || x.r !== vistos[i - 1].r), 'dos toques seguidos nunca dan la misma reacción');
+    ok(vistos.every((x) => x.e !== 'mareado'), 'cuatro toques en menos de 3 s no lo marean');
+    const quinto = await tocar();
+    ok(quinto.r === 'mareado' && quinto.e === 'mareado', 'el quinto toque en menos de 3 s lo deja mareado');
+    ok(quinto.m === 80 && quinto.v === v0 + 1, 'tocarlo no da ni quita monedas, y suma vínculo una sola vez (' + v0 + ' → ' + quinto.v + ')');
+    await evaluar(pausa(2300));
+    ok(await evaluar(`document.querySelector('.cp-compa').dataset.expresion`) !== 'mareado', 'el mareo se va solo en poco más de 2 s');
+
+    // the faces of eating and bathing, for something the visit did not wish for (a wish fulfilled is «feliz»)
+    const deseo = await evaluar(`document.querySelector('[data-deseo]').dataset.deseo`);
+    const comida = ['fruta', 'zanahoria'].find((c) => c !== deseo);
+    await evaluar(`document.querySelector('[data-consumible="${comida}"]').click(); true`); await evaluar(pausa(200)); await evaluar(aceptar); await evaluar(pausa(150));
+    ok(await evaluar(`document.querySelector('.cp-compa').dataset.expresion`) === 'nam', 'al comer (' + comida + '), mastica: ñam');
+    await evaluar(pausa(2300));
+    if (deseo !== 'banio') {
+      await evaluar(`document.querySelector('[data-consumible="jabon"]').click(); true`); await evaluar(pausa(200)); await evaluar(aceptar); await evaluar(pausa(150));
+      ok(await evaluar(`document.querySelector('.cp-compa').dataset.expresion`) === 'sonrojado', 'en el baño de burbujas se sonroja');
+    } else ok(true, 'la visita quería un baño: su cara es la de un deseo cumplido');
+
+    await cdp('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await abrir('/games/companero/index.html');
+    // the dice fixed on the last of the four reactions, the spin, so the check never depends on luck
+    await evaluar(`Math.random = () => 0.99; true`);
+    const giro = (await tocar()).r === 'giro';
+    ok(giro && await evaluar(`document.querySelector('.cp-compa').getAnimations({ subtree: true }).length === 0`), 'con movimiento reducido, el giro es solo la cara feliz, sin girar');
   });
 }
 

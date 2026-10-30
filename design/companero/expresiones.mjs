@@ -1,7 +1,7 @@
-// The companion's five expressions (#9, #18): contento (the face as drawn), feliz, antojado,
-// dormido and sorprendido. Only the eyes and the mouth change: the face's own eyes and mouth are
+// The companion's expressions (#9, #18, #33): contento (the face as drawn), feliz, antojado,
+// dormido, sorprendido, guino (a wink), sonrojado (blushing), mareado (dizzy) and nam (chewing). Only the eyes and the mouth change: the face's own eyes and mouth are
 // taken out and new ones, marked data-expr, are drawn at the same coordinates (expresiones.json).
-// Run on its own, it writes the 40 animal and expression pairs to expresiones/ and checks them:
+// Run on its own, it writes the 72 animal and expression pairs to expresiones/ and checks them:
 // valid SVG in headless Chrome, and nothing but the eyes, the mouth and the sleeping «z» differs
 // from the contento face.
 // Usage: node design/companero/expresiones.mjs
@@ -68,5 +68,5 @@ document.getElementById("r").textContent=JSON.stringify(t.map((s,i)=>new DOMPars
   fallas.forEach((f) => console.error("✗ " + f));
   const fuera = fallas.filter((f) => f.includes("fuera de ojos")).length;
   console.log(`${archivos.length} expresiones, ${fuera} diferencias fuera de rasgos`);
-  if (archivos.length !== 40 || fallas.length) process.exit(1);
+  if (archivos.length !== Object.keys(datos.animales).length * expresiones.length || fallas.length) process.exit(1);
 }
