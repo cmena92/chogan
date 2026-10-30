@@ -81,6 +81,8 @@ function testCatalogo() {
   ok(E.VERSION === 1, 'el catálogo tiene versión');
   ok(precio('capybara') === 0 && precio('conejo') === 180 && precio('panda') === 260 && precio('nutria') === 340, 'animales nuevos con los precios de #6');
   ok(precio('fruta') === 5 && precio('zanahoria') === 8 && precio('pastel') === 15 && precio('jabon') === 10, 'consumibles con los precios de #9');
+  ok(precio('sandia') === 6 && precio('galleta') === 7 && precio('helado') === 12 && precio('te') === 9, 'las comidas nuevas de #32: sandía 6, galleta 7, helado 12, té 9');
+  ok(E.CATALOGO.filter((a) => a.tipo === 'consumible').map((a) => a.id).join() === 'fruta,zanahoria,pastel,sandia,galleta,helado,te,jabon', 'ocho consumibles: siete comidas y el jabón');
   ok(['gorra', 'corona', 'lentes', 'lazo', 'panuelo', 'sueter', 'capa'].every((id) => precio(id) > 0), 'las siete prendas de #16 están a la venta');
   // a single source: the design prices of the art (#17) and the catalogue agree
   const disenos = JSON.parse(fs.readFileSync(path.join(ROOT, 'design/companero/disenos.json'), 'utf8')).disenos;
@@ -320,7 +322,10 @@ function testCuidadoLogica() {
   head('Cuidado: acciones, vínculo y deseos (#9)');
   ok(!!K && typeof K.crear === 'function', 'www/games/companero/cuidado.js exporta crear()');
   if (!K) return;
-  ok(K.DESEOS.map((d) => d.id).join() === 'fruta,zanahoria,pastel,banio,ropa,jugar,caricias', 'los deseos son los de la tabla de #9');
+  ok(K.DESEOS.map((d) => d.id).join() === 'fruta,zanahoria,pastel,sandia,galleta,helado,te,banio,ropa,jugar,caricias', 'los deseos son los de #9 con las comidas nuevas de #32');
+  const tipos = {};
+  for (let i = 0; i < 100; i++) { const c = companero(); c.dado(() => (i + 0.5) / 100); const d = c.c.visitar().id; const t = ['banio', 'ropa', 'jugar', 'caricias'].includes(d) ? d : 'comida'; tipos[t] = (tipos[t] || 0) + 1; }
+  ok(Object.keys(tipos).length === 5 && Object.values(tipos).every((v) => v === 20), 'las comidas no acaparan los deseos: comida, baño, ropa, jugar y caricias salen igual de seguido (' + JSON.stringify(tipos) + ')');
   ok(K.NIVELES.join() === '0,10,25,50,100' && K.MAXIMO === 100, 'cinco niveles, a los 0, 10, 25, 50 y 100 puntos (el máximo)');
 
   const x = companero({ saldo: 100 });
@@ -343,7 +348,7 @@ function testDeseos() {
   head('Deseos amables: uno por visita, distinto, opcional');
   if (!K) return ok(false, 'sin módulo');
   const x = companero({ saldo: 100 });
-  x.dado(() => 0.85); // the dice point at «jugar»
+  x.dado(() => 0.7); // the dice point at «jugar»
   const d1 = x.c.visitar();
   ok(d1 && d1.id === 'jugar' && !d1.cumplido, 'al abrir hay exactamente un deseo de la tabla (jugar)');
   const r = x.c.hecho({ accion: 'jugar' });
@@ -353,16 +358,16 @@ function testDeseos() {
   ok(d2.id !== 'jugar', 'en la visita siguiente el deseo es otro, aunque el dado repita (' + d2.id + ')');
 
   const y = companero({ saldo: 100 });
-  y.dado(() => 0.15); // «zanahoria»
+  y.dado(() => 0.04); // a food, and of the foods «zanahoria»
   ok(y.c.visitar().id === 'zanahoria', 'un deseo de comida');
   y.eco.comprar('fruta'); y.pasar(500);
   ok(!y.c.alimentar('fruta').cumplioDeseo && !y.c.deseo().cumplido, 'otra comida no cumple el deseo de zanahoria');
   y.eco.comprar('zanahoria');
   ok(y.c.alimentar('zanahoria').cumplioDeseo, 'la zanahoria sí lo cumple');
 
-  const z = companero(); z.dado(() => 0.6);
+  const z = companero(); z.dado(() => 0.5);
   ok(z.c.visitar().id === 'ropa' && z.c.hecho({ equipar: 'prenda' }).cumplioDeseo, 'equipar una prenda cumple el deseo de ropa');
-  const w = companero(); w.dado(() => 0.45);
+  const w = companero(); w.dado(() => 0.3);
   ok(w.c.visitar().id === 'banio', 'el deseo del baño de burbujas');
   const sinCumplir = w.c.vinculo().puntos;
   w.crearCuidado().visitar();
@@ -574,7 +579,7 @@ async function testCuidadoPagina() {
     ok(!!inicio.deseo && inicio.texto.length > 5, 'al abrir hay un globo con un deseo (' + inicio.deseo + ')');
     ok(inicio.expr === 'antojado', 'mientras el deseo espera, el compañero está antojado');
     ok(await evaluar(`[...document.querySelectorAll('[data-accion]')].map((b) => b.dataset.accion).join()`) === 'acariciar,cepillar,jugar', 'tres acciones gratuitas: acariciar, cepillar y jugar');
-    ok(await evaluar(`[...document.querySelectorAll('[data-consumible]')].map((b) => b.dataset.consumible).join()`) === 'fruta,zanahoria,pastel,jabon', 'cuatro consumibles: fruta, zanahoria, pastel y jabón');
+    ok(await evaluar(`[...document.querySelectorAll('[data-consumible]')].map((b) => b.dataset.consumible).join()`) === 'fruta,zanahoria,pastel,sandia,galleta,helado,te,jabon', 'ocho consumibles: siete comidas y el jabón');
 
     const libre = inicio.deseo === 'caricias' ? 'jugar' : 'acariciar';
     await evaluar(`document.querySelector('[data-accion="${libre}"]').click()`);
@@ -584,6 +589,7 @@ async function testCuidadoPagina() {
     // fulfil whatever the visit wished for
     const cumplir = {
       fruta: ['consumible', 'fruta'], zanahoria: ['consumible', 'zanahoria'], pastel: ['consumible', 'pastel'], banio: ['consumible', 'jabon'],
+      sandia: ['consumible', 'sandia'], galleta: ['consumible', 'galleta'], helado: ['consumible', 'helado'], te: ['consumible', 'te'],
       ropa: ['prenda-item', 'lazo'], jugar: ['accion', 'jugar'], caricias: ['accion', 'cepillar'],
     }[inicio.deseo];
     await evaluar(pausa(200));
@@ -834,6 +840,59 @@ async function testGlobo() {
     ok(await evaluar(`document.querySelector('.cp-compa').getBoundingClientRect().top`) === alto, 'mostrar u ocultar el globo no mueve al compañero');
     await evaluar(`document.querySelector('.cp-compa').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); true`);
     ok(await evaluar(visible), 'con el teclado (Enter) también');
+  });
+}
+
+/* ------------------------------------------------ eating, bathing and playing (#32) */
+
+function testEscenasFuente() {
+  head('Las escenas: una sola fuente para la app y el arte (#32)');
+  const X = path.join(ROOT, 'www/games/companero/escenas.js');
+  const A = fs.existsSync(ARTE) ? require(ARTE) : null;
+  ok(fs.existsSync(X) && !!A && !!A.escenas, 'escenas.js existe y arte.js trae sus datos');
+  if (!fs.existsSync(X) || !A || !A.escenas) return;
+  const dir = path.join(ROOT, 'design/companero');
+  const json = JSON.parse(fs.readFileSync(path.join(dir, 'escenas.json'), 'utf8'));
+  const comidas = json.comidas.concat(['jabon']);
+  ok(comidas.every((c) => A.escenas.comidas[c] === fs.readFileSync(path.join(dir, 'comidas', c + '.svg'), 'utf8')), 'las ocho comidas de arte.js son idénticas a design/companero/comidas/');
+  ok(JSON.stringify(A.escenas.bocas) === JSON.stringify(json.bocas) && JSON.stringify(A.escenas.burbujas) === JSON.stringify(json.burbujas), 'bocas y burbujas idénticas a escenas.json');
+  const { escena } = require(X);
+  const capa = escena(A.cuerpos.capybara, 'capybara', 'comer', A.escenas, { comida: 'helado' });
+  ok(/data-escena="comer"/.test(capa) && /data-comida="helado"/.test(capa) && escena(A.cuerpos.fox, 'fox', 'nada', A.escenas) === A.cuerpos.fox, 'escena() agrega su capa, y una escena desconocida no cambia nada');
+  const r = require('child_process').spawnSync(process.execPath, [path.join(dir, 'escenas.mjs')], { encoding: 'utf8' });
+  ok(r.status === 0 && /72 escenas, 0 fallas/.test(r.stdout), 'design/companero/escenas.mjs: ' + (r.stdout.trim() || r.stderr.trim().split('\n')[0]));
+}
+
+async function testEscenasPagina() {
+  head('Comer, bañarse y jugar se ven en la página (#32)');
+  await navegador(async ({ abrir, evaluar, cdp }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 300 }));
+    await abrir('/games/companero/index.html');
+    ok(await evaluar(`[...document.querySelectorAll('[data-consumible]')].every((b) => b.querySelector('svg') && !/[\\u{1F300}-\\u{1FAFF}]/u.test(b.textContent))`), 'cada consumible muestra su dibujo, sin emojis');
+    const capa = `(() => { const c = document.querySelector('.cp-compa [data-escena]'); if (!c) return null; return { escena: c.dataset.escena, comida: c.dataset.comida || '', anima: c.getAnimations({ subtree: true }).length }; })()`;
+    const comprar = async (id) => { await evaluar(`document.querySelector('[data-consumible="${id}"]').click(); true`); await evaluar(pausa(200)); await evaluar(aceptar); await evaluar(pausa(150)); };
+
+    await comprar('helado');
+    let c = await evaluar(capa);
+    ok(c && c.escena === 'comer' && c.comida === 'helado' && c.anima > 0, 'al darle un helado, el helado va a su boca, animado');
+    await evaluar(pausa(2300));
+    ok(await evaluar(capa) === null, 'la escena termina sola en menos de 2,5 s');
+    await comprar('jabon');
+    c = await evaluar(capa);
+    ok(c && c.escena === 'banio' && c.anima > 0, 'el jabón da un baño de burbujas');
+    await evaluar(`document.querySelector('[data-accion="jugar"]').click(); true`); await evaluar(pausa(100));
+    c = await evaluar(capa);
+    ok(c && c.escena === 'jugar', 'jugar trae la pelota, y reemplaza al baño sin esperar a que termine');
+    await evaluar(pausa(2300));
+    await evaluar(`document.querySelector('[data-accion="acariciar"]').click(); true`); await evaluar(pausa(100));
+    ok(await evaluar(capa) === null && await evaluar(`document.querySelector('.cp-compa').dataset.expresion === 'feliz'`), 'acariciar no trae escena: solo la cara feliz');
+
+    await cdp('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await abrir('/games/companero/index.html');
+    await comprar('galleta');
+    c = await evaluar(capa);
+    ok(c && c.escena === 'comer' && c.comida === 'galleta' && c.anima === 0, 'con movimiento reducido, la galleta aparece quieta junto a la boca, sin animación');
   });
 }
 

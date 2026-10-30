@@ -7,6 +7,7 @@ import vm from "node:vm";
 import { componer, catalogo } from "./prendas.mjs";
 import { aplicar, disenos } from "./disenos.mjs";
 import { expresar, expresiones } from "./expresiones.mjs";
+import { escena, comidas as comidasEscena } from "./escenas.mjs";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const core = fs.readFileSync(path.join(here, "../../www/lib/chogan.js"), "utf8");
@@ -63,6 +64,15 @@ const caras = `<section style="background:#FBF6EF;color:#2C2620"><h2>Expresiones
   .map((t) => `<h3>${t} px</h3>${expresiones.map((e) => `<h3>${e}</h3>${filaExpr(e, Math.round((t * 170) / 120))}`).join("")}`)
   .join("")}</section>`;
 
+// The foods and the care scenes (#32), on the companions dressed, at the size the app draws them
+const COMIDAS_FILA = ["fruta", "zanahoria", "pastel", "sandia", "galleta", "helado", "te", "fruta"];
+const enEscena = (id, tipo, comida, alto) =>
+  escena(componer(id, ["lazo"]), id, tipo, comida).replace('width="120" height="170"', `width="${Math.round((alto * 120) / 170)}" height="${alto}"`);
+const filaEscena = (tipo, alto) =>
+  `<div class="fila">${ids.map((id, i) => `<figure>${enEscena(id, tipo, COMIDAS_FILA[i], alto)}<figcaption>${id}${tipo === "comer" ? " · " + COMIDAS_FILA[i] : ""}</figcaption></figure>`).join("")}</div>`;
+const iconos = `<div class="fila">${comidasEscena.map((c) => `<figure>${fs.readFileSync(path.join(here, "comidas", c + ".svg"), "utf8")}<figcaption>${c}</figcaption></figure>`).join("")}</div>`;
+const escenas = `<section style="background:#FBF6EF;color:#2C2620"><h2 id="escenas">Comidas y escenas de cuidado (#32)</h2><p>La pose quieta de cada escena: la que se ve con movimiento reducido y donde termina la animación.</p><h3>Comidas · 48 px</h3>${iconos}${["comer", "banio", "jugar"].map((t) => `<h3>${t}</h3>${filaEscena(t, 150)}`).join("")}</section>`;
+
 fs.writeFileSync(
   path.join(here, "vista-previa.html"),
   `<!doctype html><meta charset="utf-8"><title>Compañero · bocetos de animales</title>
@@ -72,6 +82,7 @@ fs.writeFileSync(
 ${tema("Tema claro", "#FBF6EF", "#2C2620")}${tema("Tema oscuro", "#1E1B18", "#F2EDE6")}
 ${cuerpos("Cuerpo entero · tema claro", "#FBF6EF", "#2C2620")}${cuerpos("Cuerpo entero · tema oscuro", "#1E1B18", "#F2EDE6")}
 ${caras}
+${escenas}
 ${ropa}
 ${colores("Diseños exclusivos (#17) · tema claro", "#FBF6EF", "#2C2620")}${colores("Diseños exclusivos (#17) · tema oscuro", "#1E1B18", "#F2EDE6")}
 <section style="background:#FBF6EF"><h2>Anclajes de la ropa</h2><p>Rojo: cabeza (gorro, corona, lentes) · verde: cuello (lazo, pañuelo) · azul: cuerpo (suéter, capa).</p>${filaCuerpos(170, true)}</section>`,

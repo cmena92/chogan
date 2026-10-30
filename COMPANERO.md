@@ -54,6 +54,10 @@ Las compras pasan por `C.coins.spend`, que solo acepta precios enteros y positiv
 | `fruta` | consumible | comida | 5 |
 | `zanahoria` | consumible | comida | 8 |
 | `pastel` | consumible | comida | 15 |
+| `sandia` | consumible | comida | 6 |
+| `galleta` | consumible | comida | 7 |
+| `helado` | consumible | comida | 12 |
+| `te` | consumible | té de hierbas | 9 |
 | `jabon` | consumible | baño de burbujas | 10 |
 
 Los cuatro personajes del original (zorro, búho, gato y oso) también son animales del compañero. Se compran en la tienda del Perfil, no aquí, y el compañero solo lee si ya son tuyos.
@@ -69,7 +73,8 @@ Los consumibles no suman a ese total: cuestan de 5 a 15 y son opcionales.
 - **Gratis:** acariciar, cepillar y jugar.
 - **Vínculo:** +1 por cada cuidado y +3 extra al cumplir el deseo de la visita. Una misma acción gratuita suma como mucho una vez cada 30 segundos, pero se puede hacer siempre.
 - **Cinco niveles**, a los 0, 10, 25, 50 y 100 puntos. El 100 es el máximo y se muestra desde el principio.
-- **Un deseo por visita**, distinto del de la visita anterior: probar una comida, un baño de burbujas, algo nuevo para ponerse, jugar o caricias.
+- **Un deseo por visita**, distinto del de la visita anterior: probar una comida, un baño de burbujas, algo nuevo para ponerse, jugar o caricias. Primero se elige el tipo, todos igual de probables, y después cuál comida: así las siete comidas no acaparan los deseos.
+- **Escenas:** comer lleva la comida a la boca, el jabón da un baño de burbujas y jugar trae una pelota que rebota. Con movimiento reducido se ve la misma escena, quieta.
 
 ## Datos
 

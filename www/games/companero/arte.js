@@ -667,6 +667,104 @@
       "panda": 26,
       "nutria": 24
     }
+  },
+    escenas: {
+    "bocas": {
+      "fox": [
+        60,
+        83
+      ],
+      "owl": [
+        60,
+        70
+      ],
+      "cat": [
+        60,
+        81
+      ],
+      "bear": [
+        60,
+        83
+      ],
+      "capybara": [
+        60,
+        85
+      ],
+      "conejo": [
+        60,
+        86
+      ],
+      "panda": [
+        60,
+        83
+      ],
+      "nutria": [
+        60,
+        86
+      ]
+    },
+    "burbujas": [
+      [
+        22,
+        104,
+        8
+      ],
+      [
+        98,
+        100,
+        7
+      ],
+      [
+        16,
+        138,
+        6
+      ],
+      [
+        103,
+        134,
+        9
+      ],
+      [
+        24,
+        84,
+        4.5
+      ],
+      [
+        86,
+        156,
+        6
+      ],
+      [
+        62,
+        110,
+        4
+      ],
+      [
+        30,
+        160,
+        5
+      ],
+      [
+        96,
+        80,
+        5
+      ]
+    ],
+    "pelota": [
+      100,
+      149,
+      12
+    ],
+    "comidas": {
+      "fruta": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"48\" height=\"48\">\n  <g id=\"comida\"><path d=\"M12 7c-2-1.6-6.4-1.4-7.6 2.6-1.2 4 .8 9.6 4 10.8 1.4.5 2.4-.4 3.6-.4s2.2.9 3.6.4c3.2-1.2 5.2-6.8 4-10.8C18.4 5.6 14 5.4 12 7z\" fill=\"#E4573D\"/><path d=\"M8.2 10.2c.4-1.4 1.6-2.2 2.8-2.2\" stroke=\"#F49B85\" stroke-width=\"1.4\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M12 7.2c0-1.8.4-3 1.4-4\" stroke=\"#7A4B2A\" stroke-width=\"1.4\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M13.2 4.6c1.6-1.6 4-1.6 4.8-.8-1 1.6-3.2 2-4.8.8z\" fill=\"#5FA052\"/></g>\n</svg>\n",
+      "zanahoria": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"48\" height=\"48\">\n  <g id=\"comida\"><path d=\"M17.8 6.2c1.6 1.6 1.4 4-.4 5.8L6.6 21c-1 .8-2.4-.6-1.6-1.6L14 8.6c1.8-1.8 2.2-4 3.8-2.4z\" fill=\"#F28C28\"/><path d=\"M12.2 11.6l1.8 1.2M9.6 14.6l1.6 1.1M7.2 17.6l1.3.9\" stroke=\"#C96A14\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><path d=\"M17.4 6.4c-.6-2.2 0-4 1.4-5 .6 1.8.2 3.6-1.4 5zM17.8 6.6c1.2-1.8 3-2.6 4.6-2.2-.8 1.6-2.6 2.4-4.6 2.2zM17.6 6.6c2-.4 3.8.2 4.8 1.4-1.6.8-3.6.4-4.8-1.4z\" fill=\"#5FA052\"/></g>\n</svg>\n",
+      "pastel": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"48\" height=\"48\">\n  <g id=\"comida\"><path d=\"M3 11.2 21 7v11.4L3 21z\" fill=\"#F7D9A8\"/><path d=\"M3 15.4 21 12.2v2.2L3 17.6z\" fill=\"#E86A92\"/><path d=\"M3 11.2 21 7v2.4L3 13.4z\" fill=\"#FFF4EC\"/><path d=\"M3 13.4c1.4 1.4 2.4-.2 3.6.6s2-.8 3.2-.2 2-.8 3.2-.2 2-.8 3.2-.2 2-.8 3.2-.2\" stroke=\"#FFF4EC\" stroke-width=\"1.8\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"5.6\" r=\"2.2\" fill=\"#D7263D\"/><circle cx=\"15.3\" cy=\"4.9\" r=\".6\" fill=\"#FFFFFF\" opacity=\".8\"/></g>\n</svg>\n",
+      "sandia": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"48\" height=\"48\">\n  <g id=\"comida\"><path d=\"M2.6 9.4h18.8c0 5.4-4.2 9.6-9.4 9.6S2.6 14.8 2.6 9.4z\" fill=\"#5FA052\"/><path d=\"M4.4 9.4h15.2c0 4.4-3.4 7.8-7.6 7.8s-7.6-3.4-7.6-7.8z\" fill=\"#F4F1DE\"/><path d=\"M5.4 9.4h13.2c0 3.8-3 6.8-6.6 6.8s-6.6-3-6.6-6.8z\" fill=\"#EF4F5C\"/><g fill=\"#2C2620\"><ellipse cx=\"9\" cy=\"11.6\" rx=\".7\" ry=\"1\"/><ellipse cx=\"12\" cy=\"13\" rx=\".7\" ry=\"1\"/><ellipse cx=\"15\" cy=\"11.6\" rx=\".7\" ry=\"1\"/></g></g>\n</svg>\n",
+      "galleta": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"48\" height=\"48\">\n  <g id=\"comida\"><circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"#D9A15C\"/><circle cx=\"12\" cy=\"12\" r=\"7.2\" fill=\"#E8B977\"/><g fill=\"#6B3E26\"><circle cx=\"9\" cy=\"9\" r=\"1.3\"/><circle cx=\"14.6\" cy=\"8.6\" r=\"1.1\"/><circle cx=\"15.2\" cy=\"13.8\" r=\"1.4\"/><circle cx=\"9.6\" cy=\"14.6\" r=\"1.2\"/><circle cx=\"12.2\" cy=\"11.8\" r=\".9\"/></g></g>\n</svg>\n",
+      "helado": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"48\" height=\"48\">\n  <g id=\"comida\"><path d=\"M7.4 11.6h9.2L12 22z\" fill=\"#E3A85B\"/><path d=\"M9 13.6l5.6 4.2M10.4 12l4.6 3.4M15 13.6l-5.6 4.2M13.6 12l-4.6 3.4\" stroke=\"#C7853A\" stroke-width=\".9\"/><circle cx=\"12\" cy=\"8.6\" r=\"5\" fill=\"#F7A8C4\"/><path d=\"M7.2 9.8c1 1.4 1.8.2 2.8 1s1.8-.4 2.8.4 2 0 2.8-.6 1.2-.4 1.6-.8\" stroke=\"#F7A8C4\" stroke-width=\"1.8\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"3.2\" r=\"1.6\" fill=\"#D7263D\"/><circle cx=\"10.2\" cy=\"7\" r=\"1\" fill=\"#FFFFFF\" opacity=\".7\"/></g>\n</svg>\n",
+      "te": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"48\" height=\"48\">\n  <g id=\"comida\"><path d=\"M4 9.6h13v4.6c0 3.4-2.6 6-5.8 6h-1.4C6.6 20.2 4 17.6 4 14.2z\" fill=\"#7FB59A\"/><path d=\"M5.4 10.8h10.2v2.8c0 2.6-2 4.8-4.6 4.8h-1c-2.6 0-4.6-2.2-4.6-4.8z\" fill=\"#B7795A\" opacity=\".85\"/><path d=\"M17 11.4h1.4c1.4 0 2.4 1 2.4 2.2s-1 2.2-2.4 2.2H17\" stroke=\"#7FB59A\" stroke-width=\"1.6\" fill=\"none\"/><path d=\"M8.4 7.6c-1-1.2 1-2-.2-3.4M12.4 7.6c-1-1.2 1-2-.2-3.4\" stroke=\"#B8B2A8\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M14.6 9.6v-2l2.2-1\" stroke=\"#5FA052\" stroke-width=\"1\" fill=\"none\" stroke-linecap=\"round\"/></g>\n</svg>\n",
+      "jabon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"48\" height=\"48\">\n  <g id=\"comida\"><rect x=\"3\" y=\"11\" width=\"15\" height=\"9\" rx=\"3\" fill=\"#8EC9EA\"/><rect x=\"5\" y=\"12.6\" width=\"11\" height=\"3\" rx=\"1.5\" fill=\"#BDE2F5\"/><circle cx=\"17.6\" cy=\"7\" r=\"3.2\" fill=\"#E3F4FC\" stroke=\"#8EC9EA\" stroke-width=\"1.2\"/><circle cx=\"11\" cy=\"6\" r=\"2.2\" fill=\"#E3F4FC\" stroke=\"#8EC9EA\" stroke-width=\"1.1\"/><circle cx=\"21\" cy=\"12.6\" r=\"1.6\" fill=\"#E3F4FC\" stroke=\"#8EC9EA\" stroke-width=\"1\"/><circle cx=\"16.6\" cy=\"6\" r=\".9\" fill=\"#FFFFFF\"/></g>\n</svg>\n"
+    }
   } };
   if (typeof module === 'object' && module.exports) module.exports = ARTE;
   else root.CompaneroArte = ARTE;

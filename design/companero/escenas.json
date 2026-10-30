@@ -1,0 +1,34 @@
+{
+  "nota": "Escenas de cuidado (#32): comer, bañarse y jugar, encima del compañero ya vestido. boca: el punto adonde llega la comida (la boca, el pico del búho o los dientes del conejo). burbujas y pelota: comunes a los ocho, en el marco de 120 x 170 y fuera de la zona de rasgos. comidas: los consumibles que se comen; el jabón es el baño.",
+  "bocas": {
+    "fox": [60, 83],
+    "owl": [60, 70],
+    "cat": [60, 81],
+    "bear": [60, 83],
+    "capybara": [60, 85],
+    "conejo": [60, 86],
+    "panda": [60, 83],
+    "nutria": [60, 86]
+  },
+  "comidas": [
+    "fruta",
+    "zanahoria",
+    "pastel",
+    "sandia",
+    "galleta",
+    "helado",
+    "te"
+  ],
+  "burbujas": [
+    [22, 104, 8],
+    [98, 100, 7],
+    [16, 138, 6],
+    [103, 134, 9],
+    [24, 84, 4.5],
+    [86, 156, 6],
+    [62, 110, 4],
+    [30, 160, 5],
+    [96, 80, 5]
+  ],
+  "pelota": [100, 149, 12]
+}

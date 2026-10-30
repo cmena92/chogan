@@ -10,17 +10,24 @@
   'use strict';
 
   var VERSION = 1;
-  // The wishes of #9, in order; each says what fulfils it
+  // The wishes of #9 and the foods of #32, in order; each says what fulfils it
   var DESEOS = [
     { id: 'fruta', usar: 'fruta' },
     { id: 'zanahoria', usar: 'zanahoria' },
     { id: 'pastel', usar: 'pastel' },
+    { id: 'sandia', usar: 'sandia' },
+    { id: 'galleta', usar: 'galleta' },
+    { id: 'helado', usar: 'helado' },
+    { id: 'te', usar: 'te' },
     { id: 'banio', usar: 'jabon' },
     { id: 'ropa', equipar: 'prenda' },
     { id: 'jugar', acciones: ['jugar'] },
     { id: 'caricias', acciones: ['acariciar', 'cepillar'] }
   ];
   var ACCIONES = ['acariciar', 'cepillar', 'jugar'];
+  // A wish is first a kind, all as likely, then which food: seven foods do not crowd out the rest
+  var COMIDAS = DESEOS.filter(function (d) { return d.usar && d.usar !== 'jabon'; }).map(function (d) { return d.id; });
+  var TIPOS = [COMIDAS, ['banio'], ['ropa'], ['jugar'], ['caricias']];
   var NIVELES = [0, 10, 25, 50, 100];
   var MAXIMO = 100;
   var POR_CUIDADO = 1, POR_DESEO = 3;
@@ -55,7 +62,10 @@
 
     // A visit is each time the space opens: one wish, never the same as the last visit's
     function visitar() {
-      var i = Math.min(DESEOS.length - 1, Math.max(0, Math.floor(azar() * DESEOS.length)));
+      var x = Math.min(0.999999, Math.max(0, azar())) * TIPOS.length;
+      var tipo = TIPOS[Math.floor(x)];
+      var id = tipo[Math.min(tipo.length - 1, Math.floor((x - Math.floor(x)) * tipo.length))];
+      var i = DESEOS.indexOf(buscar(id));
       if (DESEOS[i].id === d.ultimoDeseo) i = (i + 1) % DESEOS.length;
       d.deseo = { id: DESEOS[i].id, cumplido: false };
       d.ultimoDeseo = DESEOS[i].id;
