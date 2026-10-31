@@ -1,6 +1,6 @@
 {
-  "nota": "Expresiones del compañero (#9, #18). Solo cambian ojos y boca; las coordenadas copian las de cada cara. tipo: punto (ojo oscuro), pupila (búho: pupila sobre el disco claro) o panda (ojo claro con pupila sobre la mancha). Sin boca: el búho (pico) y el conejo (dientes).",
-  "expresiones": ["contento", "feliz", "antojado", "dormido", "sorprendido"],
+  "nota": "Expresiones del compañero (#9, #18, #33). Solo cambian ojos y boca; las coordenadas copian las de cada cara. tipo: punto (ojo oscuro), pupila (búho: pupila sobre el disco claro) o panda (ojo claro con pupila sobre la mancha). Sin boca: el búho (pico) y el conejo (dientes).",
+  "expresiones": ["contento", "feliz", "antojado", "dormido", "sorprendido", "guino", "sonrojado", "mareado", "nam"],
   "animales": {
     "fox": { "tipo": "punto", "color": "#3A2620", "ojos": [[46, 58, 5], [74, 58, 5]], "boca": { "d": "M54 82c2 3 10 3 12 0", "cx": 60, "cy": 83.5, "ancho": 12 } },
     "owl": { "tipo": "pupila", "color": "#2C2620", "ojos": [[45, 52, 6.5], [75, 52, 6.5]] },

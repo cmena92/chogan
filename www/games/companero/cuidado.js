@@ -25,6 +25,8 @@
     { id: 'caricias', acciones: ['acariciar', 'cepillar'] }
   ];
   var ACCIONES = ['acariciar', 'cepillar', 'jugar'];
+  // touching the companion itself (#33) is care too, with the same 30 s rule, but not a button
+  var GRATIS = ACCIONES.concat(['tocar']);
   // A wish is first a kind, all as likely, then which food: seven foods do not crowd out the rest
   var COMIDAS = DESEOS.filter(function (d) { return d.usar && d.usar !== 'jabon'; }).map(function (d) { return d.id; });
   var TIPOS = [COMIDAS, ['banio'], ['ropa'], ['jugar'], ['caricias']];
@@ -78,7 +80,7 @@
     function hecho(ev) {
       var suma = 0, t = ahora();
       if (ev.accion) {
-        if (ACCIONES.indexOf(ev.accion) < 0) return { ok: false };
+        if (GRATIS.indexOf(ev.accion) < 0) return { ok: false };
         var antes = d.ultimas[ev.accion];
         if (typeof antes !== 'number' || t - antes >= ESPERA_MS || t < antes) { suma += POR_CUIDADO; d.ultimas[ev.accion] = t; }
       } else if (ev.usar) suma += POR_CUIDADO;

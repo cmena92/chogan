@@ -15,11 +15,12 @@
   /* top: the game area's own top padding, so it sticks right under the bar with no gap for the options to show through */
   .cp-escenario { position: sticky; top: calc(-1 * var(--s-3)); z-index: 2; display: flex; flex-direction: column; gap: var(--s-2);
     margin: calc(-1 * var(--s-3)) calc(-1 * var(--s-3)) 0; padding: var(--s-3) var(--s-3) var(--s-2); background: var(--c-bg); }
-  .cp-compa { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--s-1, 4px); padding: var(--s-5) 0 var(--s-2); background: var(--c-surface);
+  /* the top padding is the wish's room: the bubble never covers a hat (#33) */
+  .cp-compa { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--s-1, 4px); padding: 56px 0 var(--s-2); background: var(--c-surface);
     border-radius: var(--r-lg); box-shadow: var(--sh-1); cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .cp-compa:focus-visible { outline: 3px solid var(--game); outline-offset: 2px; }
-  .cp-dibujo svg { width: min(34vw, 150px); height: auto; display: block; }
-  @media (max-height: 600px) { .cp-dibujo svg { width: 100px; } .cp-compa { padding-top: var(--s-4); } }
+  .cp-dibujo svg { width: min(30vw, 136px); height: auto; display: block; }
+  @media (max-height: 600px) { .cp-dibujo svg { width: 96px; } }
   /* one row per section that slides sideways, card by card */
   .cp-fila { display: flex; gap: var(--s-2); overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
     scroll-padding-inline: 2px; padding: 2px 2px var(--s-2); scrollbar-width: thin; }
@@ -40,8 +41,8 @@
   .cp-subtitulo { margin: var(--s-2) 0 0; font-size: .9rem; opacity: .8; }
   /* the wish floats over the top of the card, so showing or hiding it never moves the companion */
   .cp-globo { position: absolute; top: var(--s-2); inset-inline: var(--s-3); z-index: 1; margin: 0 auto; width: fit-content; max-width: calc(100% - 2 * var(--s-3));
-    padding: var(--s-2) var(--s-3); border-radius: var(--r-lg); background: var(--c-surface); box-shadow: var(--sh-2, var(--sh-1));
-    text-align: center; font-weight: 600; transition: opacity .3s ease, visibility .3s; }
+    padding: 6px var(--s-3); border-radius: var(--r-lg); background: var(--c-surface); box-shadow: var(--sh-2, var(--sh-1));
+    text-align: center; font-weight: 600; font-size: .92rem; line-height: 1.25; transition: opacity .3s ease, visibility .3s; }
   .cp-globo[data-visible="0"] { opacity: 0; visibility: hidden; }
   @media (prefers-reduced-motion: reduce) { .cp-globo { transition: none; } }
   .cp-globo[data-cumplido="1"] { border: 2px solid var(--game); }
@@ -50,6 +51,9 @@
   .cp-accion { min-height: 56px; justify-content: center; font-weight: 600; }
   @keyframes cp-salto { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-8%); } }
   .cp-salto { animation: cp-salto .5s ease; }
+  /* a tap's spin (#33): a quick turn on the spot */
+  @keyframes cp-giro { 0% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
+  .cp-giro { animation: cp-giro .6s ease-in-out; }
   /* The care scenes (#32): the resting pose in escenas.js is the still picture; these only move it */
   .cp-esc-bocado, .cp-esc-burbuja, .cp-esc-pelota { transform-box: fill-box; transform-origin: center; }
   .cp-esc-bocado { animation: cp-comer 1.8s ease-in-out forwards; }
@@ -65,7 +69,7 @@
   @keyframes cp-pelota { 0%, 30%, 60%, 90%, 100% { transform: translateY(0); } 15% { transform: translateY(-28px) rotate(120deg); }
     45% { transform: translateY(-18px) rotate(240deg); } 75% { transform: translateY(-8px) rotate(330deg); } }
   .cp-item .cp-icono svg { width: 40px; height: 40px; }
-  @media (prefers-reduced-motion: reduce) { .cp-salto, .cp-esc-bocado, .cp-esc-burbuja, .cp-esc-pelota { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .cp-salto, .cp-giro, .cp-esc-bocado, .cp-esc-burbuja, .cp-esc-pelota { animation: none; } }
 </style>
 </head>
 <body>
@@ -364,15 +368,16 @@
   function reduceMotion() { return !!(C.ui.reduceMotion && C.ui.reduceMotion()); }
 
   // A face for a few seconds after something happens, then back to the opening one
-  function mostrar(cara, ms, conEscena) {
+  function mostrar(cara, ms, conEscena, movimiento) {
     momento = cara;
+    compa.dataset.reaccion = '';
     escena = conEscena || null;
     if (relojMomento) clearTimeout(relojMomento);
     relojMomento = setTimeout(function () { momento = null; escena = null; render(); }, ms);
     render();
     if (!reduceMotion()) {
       var svg = lienzo.querySelector('svg');
-      if (svg) svg.classList.add('cp-salto');
+      if (svg) svg.classList.add(movimiento || 'cp-salto');
     }
   }
   // Asleep only while the screen stays open and untouched; never because of time away (#9)
@@ -392,9 +397,30 @@
     if (relojGlobo) clearTimeout(relojGlobo);
     relojGlobo = setTimeout(function () { globo.dataset.visible = '0'; }, 4000);
   }
-  compa.addEventListener('click', function () { C.feedback('tap'); mostrarGlobo(); });
+  // Touching the companion (#33): it shows its wish and reacts, never the same way twice running.
+  // Five touches within 3 s leave it dizzy for a moment: a funny face, never a punishment.
+  var REACCIONES = ['feliz', 'guino', 'sonrojado', 'giro'];
+  var toques = [], ultimaReaccion = null;
+  function tocarCompa() {
+    var t = Date.now();
+    toques = toques.filter(function (x) { return t - x < 3000; });
+    toques.push(t);
+    mostrarGlobo();
+    K.hecho({ accion: 'tocar' });
+    C.feedback('tap');
+    var r;
+    if (toques.length >= 5) { toques = []; r = 'mareado'; mostrar('mareado', 2000); }
+    else {
+      var opciones = REACCIONES.filter(function (x) { return x !== ultimaReaccion; });
+      r = opciones[Math.floor(Math.random() * opciones.length)];
+      mostrar(r === 'giro' ? 'feliz' : r, 1500, null, r === 'giro' ? 'cp-giro' : 'cp-salto');
+    }
+    ultimaReaccion = r;
+    compa.dataset.reaccion = r;
+  }
+  compa.addEventListener('click', tocarCompa);
   compa.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); mostrarGlobo(); }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tocarCompa(); }
   });
   // A mouse wheel slides a row sideways while the row can still move that way, then scrolls the page
   raiz.addEventListener('wheel', function (e) {
@@ -410,7 +436,9 @@
     if (!r || !r.ok) return;
     if (r.cumplioDeseo) mostrarGlobo();
     C.feedback(r.cumplioDeseo ? 'good' : 'tap');
-    mostrar('feliz', conEscena ? 2000 : 2500, conEscena);
+    // a wish fulfilled is joy; otherwise eating chews (ñam) and a bath blushes
+    var cara = r.cumplioDeseo || !conEscena ? 'feliz' : { comer: 'nam', banio: 'sonrojado' }[conEscena.tipo] || 'feliz';
+    mostrar(cara, conEscena ? 2000 : 2500, conEscena);
   }
   function escenaDe(id) { return id === 'jabon' ? { tipo: 'banio' } : { tipo: 'comer', comida: id }; }
   function cuidar(ev) { reaccionar(K.hecho(ev), ev.accion === 'jugar' ? { tipo: 'jugar' } : null); }

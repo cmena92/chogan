@@ -74,7 +74,8 @@ Los consumibles no suman a ese total: cuestan de 5 a 15 y son opcionales.
 - **Vínculo:** +1 por cada cuidado y +3 extra al cumplir el deseo de la visita. Una misma acción gratuita suma como mucho una vez cada 30 segundos, pero se puede hacer siempre.
 - **Cinco niveles**, a los 0, 10, 25, 50 y 100 puntos. El 100 es el máximo y se muestra desde el principio.
 - **Un deseo por visita**, distinto del de la visita anterior: probar una comida, un baño de burbujas, algo nuevo para ponerse, jugar o caricias. Primero se elige el tipo, todos igual de probables, y después cuál comida: así las siete comidas no acaparan los deseos.
-- **Escenas:** comer lleva la comida a la boca, el jabón da un baño de burbujas y jugar trae una pelota que rebota. Con movimiento reducido se ve la misma escena, quieta.
+- **Tocarlo:** responde con risa, guiño, sonrojo o un giro, nunca dos veces seguidas igual, y vuelve a mostrar su deseo. Cinco toques en 3 segundos lo marean un momento: es un gesto gracioso, no un castigo. Suma vínculo con la regla de 30 segundos y no da monedas.
+- **Escenas:** comer lleva la comida a la boca, el jabón da un baño de burbujas y jugar trae una pelota que rebota. Al comer mastica («ñam») y en el baño se sonroja. Con movimiento reducido se ve la misma escena, quieta.
 
 ## Datos
 
