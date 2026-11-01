@@ -84,6 +84,9 @@ function testCatalogo() {
   ok(precio('sandia') === 6 && precio('galleta') === 7 && precio('helado') === 12 && precio('te') === 9, 'las comidas nuevas de #32: sandía 6, galleta 7, helado 12, té 9');
   ok(E.CATALOGO.filter((a) => a.tipo === 'consumible').map((a) => a.id).join() === 'fruta,zanahoria,pastel,sandia,galleta,helado,te,jabon', 'ocho consumibles: siete comidas y el jabón');
   ok(['gorra', 'corona', 'lentes', 'lazo', 'panuelo', 'sueter', 'capa'].every((id) => precio(id) > 0), 'las siete prendas de #16 están a la venta');
+  const nuevas = { vestido: 200, gala: 280, falda: 150, diadema: 100, mono: 90, perlas: 160, zapatillas: 110, botas: 140, sandalias: 90 };
+  ok(Object.entries(nuevas).every(([id, p]) => precio(id) === p), 'las nueve prendas de #34 con sus precios');
+  ok(['zapatillas', 'botas', 'sandalias'].every((id) => (E.CATALOGO.find((a) => a.id === id) || {}).espacio === 'pies') && ['vestido', 'gala', 'falda'].every((id) => (E.CATALOGO.find((a) => a.id === id) || {}).espacio === 'cuerpo'), 'los zapatos van en un espacio nuevo, pies; los vestidos y la falda, en cuerpo');
   // a single source: the design prices of the art (#17) and the catalogue agree
   const disenos = JSON.parse(fs.readFileSync(path.join(ROOT, 'design/companero/disenos.json'), 'utf8')).disenos;
   ok(disenos.every((d) => precio(d.id) === d.precio), 'los diseños cuestan lo mismo que en design/companero/disenos.json');
@@ -265,7 +268,9 @@ async function testPrendasFuente() {
     total++;
     if (componer(A.cuerpos[id], id, [p.id], A.prendas) === diseno.componer(id, [p.id])) iguales++;
   }
-  ok(total === 56 && iguales === 56, 'la app viste las 56 combinaciones igual que el arte que mide Chrome (' + iguales + ' de ' + total + ')');
+  ok(total === 128 && iguales === 128, 'la app viste las 128 combinaciones igual que el arte que mide Chrome (' + iguales + ' de ' + total + ')');
+  const r = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'design/companero/prendas.mjs')], { encoding: 'utf8' });
+  ok(r.status === 0 && /128 combinaciones, 0 superposiciones/.test(r.stdout), 'design/companero/prendas.mjs: ' + (r.stdout.trim() || r.stderr.trim().split('\n')[0]));
   const solo = componer(A.cuerpos.fox, 'fox', [], A.prendas);
   ok(componer(A.cuerpos.fox, 'fox', ['dragon', 'gorra'], A.prendas) === componer(A.cuerpos.fox, 'fox', ['gorra'], A.prendas) && componer(A.cuerpos.fox, 'fox', ['dragon'], A.prendas) === solo, 'una prenda desconocida se omite sin romper al animal');
 }
@@ -277,9 +282,9 @@ async function testRopaPagina() {
     await abrir('/games/companero/index.html');
     await evaluar(preparar({ monedas: 500 }));
     await abrir('/games/companero/index.html');
-    ok(await evaluar(`[...document.querySelectorAll('[data-espacio]')].map((g) => g.dataset.espacio).join()`) === 'cabeza,cuello,cuerpo', 'la ropa tiene los tres espacios: cabeza, cuello y cuerpo');
-    ok(await evaluar(`[...document.querySelectorAll('[data-prenda-item]')].map((b) => b.dataset.prendaItem).join()`) === 'gorra,corona,lentes,lazo,panuelo,sueter,capa', 'aparecen las siete prendas');
-    ok(await evaluar(`document.querySelectorAll('[data-ninguna]').length === 3`), 'cada espacio tiene su opción «Ninguna»');
+    ok(await evaluar(`[...document.querySelectorAll('[data-espacio]')].map((g) => g.dataset.espacio).join()`) === 'cabeza,cuello,cuerpo,pies', 'la ropa tiene cuatro espacios: cabeza, cuello, cuerpo y pies');
+    ok(await evaluar(`[...document.querySelectorAll('[data-prenda-item]')].map((b) => b.dataset.prendaItem).join()`) === 'gorra,corona,lentes,diadema,mono,lazo,panuelo,perlas,sueter,capa,vestido,gala,falda,zapatillas,botas,sandalias', 'aparecen las dieciséis prendas, por espacio');
+    ok(await evaluar(`document.querySelectorAll('[data-ninguna]').length === 4`), 'cada uno de los cuatro espacios tiene su opción «Ninguna»');
     ok(/80/.test(await evaluar(`document.querySelector('[data-prenda-item="lazo"]').getAttribute('aria-label') || ''`)), 'el lector de pantalla anuncia el nombre y el precio de una prenda que no se tiene');
 
     const comprar = async (id) => { await evaluar(`document.querySelector('[data-prenda-item="${id}"]').click()`); await evaluar(pausa(250)); await evaluar(aceptar); await evaluar(pausa(250)); };
@@ -422,19 +427,26 @@ async function navegador(fn) {
   const os = require('os');
   const binario = process.env.CHROME || ['google-chrome', 'chromium', 'chromium-browser'].find((c) => require('child_process').spawnSync('sh', ['-c', 'command -v ' + c]).status === 0);
   if (!binario) throw new Error('Chrome or Chromium not found; set CHROME');
-  const puerto = 8900 + Math.floor(Math.random() * 400);
-  const servidor = spawn('python3', ['-m', 'http.server', String(puerto), '-d', path.join(ROOT, 'www'), '--bind', '127.0.0.1'], { stdio: 'ignore' });
-  const perfil = fs.mkdtempSync(path.join(os.tmpdir(), 'companero-'));
-  const chrome = spawn(binario, ['--headless=new', '--no-sandbox', '--remote-debugging-port=' + (puerto + 1000), '--user-data-dir=' + perfil, 'about:blank'], { stdio: 'ignore' });
   const espera = (ms) => new Promise((r) => setTimeout(r, ms));
+  const perfil = fs.mkdtempSync(path.join(os.tmpdir(), 'companero-'));
+  let puerto, servidor, chrome, lista = null;
+  // A random port can still be held by the Chrome of the group before, which is shutting down:
+  // then this Chrome never opens its debugging port. Up to three tries, each on a new port.
+  for (let intento = 0; intento < 3 && !lista; intento++) {
+    if (chrome) { chrome.kill(); servidor.kill(); await espera(500); }
+    puerto = 8900 + Math.floor(Math.random() * 400);
+    servidor = spawn('python3', ['-m', 'http.server', String(puerto), '-d', path.join(ROOT, 'www'), '--bind', '127.0.0.1'], { stdio: 'ignore' });
+    chrome = spawn(binario, ['--headless=new', '--no-sandbox', '--remote-debugging-port=' + (puerto + 1000), '--user-data-dir=' + perfil + '/' + intento, 'about:blank'], { stdio: 'ignore' });
+    let sirve = false;
+    for (let i = 0; i < 75 && !(lista && sirve); i++) {
+      if (!lista) { try { lista = await (await fetch('http://127.0.0.1:' + (puerto + 1000) + '/json/list')).json(); } catch (e) { /* not yet */ } }
+      if (!sirve) { try { sirve = (await fetch('http://127.0.0.1:' + puerto + '/games.json')).ok; } catch (e) { /* not yet */ } }
+      if (!(lista && sirve)) await espera(200);
+    }
+    if (!sirve) lista = null;
+  }
   try {
-    let lista = null;
-    for (let i = 0; i < 60 && !lista; i++) {
-      try { lista = await (await fetch('http://127.0.0.1:' + (puerto + 1000) + '/json/list')).json(); } catch (e) { await espera(200); }
-    }
-    for (let i = 0; i < 30; i++) {
-      try { await fetch('http://127.0.0.1:' + puerto + '/games.json'); break; } catch (e) { await espera(200); }
-    }
+    if (!lista) throw new Error('Chrome or the local server did not start after three tries');
     const ws = new WebSocket(lista.find((t) => t.type === 'page').webSocketDebuggerUrl);
     await new Promise((r) => ws.addEventListener('open', r, { once: true }));
     let n = 0;
@@ -816,7 +828,7 @@ async function testEscenario() {
     ok(await evaluar(enPantalla) && await evaluar(`document.querySelector('.cp-compa').dataset.expresion === 'feliz'`), 'al acariciar, la reacción se ve sin desplazar');
 
     const filas = await evaluar(`[...document.querySelectorAll('.cp-fila')].map((f) => ({ id: f.closest('[data-seccion]').dataset.seccion, sobra: f.scrollWidth > f.clientWidth + 1, snap: getComputedStyle(f).scrollSnapType, linea: [...f.children].every((c) => Math.abs(c.getBoundingClientRect().top - f.children[0].getBoundingClientRect().top) < 1), items: f.children.length }))`);
-    ok(filas.length === 6, 'seis filas: cuidado, animales, colores y las tres de ropa (' + filas.length + ')');
+    ok(filas.length === 7, 'siete filas: cuidado, animales, colores y las cuatro de ropa (' + filas.length + ')');
     ok(filas.every((f) => f.snap.indexOf('x') === 0 && f.linea), 'cada fila es una sola línea que encaja por tarjeta');
     ok(filas.filter((f) => f.id !== 'ropa').every((f) => f.sobra), 'cuidado, animales y colores se deslizan de lado a 390 px');
     ok(await evaluar(`document.documentElement.scrollWidth <= 390 && document.querySelector('.ch-gamemain').scrollWidth <= 390`), 'la página no se ensancha más allá de la pantalla');
@@ -962,6 +974,32 @@ async function testToques() {
     await evaluar(`Math.random = () => 0.99; true`);
     const giro = (await tocar()).r === 'giro';
     ok(giro && await evaluar(`document.querySelector('.cp-compa').getAnimations({ subtree: true }).length === 0`), 'con movimiento reducido, el giro es solo la cara feliz, sin girar');
+  });
+}
+
+/* ------------------------------------------------ dresses, shoes and more clothes (#34) */
+
+async function testRopaNueva() {
+  head('Vestidos, zapatos y más ropa en la página (#34)');
+  await navegador(async ({ abrir, evaluar, errores }) => {
+    // a profile from before #34: a sweater on, and no «pies» anywhere
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 400 }));
+    await evaluar(`localStorage.setItem('chogan.companero.inventario', JSON.stringify({ version: 1, permanentes: ['sueter'], consumibles: {}, equipado: { animal: 'capybara', diseno: 'natural', prendas: { cuerpo: 'sueter' } }, movimientos: [] })); true`);
+    errores.length = 0;
+    await abrir('/games/companero/index.html');
+    ok(!errores.length && await evaluar(`document.querySelector('[data-ninguna="pies"]').getAttribute('aria-pressed') === 'true'`), 'un inventario anterior abre sin errores, con los pies vacíos');
+    const clic = async (sel) => { await evaluar(`document.querySelector('${sel}').click(); true`); await evaluar(pausa(200)); if (await evaluar(`!!document.querySelector('.ch-scrim')`)) { await evaluar(aceptar); await evaluar(pausa(250)); } };
+    await clic('[data-prenda-item="vestido"]');
+    await clic('[data-prenda-item="zapatillas"]');
+    const r = await evaluar(`({ eq: JSON.parse(localStorage.getItem('chogan.companero.inventario')).equipado.prendas, monedas: +localStorage.getItem('chogan.app.coins'), dibujo: [...document.querySelectorAll('.cp-dibujo [data-prenda]')].map((g) => g.dataset.prenda).sort().join() })`);
+    ok(r.eq.cuerpo === 'vestido' && r.eq.pies === 'zapatillas', 'el vestido reemplaza al suéter y las zapatillas van en los pies');
+    ok(r.monedas === 400 - 200 - 110, 'cada prenda cuesta lo suyo (' + r.monedas + ')');
+    ok(r.dibujo === 'vestido,zapatillas', 'el compañero lleva puesto el vestido y las zapatillas');
+    await clic('[data-prenda-item="sueter"]');
+    ok(await evaluar(`JSON.parse(localStorage.getItem('chogan.companero.inventario')).equipado.prendas.cuerpo`) === 'sueter' && await evaluar(`+localStorage.getItem('chogan.app.coins')`) === 90, 'volver al suéter, que ya era suyo, es gratis');
+    await clic('[data-ninguna="pies"]');
+    ok(!(await evaluar(`JSON.parse(localStorage.getItem('chogan.companero.inventario')).equipado.prendas.pies`)), '«Ninguno» en pies se los quita');
   });
 }
 

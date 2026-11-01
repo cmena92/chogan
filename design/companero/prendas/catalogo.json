@@ -3,9 +3,18 @@
     { "id": "gorra", "espacio": "cabeza", "nombre": "Gorra" },
     { "id": "corona", "espacio": "cabeza", "nombre": "Corona" },
     { "id": "lentes", "espacio": "cabeza", "anclaje": "ojos", "nombre": "Lentes" },
+    { "id": "diadema", "espacio": "cabeza", "nombre": "Diadema con flor" },
+    { "id": "mono", "espacio": "cabeza", "nombre": "Moño grande" },
     { "id": "lazo", "espacio": "cuello", "nombre": "Lazo" },
     { "id": "panuelo", "espacio": "cuello", "nombre": "Pañuelo" },
+    { "id": "perlas", "espacio": "cuello", "nombre": "Collar de perlas" },
     { "id": "sueter", "espacio": "cuerpo", "nombre": "Suéter" },
-    { "id": "capa", "espacio": "cuerpo", "nombre": "Capa" }
+    { "id": "capa", "espacio": "cuerpo", "nombre": "Capa" },
+    { "id": "vestido", "espacio": "cuerpo", "nombre": "Vestido de flores" },
+    { "id": "gala", "espacio": "cuerpo", "nombre": "Vestido de fiesta" },
+    { "id": "falda", "espacio": "cuerpo", "nombre": "Falda" },
+    { "id": "zapatillas", "espacio": "pies", "nombre": "Zapatillas" },
+    { "id": "botas", "espacio": "pies", "nombre": "Botas" },
+    { "id": "sandalias", "espacio": "pies", "nombre": "Sandalias" }
   ]
 }
