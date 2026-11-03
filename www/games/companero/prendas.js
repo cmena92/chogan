@@ -1,6 +1,6 @@
 /* Capybara's companion: dressing it (epic #2, #8 and #16).
-   One source for the app and for design/companero/prendas.mjs, which measures the 56 animal and
-   garment pairs in Chrome. Pure string work on an SVG, no DOM: the garments, the catalogue and
+   One source for the app and for design/companero/prendas.mjs, which measures the 128 animal and
+   garment pairs in Chrome (#34 added dresses, a skirt and shoes, on a fourth slot, the feet). Pure string work on an SVG, no DOM: the garments, the catalogue and
    the anchors come in as `datos`. Capes go behind the body, sweaters over the belly and under
    the arms, everything else over the face, and the glasses last. An unknown garment is skipped. */
 (function (root, factory) {

@@ -130,6 +130,16 @@
         "nombre": "Lentes"
       },
       {
+        "id": "diadema",
+        "espacio": "cabeza",
+        "nombre": "Diadema con flor"
+      },
+      {
+        "id": "mono",
+        "espacio": "cabeza",
+        "nombre": "Moño grande"
+      },
+      {
         "id": "lazo",
         "espacio": "cuello",
         "nombre": "Lazo"
@@ -140,6 +150,11 @@
         "nombre": "Pañuelo"
       },
       {
+        "id": "perlas",
+        "espacio": "cuello",
+        "nombre": "Collar de perlas"
+      },
+      {
         "id": "sueter",
         "espacio": "cuerpo",
         "nombre": "Suéter"
@@ -148,6 +163,36 @@
         "id": "capa",
         "espacio": "cuerpo",
         "nombre": "Capa"
+      },
+      {
+        "id": "vestido",
+        "espacio": "cuerpo",
+        "nombre": "Vestido de flores"
+      },
+      {
+        "id": "gala",
+        "espacio": "cuerpo",
+        "nombre": "Vestido de fiesta"
+      },
+      {
+        "id": "falda",
+        "espacio": "cuerpo",
+        "nombre": "Falda"
+      },
+      {
+        "id": "zapatillas",
+        "espacio": "pies",
+        "nombre": "Zapatillas"
+      },
+      {
+        "id": "botas",
+        "espacio": "pies",
+        "nombre": "Botas"
+      },
+      {
+        "id": "sandalias",
+        "espacio": "pies",
+        "nombre": "Sandalias"
       }
     ],
     "piezas": {
@@ -163,12 +208,24 @@
         "frente": "<g id=\"prenda\" fill=\"rgba(255,255,255,0.18)\" stroke=\"#2C2620\" stroke-width=\"2.5\">\n    <circle cx=\"-14\" cy=\"0\" r=\"8.5\"/><circle cx=\"14\" cy=\"0\" r=\"8.5\"/>\n    <path d=\"M-5.5 0h11\" fill=\"none\"/>\n  </g>",
         "atras": ""
       },
+      "diadema": {
+        "frente": "<g id=\"prenda\"><path d=\"M-25 13Q0-8 25 13\" stroke=\"#D7263D\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/><g transform=\"translate(-15 3) scale(1.6)\"><circle cx=\"0\" cy=\"-2.2\" r=\"1.9\" fill=\"#F7A8C4\"/><circle cx=\"2.1\" cy=\"-.7\" r=\"1.9\" fill=\"#F7A8C4\"/><circle cx=\"1.3\" cy=\"1.8\" r=\"1.9\" fill=\"#F7A8C4\"/><circle cx=\"-1.3\" cy=\"1.8\" r=\"1.9\" fill=\"#F7A8C4\"/><circle cx=\"-2.1\" cy=\"-.7\" r=\"1.9\" fill=\"#F7A8C4\"/><circle r=\"1.3\" fill=\"#F2C14E\"/></g></g>",
+        "atras": ""
+      },
+      "mono": {
+        "frente": "<g id=\"prenda\"><path d=\"M0 2-17-8v20zM0 2 17-8v20z\" fill=\"#F06BA8\"/><path d=\"M-3 2-14-3M3 2 14-3\" stroke=\"#D44A8A\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><circle cx=\"0\" cy=\"2\" r=\"4.5\" fill=\"#D44A8A\"/></g>",
+        "atras": ""
+      },
       "lazo": {
         "frente": "<g id=\"prenda\">\n    <path d=\"M0 4-15-2v12zM0 4 15-2v12z\" fill=\"#D7263D\"/>\n    <circle cx=\"0\" cy=\"4\" r=\"4\" fill=\"#B51F33\"/>\n  </g>",
         "atras": ""
       },
       "panuelo": {
         "frente": "<g id=\"prenda\">\n    <path d=\"M-20-2h40L0 16z\" fill=\"#1B998B\"/>\n    <path d=\"M-20-2h40v4h-40z\" fill=\"#147A6F\"/>\n    <circle cx=\"-6\" cy=\"6\" r=\"1.4\" fill=\"#FFFFFF\"/><circle cx=\"6\" cy=\"6\" r=\"1.4\" fill=\"#FFFFFF\"/><circle cx=\"0\" cy=\"11\" r=\"1.4\" fill=\"#FFFFFF\"/>\n  </g>",
+        "atras": ""
+      },
+      "perlas": {
+        "frente": "<g id=\"prenda\"><circle cx=\"-16\" cy=\"2.5\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><circle cx=\"-12\" cy=\"6.44\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><circle cx=\"-8\" cy=\"9.25\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><circle cx=\"-4\" cy=\"10.94\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><circle cx=\"0\" cy=\"11.5\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><circle cx=\"4\" cy=\"10.94\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><circle cx=\"8\" cy=\"9.25\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><circle cx=\"12\" cy=\"6.44\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><circle cx=\"16\" cy=\"2.5\" r=\"2.5\" fill=\"#FFFDF6\" stroke=\"#D9D2C7\" stroke-width=\".8\"/></g>",
         "atras": ""
       },
       "sueter": {
@@ -178,6 +235,30 @@
       "capa": {
         "frente": "<g id=\"prenda-frente\"><circle cx=\"0\" cy=\"-27\" r=\"3.5\" fill=\"#F4C430\"/></g>",
         "atras": "<g id=\"prenda-atras\"><path d=\"M-18-29h36q6 4 10 14l16 43q-44 10-88 0l16-43q4-10 10-14z\" fill=\"#8C1C3A\"/><path d=\"M-18-29h36q-18 8-36 0z\" fill=\"#6E1530\"/></g>"
+      },
+      "vestido": {
+        "frente": "<g id=\"prenda\"><path d=\"M-27.5 12A30 30 0 1 1 27.5 12L30 22Q0 29-30 22z\" fill=\"#F48FB8\"/><path d=\"M-27.5 12h55l1 3.6h-57z\" fill=\"#E26A9C\"/><g transform=\"translate(-12 -2)\"><circle cx=\"0\" cy=\"-2.2\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle r=\"1.2\" fill=\"#F2C14E\"/></g><g transform=\"translate(11 -8)\"><circle cx=\"0\" cy=\"-2.2\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle r=\"1.2\" fill=\"#F2C14E\"/></g><g transform=\"translate(3 6)\"><circle cx=\"0\" cy=\"-2.2\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle r=\"1.2\" fill=\"#F2C14E\"/></g><g transform=\"translate(-17 18)\"><circle cx=\"0\" cy=\"-2.2\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle r=\"1.2\" fill=\"#F2C14E\"/></g><g transform=\"translate(17 17)\"><circle cx=\"0\" cy=\"-2.2\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle r=\"1.2\" fill=\"#F2C14E\"/></g><g transform=\"translate(-2 20)\"><circle cx=\"0\" cy=\"-2.2\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-1.3\" cy=\"1.8\" r=\"1.8\" fill=\"#FFFFFF\"/><circle cx=\"-2.1\" cy=\"-.7\" r=\"1.8\" fill=\"#FFFFFF\"/><circle r=\"1.2\" fill=\"#F2C14E\"/></g></g>",
+        "atras": ""
+      },
+      "gala": {
+        "frente": "<g id=\"prenda\"><path d=\"M-27.5 12A30 30 0 1 1 27.5 12L31 23Q0 30-31 23z\" fill=\"#8E5BD6\"/><path d=\"M-29.4 2h58.8v5h-58.8z\" fill=\"#F2C14E\"/><circle cx=\"0\" cy=\"4.5\" r=\"3\" fill=\"#FFF4C2\" stroke=\"#D9A441\" stroke-width=\"1\"/><path d=\"M-14 14l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1zM12 -12l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8zM16 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z\" fill=\"#FFF4C2\"/></g>",
+        "atras": ""
+      },
+      "falda": {
+        "frente": "<g id=\"prenda\"><path d=\"M-24 2h48l6 21Q0 29-30 23z\" fill=\"#E4573D\"/><path d=\"M-24 2h48v4.5h-48z\" fill=\"#B53A26\"/><path d=\"M-12 7l-3 18M0 7v19M12 7l3 18\" stroke=\"#B53A26\" stroke-width=\"1.2\"/></g>",
+        "atras": ""
+      },
+      "zapatillas": {
+        "frente": "<g id=\"prenda\"><g transform=\"translate(-14 0)\"><path d=\"M-11 2q0-8 8-8h6q8 0 8 6v4h-22z\" fill=\"#3A86FF\"/><path d=\"M-11 4h22v3q0 1.6-1.6 1.6h-18.8q-1.6 0-1.6-1.6z\" fill=\"#FFFFFF\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><path d=\"M-4-3.5l3 3M0-4.6l3 3\" stroke=\"#FFFFFF\" stroke-width=\"1.1\" stroke-linecap=\"round\"/></g><g transform=\"translate(14 0)\"><path d=\"M-11 2q0-8 8-8h6q8 0 8 6v4h-22z\" fill=\"#3A86FF\"/><path d=\"M-11 4h22v3q0 1.6-1.6 1.6h-18.8q-1.6 0-1.6-1.6z\" fill=\"#FFFFFF\" stroke=\"#D9D2C7\" stroke-width=\".8\"/><path d=\"M-4-3.5l3 3M0-4.6l3 3\" stroke=\"#FFFFFF\" stroke-width=\"1.1\" stroke-linecap=\"round\"/></g></g>",
+        "atras": ""
+      },
+      "botas": {
+        "frente": "<g id=\"prenda\"><g transform=\"translate(-14 0)\"><path d=\"M-8-14h12v10q7 0 7 6v5h-22v-5z\" fill=\"#8B5A3C\"/><path d=\"M-9-15h14v4h-14z\" fill=\"#B07A52\"/><path d=\"M-11 5h22v3h-22z\" fill=\"#5E3A24\"/></g><g transform=\"translate(14 0)\"><path d=\"M-8-14h12v10q7 0 7 6v5h-22v-5z\" fill=\"#8B5A3C\"/><path d=\"M-9-15h14v4h-14z\" fill=\"#B07A52\"/><path d=\"M-11 5h22v3h-22z\" fill=\"#5E3A24\"/></g></g>",
+        "atras": ""
+      },
+      "sandalias": {
+        "frente": "<g id=\"prenda\"><g transform=\"translate(-14 0)\"><path d=\"M-11 4h22q0 4-3 4h-16q-3 0-3-4z\" fill=\"#E3A85B\"/><path d=\"M-7 4q0-7 7-7M7 4q0-7-7-7\" stroke=\"#D7263D\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"0\" cy=\"-3\" r=\"1.6\" fill=\"#F2C14E\"/></g><g transform=\"translate(14 0)\"><path d=\"M-11 4h22q0 4-3 4h-16q-3 0-3-4z\" fill=\"#E3A85B\"/><path d=\"M-7 4q0-7 7-7M7 4q0-7-7-7\" stroke=\"#D7263D\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"0\" cy=\"-3\" r=\"1.6\" fill=\"#F2C14E\"/></g></g>",
+        "atras": ""
       }
     },
     "anclajes": {
@@ -196,6 +277,10 @@
           "y": 130,
           "ancho": 56,
           "alto": 44
+        },
+        "pies": {
+          "x": 60,
+          "y": 160
         },
         "ojos": {
           "izq": 46,
@@ -231,6 +316,10 @@
           "y": 130,
           "ancho": 56,
           "alto": 44
+        },
+        "pies": {
+          "x": 60,
+          "y": 160
         },
         "ojos": {
           "izq": 45,
@@ -271,6 +360,10 @@
           "ancho": 56,
           "alto": 44
         },
+        "pies": {
+          "x": 60,
+          "y": 160
+        },
         "ojos": {
           "izq": 47,
           "der": 73,
@@ -305,6 +398,10 @@
           "y": 130,
           "ancho": 56,
           "alto": 44
+        },
+        "pies": {
+          "x": 60,
+          "y": 160
         },
         "ojos": {
           "izq": 47,
@@ -341,6 +438,10 @@
           "ancho": 56,
           "alto": 44
         },
+        "pies": {
+          "x": 60,
+          "y": 160
+        },
         "ojos": {
           "izq": 44,
           "der": 76,
@@ -375,6 +476,10 @@
           "y": 130,
           "ancho": 56,
           "alto": 44
+        },
+        "pies": {
+          "x": 60,
+          "y": 160
         },
         "ojos": {
           "izq": 47,
@@ -416,6 +521,10 @@
           "ancho": 56,
           "alto": 44
         },
+        "pies": {
+          "x": 60,
+          "y": 160
+        },
         "ojos": {
           "izq": 45,
           "der": 75,
@@ -450,6 +559,10 @@
           "y": 130,
           "ancho": 56,
           "alto": 44
+        },
+        "pies": {
+          "x": 60,
+          "y": 160
         },
         "ojos": {
           "izq": 46,

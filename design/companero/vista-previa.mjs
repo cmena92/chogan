@@ -33,7 +33,7 @@ const cuerpoSvg = (id, alto, marcas) => {
   if (marcas) {
     const a = anclajes[id];
     const punto = (p, c) => `<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="${c}" stroke="#fff" stroke-width="1.5"/>`;
-    s = s.replace("</svg>", `${punto(a.cabeza, "#D7263D")}${punto(a.cuello, "#1B998B")}${punto(a.cuerpo, "#3A86FF")}</svg>`);
+    s = s.replace("</svg>", `${punto(a.cabeza, "#D7263D")}${punto(a.cuello, "#1B998B")}${punto(a.cuerpo, "#3A86FF")}${punto(a.pies, "#F2C14E")}</svg>`);
   }
   return s;
 };
@@ -46,8 +46,8 @@ const cuerpos = (nombre, fondo, texto) =>
 const vestido = (id, prendas, alto) => componer(id, prendas).replace('width="120" height="170"', `width="${Math.round((alto * 120) / 170)}" height="${alto}"`);
 const filaPrenda = (prendas, alto) =>
   `<div class="fila">${ids.map((id) => `<figure>${vestido(id, prendas, alto)}<figcaption>${id}</figcaption></figure>`).join("")}</div>`;
-const CONJUNTOS = [["gorra", "lazo", "sueter"], ["corona", "panuelo", "capa"], ["lentes", "lazo", "capa"]];
-const ropa = `<section style="background:#FBF6EF;color:#2C2620"><h2>Prendas (#16)</h2>${catalogo
+const CONJUNTOS = [["gorra", "lazo", "sueter"], ["corona", "panuelo", "capa"], ["lentes", "lazo", "capa"], ["diadema", "perlas", "vestido", "sandalias"], ["mono", "lazo", "gala", "zapatillas"], ["gorra", "panuelo", "falda", "botas"]];
+const ropa = `<section style="background:#FBF6EF;color:#2C2620"><h2 id="ropa">Prendas (#16, #34)</h2>${catalogo
   .map((p) => `<h3>${p.nombre} · ${p.espacio}</h3>${filaPrenda([p.id], 120)}`)
   .join("")}<h2>Conjuntos completos</h2>${CONJUNTOS.map((c) => `<h3>${c.join(" + ")}</h3>${filaPrenda(c, 150)}`).join("")}</section>`;
 
@@ -85,6 +85,6 @@ ${caras}
 ${escenas}
 ${ropa}
 ${colores("Diseños exclusivos (#17) · tema claro", "#FBF6EF", "#2C2620")}${colores("Diseños exclusivos (#17) · tema oscuro", "#1E1B18", "#F2EDE6")}
-<section style="background:#FBF6EF"><h2>Anclajes de la ropa</h2><p>Rojo: cabeza (gorro, corona, lentes) · verde: cuello (lazo, pañuelo) · azul: cuerpo (suéter, capa).</p>${filaCuerpos(170, true)}</section>`,
+<section style="background:#FBF6EF"><h2>Anclajes de la ropa</h2><p>Rojo: cabeza (gorro, corona, lentes, diadema, moño) · verde: cuello (lazo, pañuelo, perlas) · azul: cuerpo (suéter, capa, vestidos, falda) · amarillo: pies (zapatos).</p>${filaCuerpos(170, true)}</section>`,
 );
 console.log("vista-previa.html lista");

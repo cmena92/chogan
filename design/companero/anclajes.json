@@ -3,7 +3,7 @@
     "ancho": 120,
     "alto": 170
   },
-  "nota": "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello y cuerpo son comunes a los ocho; ojos: para los lentes; rasgos: zona que ninguna prenda cubre; ajustes: desplazamiento o escala de una prenda en ese animal; colores: los del diseño Natural, que los demás diseños reemplazan.",
+  "nota": "Coordenadas en el marco del cuerpo entero. cabeza: donde apoya un gorro; cuello, cuerpo y pies (#34) son comunes a los ocho; ojos: para los lentes; rasgos: zona que ninguna prenda cubre; ajustes: desplazamiento o escala de una prenda en ese animal; colores: los del diseño Natural, que los demás diseños reemplazan.",
   "animales": {
     "fox": {
       "cabeza": {
@@ -20,6 +20,10 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
+      },
+      "pies": {
+        "x": 60,
+        "y": 160
       },
       "ojos": {
         "izq": 46,
@@ -55,6 +59,10 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
+      },
+      "pies": {
+        "x": 60,
+        "y": 160
       },
       "ojos": {
         "izq": 45,
@@ -95,6 +103,10 @@
         "ancho": 56,
         "alto": 44
       },
+      "pies": {
+        "x": 60,
+        "y": 160
+      },
       "ojos": {
         "izq": 47,
         "der": 73,
@@ -129,6 +141,10 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
+      },
+      "pies": {
+        "x": 60,
+        "y": 160
       },
       "ojos": {
         "izq": 47,
@@ -165,6 +181,10 @@
         "ancho": 56,
         "alto": 44
       },
+      "pies": {
+        "x": 60,
+        "y": 160
+      },
       "ojos": {
         "izq": 44,
         "der": 76,
@@ -199,6 +219,10 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
+      },
+      "pies": {
+        "x": 60,
+        "y": 160
       },
       "ojos": {
         "izq": 47,
@@ -240,6 +264,10 @@
         "ancho": 56,
         "alto": 44
       },
+      "pies": {
+        "x": 60,
+        "y": 160
+      },
       "ojos": {
         "izq": 45,
         "der": 75,
@@ -274,6 +302,10 @@
         "y": 130,
         "ancho": 56,
         "alto": 44
+      },
+      "pies": {
+        "x": 60,
+        "y": 160
       },
       "ojos": {
         "izq": 46,

@@ -47,10 +47,19 @@ Las compras pasan por `C.coins.spend`, que solo acepta precios enteros y positiv
 | `gorra` | prenda | cabeza | 90 |
 | `corona` | prenda | cabeza | 220 |
 | `lentes` | prenda | cabeza | 140 |
+| `diadema` | prenda | cabeza, con flor | 100 |
+| `mono` | prenda | cabeza, moño grande | 90 |
 | `lazo` | prenda | cuello | 80 |
 | `panuelo` | prenda | cuello | 110 |
+| `perlas` | prenda | cuello, collar de perlas | 160 |
 | `sueter` | prenda | cuerpo | 180 |
 | `capa` | prenda | cuerpo | 240 |
+| `vestido` | prenda | cuerpo, vestido de flores | 200 |
+| `gala` | prenda | cuerpo, vestido de fiesta | 280 |
+| `falda` | prenda | cuerpo | 150 |
+| `zapatillas` | prenda | pies | 110 |
+| `botas` | prenda | pies | 140 |
+| `sandalias` | prenda | pies | 90 |
 | `fruta` | consumible | comida | 5 |
 | `zanahoria` | consumible | comida | 8 |
 | `pastel` | consumible | comida | 15 |
@@ -64,7 +73,9 @@ Los cuatro personajes del original (zorro, búho, gato y oso) también son anima
 
 ### Costo total
 
-Todo lo permanente cuesta **2,770 monedas**: animales 780, diseños 930 y ropa 1,060. A unas 8 monedas por partida, son unas 350 partidas: meses de juego tranquilo, sin necesidad de apurarse.
+Todo lo permanente cuesta **4,090 monedas**: animales 780, diseños 930 y ropa 2,380. A unas 8 monedas por partida, son unas 510 partidas: meses de juego tranquilo, sin necesidad de apurarse.
+
+La ropa tiene cuatro espacios (cabeza, cuello, cuerpo y pies) y una prenda por espacio: un vestido reemplaza al suéter, y los zapatos conviven con todo. Cualquier prenda le queda a cualquier animal; la tienda no separa por género.
 
 Los consumibles no suman a ese total: cuestan de 5 a 15 y son opcionales.
 
