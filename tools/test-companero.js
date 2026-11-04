@@ -318,9 +318,11 @@ function companero(o) {
   const x = nuevo({ saldo: o.saldo === undefined ? 500 : o.saldo, datos: o.datos });
   let t = o.t || 1e12;
   let dado = o.dado || (() => 0);
-  const crearCuidado = () => K.crear({ store: x.s, economia: x.eco, ahora: () => t, azar: () => dado() });
+  // the games finished in the whole app, as the core counts them (C.stats.get().plays)
+  let jugadas = o.partidas || 0;
+  const crearCuidado = () => K.crear({ store: x.s, economia: x.eco, ahora: () => t, azar: () => dado(), partidas: () => jugadas });
   const c = crearCuidado();
-  return Object.assign(x, { c, crearCuidado, pasar(ms) { t += ms; }, dado(f) { dado = f; } });
+  return Object.assign(x, { c, crearCuidado, pasar(ms) { t += ms; }, dado(f) { dado = f; }, jugar(n) { jugadas += n; } });
 }
 
 function testCuidadoLogica() {
@@ -574,7 +576,7 @@ function testDeseosSinCarencia() {
     zh: ['饿', '伤心', '难过', '脏', '孤单', '寂寞', '想你'],
     fa: ['گرسنه', 'غمگین', 'ناراحت', 'کثیف', 'تنها', 'دلتنگ'],
   };
-  const claves = (K ? K.DESEOS.map((d) => 'deseo_' + d.id) : []).concat(['deseoCumplido']);
+  const claves = (K ? K.DESEOS.map((d) => 'deseo_' + d.id) : []).concat(['deseoCumplido', 'gana_comer', 'gana_jugar', 'gana_banio']);
   for (const l of Object.keys(PROHIBIDAS)) {
     const textos = claves.map((k) => T[l] && T[l][k]);
     ok(textos.every((x) => typeof x === 'string' && x.length > 2), l + ': cada deseo tiene su texto');
@@ -1000,6 +1002,65 @@ async function testRopaNueva() {
     ok(await evaluar(`JSON.parse(localStorage.getItem('chogan.companero.inventario')).equipado.prendas.cuerpo`) === 'sueter' && await evaluar(`+localStorage.getItem('chogan.app.coins')`) === 90, 'volver al suéter, que ya era suyo, es gratis');
     await clic('[data-ninguna="pies"]');
     ok(!(await evaluar(`JSON.parse(localStorage.getItem('chogan.companero.inventario')).equipado.prendas.pies`)), '«Ninguno» en pies se los quita');
+  });
+}
+
+/* ------------------------------------------------ wanting things, as you play (#39) */
+
+function testGanas() {
+  head('Ganas de comer, jugar y bañarse: crecen jugando, nunca por ausencia (#39)');
+  if (!K || !K.GANAS) return ok(false, 'cuidado.js exporta GANAS');
+  ok(JSON.stringify(K.GANAS) === JSON.stringify({ comer: 3, jugar: 4, banio: 5 }), 'una gana sube cada 3 partidas (comer), 4 (jugar) y 5 (bañarse)');
+  const x = companero({ saldo: 200, partidas: 40 });
+  ok(JSON.stringify(x.c.ganas()) === '{"comer":0,"jugar":0,"banio":0}', 'un perfil que ya jugaba empieza con las ganas en 0, no con las partidas de antes');
+  x.jugar(3);
+  ok(x.c.ganas().comer === 1 && x.c.ganas().jugar === 0, 'tras 3 partidas: comer 1, jugar 0');
+  x.jugar(2);
+  ok(JSON.stringify(x.c.ganas()) === '{"comer":1,"jugar":1,"banio":1}', 'tras 5: las tres en 1');
+  x.jugar(30);
+  ok(JSON.stringify(x.c.ganas()) === '{"comer":3,"jugar":3,"banio":3}', 'tras 35: las tres en 3, el tope');
+  x.pasar(365 * 864e5);
+  ok(JSON.stringify(x.crearCuidado().ganas()) === '{"comer":3,"jugar":3,"banio":3}', 'un año después siguen en 3: nunca bajan solas');
+
+  const v0 = x.c.vinculo().puntos;
+  x.eco.comprar('galleta');
+  const r = x.c.alimentar('galleta');
+  ok(x.c.ganas().comer === 0 && x.c.ganas().jugar === 3, 'cualquier comida baja «comer» a 0, y nada más');
+  ok(r.atendio === 'comer' && x.c.vinculo().puntos === v0 + 1 + 2, 'atender una gana en 2 o más suma +2 de vínculo extra (' + v0 + ' → ' + x.c.vinculo().puntos + ')');
+  x.c.hecho({ accion: 'jugar' });
+  x.eco.comprar('jabon'); x.c.alimentar('jabon');
+  ok(JSON.stringify(x.c.ganas()) === '{"comer":0,"jugar":0,"banio":0}', 'jugar baja «jugar» y el jabón, «bañarse»');
+  x.jugar(3); const v1 = x.c.vinculo().puntos;
+  x.pasar(31000); x.eco.comprar('fruta'); x.c.alimentar('fruta');
+  ok(x.c.vinculo().puntos === v1 + 1, 'una gana en 1 no da el extra');
+
+  const y = companero({ partidas: 0 });
+  y.pasar(365 * 864e5);
+  ok(JSON.stringify(y.crearCuidado().ganas()) === '{"comer":0,"jugar":0,"banio":0}', 'un año sin jugar: las ganas siguen en 0');
+  const z = companero({ partidas: 0 });
+  z.jugar(9);
+  ok(z.c.ganaFuerte() === 'comer' && z.c.expresionAlAbrir() === 'antojado', 'con una gana en 3, abre antojado y la gana fuerte es la que más creció (comer)');
+  ok(z.s.escritas.every((k) => k === 'inventario' || k === 'cuidado'), 'las ganas se guardan en «cuidado»: nunca escribe las estadísticas del núcleo');
+  // an old saved care, from before #39, keeps its bond
+  const w = nuevo({ saldo: 10, datos: { cuidado: { version: 1, puntos: 42, ultimas: {}, deseo: null, ultimoDeseo: null } } });
+  const cw = K.crear({ store: w.s, economia: w.eco, partidas: () => 80 });
+  ok(cw.vinculo().puntos === 42 && JSON.stringify(cw.ganas()) === '{"comer":0,"jugar":0,"banio":0}', 'un cuidado guardado antes de #39 conserva su vínculo y empieza con las ganas en 0');
+}
+
+async function testGanasPagina() {
+  head('Las ganas en la página (#39)');
+  await navegador(async ({ abrir, evaluar }) => {
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 100 }));
+    await evaluar(`localStorage.setItem('chogan.app.stats', JSON.stringify({ plays: 12, timeMs: 0, byGame: {}, streak: { count: 0 } })); localStorage.setItem('chogan.companero.cuidado', JSON.stringify({ version: 1, puntos: 5, ultimas: {}, deseo: null, ultimoDeseo: null, ganas: { comer: 0, jugar: 4, banio: 12 } })); true`);
+    await abrir('/games/companero/index.html');
+    const g = await evaluar(`[...document.querySelectorAll('.cp-gana')].map((x) => x.dataset.gana + ':' + x.dataset.nivel).join()`);
+    ok(g === 'comer:3,jugar:2,banio:0', 'tres indicadores con su nivel: comer 3, jugar 2, bañarse 0 (' + g + ')');
+    ok(await evaluar(`[...document.querySelectorAll('.cp-gana')].every((x) => x.querySelector('svg') && x.getAttribute('aria-label'))`), 'cada indicador tiene su dibujo y un nombre para el lector de pantalla');
+    ok(await evaluar(`document.querySelector('.cp-globo').dataset.gana === 'comer'`) && await evaluar(`document.querySelector('.cp-compa').dataset.expresion === 'antojado'`), 'con ganas de comer en 3, el globo lo dice y la cara es antojada');
+    await evaluar(`document.querySelector('[data-consumible="fruta"]').click(); true`); await evaluar(pausa(200)); await evaluar(aceptar); await evaluar(pausa(200));
+    ok(await evaluar(`document.querySelector('[data-gana="comer"]').dataset.nivel`) === '0', 'al darle de comer, la gana baja a 0');
+    ok(!(await evaluar(`localStorage.getItem('chogan.app.stats')`)).includes('companero'), 'las estadísticas del núcleo quedan intactas');
   });
 }
 
