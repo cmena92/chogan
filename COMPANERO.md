@@ -85,6 +85,7 @@ Los consumibles no suman a ese total: cuestan de 5 a 15 y son opcionales.
 - **Vínculo:** +1 por cada cuidado y +3 extra al cumplir el deseo de la visita. Una misma acción gratuita suma como mucho una vez cada 30 segundos, pero se puede hacer siempre.
 - **Cinco niveles**, a los 0, 10, 25, 50 y 100 puntos. El 100 es el máximo y se muestra desde el principio.
 - **Un deseo por visita**, distinto del de la visita anterior: probar una comida, un baño de burbujas, algo nuevo para ponerse, jugar o caricias. Primero se elige el tipo, todos igual de probables, y después cuál comida: así las siete comidas no acaparan los deseos.
+- **Ganas (#39):** de comer, de jugar y de bañarse, de 0 a 3. Suben una cada 3, 4 y 5 partidas terminadas en toda la app (leídas de las estadísticas del núcleo, que el compañero nunca escribe). **Crecen jugando, nunca por el tiempo fuera:** un año sin jugar las deja como estaban. En 3, el globo lo dice («¡Uf, tanto mirarte jugar me abrió el apetito!») y la cara es antojada. Atenderlas las baja a 0, y si estaban en 2 o más suman +2 de vínculo. Si nadie las atiende no pasa nada.
 - **Tocarlo:** responde con risa, guiño, sonrojo o un giro, nunca dos veces seguidas igual, y vuelve a mostrar su deseo. Cinco toques en 3 segundos lo marean un momento: es un gesto gracioso, no un castigo. Suma vínculo con la regla de 30 segundos y no da monedas.
 - **Escenas:** comer lleva la comida a la boca, el jabón da un baño de burbujas y jugar trae una pelota que rebota. Al comer mastica («ñam») y en el baño se sonroja. Con movimiento reducido se ve la misma escena, quieta.
 
@@ -102,6 +103,7 @@ Todo se guarda en el teléfono, bajo `chogan.companero.`:
 | Decisión | Por qué |
 |---|---|
 | Deseos en vez de necesidades | Las mascotas virtuales suelen enganchar con culpa; Capybara promete no hacerlo. |
+| Ganas que crecen jugando, no esperando | El compañero reacciona a lo que hacés sin castigar a quien no entra (decisión del 2026-11-03). |
 | El compañero es una entrada más de `games.json` | El núcleo queda intacto y sincronizar con el original no da conflictos. |
 | Lógica pura en módulos propios (`economia.js`, `cuidado.js`, `disenos.js`, `prendas.js`, `expresiones.js`) | Se prueba sin navegador, con el reloj y el azar simulados. |
 | Una sola fuente para la app y el arte | `design/companero/` usa los mismos módulos, así lo aprobado es exactamente lo que se ve. |

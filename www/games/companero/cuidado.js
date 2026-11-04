@@ -35,6 +35,10 @@
   var POR_CUIDADO = 1, POR_DESEO = 3;
   // the same free action adds to the bond at most once in this long; it is never blocked
   var ESPERA_MS = 30000;
+  // Wanting things (#39): one level more every this many games finished in the whole app, up to 3.
+  // Games, never time: a year away with no games leaves them as they were.
+  var GANAS = { comer: 3, jugar: 4, banio: 5 };
+  var TOPE = 3, POR_GANA = 2;
 
   function vacio() { return { version: VERSION, puntos: 0, ultimas: {}, deseo: null, ultimoDeseo: null }; }
   function sano(d) {
@@ -58,9 +62,28 @@
     var store = opts.store, eco = opts.economia;
     var ahora = opts.ahora || function () { return Date.now(); };
     var azar = opts.azar || Math.random;
+    var partidas = function () { var n = opts.partidas ? opts.partidas() : 0; return typeof n === 'number' && n >= 0 ? Math.floor(n) : 0; };
     var d = store.get('cuidado', null);
     if (!sano(d)) d = vacio();
+    // each gana keeps the game count it was last tended at; a missing one starts now, so the games
+    // played before #39 never count, and a count above the core's (its stats were erased) comes down
+    if (!d.ganas || typeof d.ganas !== 'object') d.ganas = {};
+    var nuevas = false;
+    Object.keys(GANAS).forEach(function (g) {
+      var b = d.ganas[g];
+      if (typeof b !== 'number' || b < 0 || b > partidas()) { d.ganas[g] = partidas(); nuevas = true; }
+    });
     function guardar() { store.set('cuidado', d); }
+    // kept at once: else the next opening would start them over from its own count
+    if (nuevas) guardar();
+    function nivel(g) { return Math.min(TOPE, Math.floor((partidas() - d.ganas[g]) / GANAS[g])); }
+    function ganas() { var r = {}; Object.keys(GANAS).forEach(function (g) { r[g] = nivel(g); }); return r; }
+    // the gana at the top, if any, in a fixed order: the bubble says it and the face shows it
+    function ganaFuerte() {
+      var gs = Object.keys(GANAS);
+      for (var i = 0; i < gs.length; i++) if (nivel(gs[i]) >= TOPE) return gs[i];
+      return null;
+    }
 
     // A visit is each time the space opens: one wish, never the same as the last visit's
     function visitar() {
@@ -86,9 +109,17 @@
       } else if (ev.usar) suma += POR_CUIDADO;
       var cumplio = !!(d.deseo && !d.deseo.cumplido && cumple(d.deseo, ev));
       if (cumplio) { d.deseo.cumplido = true; suma += POR_DESEO; }
+      // tending a gana brings it back to 0, with a little extra when it had grown
+      var gana = ev.usar === 'jabon' ? 'banio' : ev.usar ? 'comer' : ev.accion === 'jugar' || ev.juego ? 'jugar' : null;
+      var atendio = null;
+      if (gana) {
+        if (nivel(gana) >= 2) suma += POR_GANA;
+        if (nivel(gana) > 0) atendio = gana;
+        d.ganas[gana] = partidas();
+      }
       d.puntos = Math.min(MAXIMO, d.puntos + suma);
       guardar();
-      return { ok: true, suma: suma, cumplioDeseo: cumplio };
+      return { ok: true, suma: suma, cumplioDeseo: cumplio, atendio: atendio };
     }
 
     // Feeding or a bubble bath: uses one unit from the economy, then counts as care
@@ -105,10 +136,11 @@
     }
 
     // The face on opening depends only on the visit's wish, never on time away
-    function expresionAlAbrir() { return d.deseo && !d.deseo.cumplido ? 'antojado' : 'contento'; }
+    function expresionAlAbrir() { return (d.deseo && !d.deseo.cumplido) || ganaFuerte() ? 'antojado' : 'contento'; }
 
-    return { visitar: visitar, deseo: deseo, hecho: hecho, alimentar: alimentar, vinculo: vinculo, expresionAlAbrir: expresionAlAbrir };
+    return { visitar: visitar, deseo: deseo, hecho: hecho, alimentar: alimentar, vinculo: vinculo, expresionAlAbrir: expresionAlAbrir,
+      ganas: ganas, ganaFuerte: ganaFuerte };
   }
 
-  return { VERSION: VERSION, DESEOS: DESEOS, ACCIONES: ACCIONES, NIVELES: NIVELES, MAXIMO: MAXIMO, crear: crear };
+  return { VERSION: VERSION, DESEOS: DESEOS, ACCIONES: ACCIONES, NIVELES: NIVELES, MAXIMO: MAXIMO, GANAS: GANAS, crear: crear };
 });
