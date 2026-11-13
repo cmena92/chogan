@@ -60,6 +60,25 @@
   /* a tap's spin (#33): a quick turn on the spot */
   @keyframes cp-giro { 0% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
   .cp-giro { animation: cp-giro .6s ease-in-out; }
+  /* idle gestures (#40): the whole body, or only the face, moves for 1.2 s */
+  .cp-dibujo svg { transform-origin: 50% 100%; }
+  .cp-dibujo svg #cara { transform-box: fill-box; transform-origin: 50% 90%; }
+  .cp-gesto-estirar { animation: cp-estirar 1.2s ease-in-out; }
+  @keyframes cp-estirar { 0%, 100% { transform: scale(1); } 45% { transform: scale(.95, 1.08); } 70% { transform: scale(1.02, .98); } }
+  .cp-gesto-bailar { animation: cp-bailar 1.2s ease-in-out; }
+  @keyframes cp-bailar { 0%, 100% { transform: none; } 20% { transform: translateX(-4px) rotate(-7deg); } 40% { transform: translateX(4px) rotate(7deg); }
+    60% { transform: translateX(-4px) rotate(-7deg); } 80% { transform: translateX(4px) rotate(7deg); } }
+  .cp-gesto-saludar { animation: cp-saludar 1.2s ease-in-out; }
+  @keyframes cp-saludar { 0%, 100% { transform: none; } 25%, 75% { transform: rotate(-4deg) translateY(-3px); } 50% { transform: rotate(4deg); } }
+  .cp-gesto-bostezar #cara { animation: cp-bostezar 1.2s ease-in-out; }
+  @keyframes cp-bostezar { 0%, 100% { transform: none; } 30%, 70% { transform: rotate(-8deg) translateY(-2px); } }
+  .cp-gesto-mirar #cara { animation: cp-mirar 1.2s ease-in-out; }
+  @keyframes cp-mirar { 0%, 100% { transform: none; } 25%, 40% { transform: translateX(-4px) rotate(-4deg); } 65%, 80% { transform: translateX(4px) rotate(4deg); } }
+  /* hearts where a finger strokes it */
+  .cp-compa { touch-action: pan-y; }
+  .cp-corazon { position: absolute; z-index: 2; pointer-events: none; color: #D7263D; font-size: 18px; line-height: 1;
+    transform: translate(-50%, -50%); animation: cp-corazon .9s ease-out forwards; }
+  @keyframes cp-corazon { to { transform: translate(-50%, -180%) scale(1.3); opacity: 0; } }
   /* The care scenes (#32): the resting pose in escenas.js is the still picture; these only move it */
   .cp-esc-bocado, .cp-esc-burbuja, .cp-esc-pelota { transform-box: fill-box; transform-origin: center; }
   .cp-esc-bocado { animation: cp-comer 1.8s ease-in-out forwards; }
@@ -75,7 +94,7 @@
   @keyframes cp-pelota { 0%, 30%, 60%, 90%, 100% { transform: translateY(0); } 15% { transform: translateY(-28px) rotate(120deg); }
     45% { transform: translateY(-18px) rotate(240deg); } 75% { transform: translateY(-8px) rotate(330deg); } }
   .cp-item .cp-icono svg { width: 40px; height: 40px; }
-  @media (prefers-reduced-motion: reduce) { .cp-salto, .cp-giro, .cp-esc-bocado, .cp-esc-burbuja, .cp-esc-pelota { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .cp-corazon, .cp-gesto-estirar, .cp-gesto-bailar, .cp-gesto-saludar, .cp-gesto-bostezar #cara, .cp-gesto-mirar #cara, .cp-salto, .cp-giro, .cp-esc-bocado, .cp-esc-burbuja, .cp-esc-pelota { animation: none; } }
 </style>
 </head>
 <body>
@@ -88,6 +107,7 @@
 <script src="expresiones.js"></script>
 <script src="cuidado.js"></script>
 <script src="escenas.js"></script>
+<script src="sonidos.js"></script>
 <script>
 (function () {
   'use strict';
@@ -157,6 +177,8 @@
   var K = window.CompaneroCuidado.crear({ store: ctx.store, economia: E,
     partidas: function () { var st = C.stats && C.stats.get ? C.stats.get() : null; return st && st.plays; } });
   K.visitar();   // each opening is a visit: one kind wish, never the last visit's
+  // its own sounds, only with the app's sound on (#40); the setting is read, never written
+  var S = window.CompaneroSonidos.crear({ activo: function () { return !!(C.state.settings && C.state.settings.sfx); } });
   var CONSUMIBLES = window.CompaneroEconomia.CATALOGO.filter(function (a) { return a.tipo === 'consumible'; }).map(function (a) { return a.id; });
   // the face of the moment: the opening one, or a short-lived one after something happens
   var momento = null, relojMomento = null, relojSueno = null;
@@ -409,7 +431,8 @@
   function despertar() {
     if (relojSueno) clearTimeout(relojSueno);
     if (momento === 'dormido') { momento = null; render(); }
-    relojSueno = setTimeout(function () { momento = 'dormido'; render(); }, 45000);
+    // a gesture or a reaction still running must not wake it when it ends
+    relojSueno = setTimeout(function () { terminarGesto(); if (relojMomento) clearTimeout(relojMomento); momento = 'dormido'; render(); }, 45000);
   }
   ['pointerdown', 'keydown'].forEach(function (ev) { document.addEventListener(ev, despertar, true); });
   despertar();
@@ -426,8 +449,12 @@
   // Five touches within 3 s leave it dizzy for a moment: a funny face, never a punishment.
   var REACCIONES = ['feliz', 'guino', 'sonrojado', 'giro'];
   var toques = [], ultimaReaccion = null;
+  var ultimoToque = 0, sinClic = false;
   function tocarCompa() {
-    var t = Date.now();
+    // the click that ends a stroke of the finger is not a touch
+    if (sinClic) { sinClic = false; return; }
+    var t = Date.now(), doble = t - ultimoToque < 250;
+    ultimoToque = t;
     toques = toques.filter(function (x) { return t - x < 3000; });
     toques.push(t);
     mostrarGlobo();
@@ -435,15 +462,78 @@
     C.feedback('tap');
     var r;
     if (toques.length >= 5) { toques = []; r = 'mareado'; mostrar('mareado', 2000); }
+    // a double tap: a little jump and a laugh
+    else if (doble) { r = 'doble'; mostrar('feliz', 1500, null, 'cp-salto'); S.tocar('risa'); }
     else {
       var opciones = REACCIONES.filter(function (x) { return x !== ultimaReaccion; });
       r = opciones[Math.floor(Math.random() * opciones.length)];
       mostrar(r === 'giro' ? 'feliz' : r, 1500, null, r === 'giro' ? 'cp-giro' : 'cp-salto');
+      if (r === 'feliz' || r === 'giro') S.tocar('risa');
     }
     ultimaReaccion = r;
     compa.dataset.reaccion = r;
   }
   compa.addEventListener('click', tocarCompa);
+
+  // A stroke of the finger across it is a cuddle (#40): hearts follow the finger, and the bond counts
+  // it as «acariciar», under the same 30 s rule
+  var trazoCaricia = null;
+  function corazon(x, y) {
+    var r = compa.getBoundingClientRect();
+    var h = el('span', { class: 'cp-corazon', 'aria-hidden': 'true', text: '♥' });
+    h.style.left = (x - r.left) + 'px'; h.style.top = (y - r.top) + 'px';
+    compa.appendChild(h);
+    setTimeout(function () { if (h.parentNode) h.parentNode.removeChild(h); }, 900);
+  }
+  compa.addEventListener('pointerdown', function (e) { trazoCaricia = { x: e.clientX, y: e.clientY, recorrido: 0, ultimo: 0, contado: false }; });
+  compa.addEventListener('pointermove', function (e) {
+    var p = trazoCaricia;
+    if (!p) return;
+    p.recorrido += Math.hypot(e.clientX - p.x, e.clientY - p.y);
+    p.x = e.clientX; p.y = e.clientY;
+    if (p.recorrido - p.ultimo >= 30) { p.ultimo = p.recorrido; corazon(e.clientX, e.clientY); }
+    if (!p.contado && p.recorrido >= 40) {
+      p.contado = true;
+      C.haptic('select');
+      reaccionar(K.hecho({ accion: 'acariciar' }));
+    }
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+    compa.addEventListener(ev, function () {
+      if (trazoCaricia && trazoCaricia.recorrido > 10) { sinClic = true; setTimeout(function () { sinClic = false; }, 400); }
+      trazoCaricia = null;
+    });
+  });
+
+  // Idle gestures (#40): left alone, every 8 to 15 s it stretches, yawns, waves, dances or looks
+  // around. Never while hidden, under reduced motion, asleep or in the middle of a reaction.
+  var GESTOS = { estirar: null, bostezar: 'sorprendido', saludar: 'guino', bailar: 'feliz', mirar: null };
+  var relojGesto = null, finGesto = null, ultimoGesto = null;
+  function programarGesto() {
+    if (relojGesto) clearTimeout(relojGesto);
+    relojGesto = setTimeout(gesto, 8000 + Math.random() * 7000);
+  }
+  function terminarGesto() {
+    if (finGesto) { clearTimeout(finGesto); finGesto = null; }
+    if (compa.dataset.gesto) { compa.dataset.gesto = ''; momento = null; render(); }
+  }
+  function gesto() {
+    if (document.hidden || reduceMotion() || momento || escena) { programarGesto(); return; }
+    var lista = Object.keys(GESTOS).filter(function (g) { return g !== ultimoGesto; });
+    var g = lista[Math.floor(Math.random() * lista.length)];
+    ultimoGesto = g;
+    mostrar(GESTOS[g] || K.expresionAlAbrir(), 1300, null, 'cp-gesto-' + g);
+    compa.dataset.gesto = g;
+    if (g === 'bostezar') S.tocar('bostezo', true);
+    finGesto = setTimeout(function () { finGesto = null; compa.dataset.gesto = ''; programarGesto(); }, 1300);
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { if (relojGesto) clearTimeout(relojGesto); terminarGesto(); }
+    else programarGesto();
+  });
+  // a touch anywhere starts the wait over
+  ['pointerdown', 'keydown'].forEach(function (ev) { document.addEventListener(ev, function () { if (!compa.dataset.gesto) programarGesto(); }, true); });
+  programarGesto();
   compa.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tocarCompa(); }
   });
@@ -457,8 +547,11 @@
   }, { passive: false });
 
   // A care shows the happy face and, for eating, a bath or play, its scene for two seconds
+  var SONIDO_ESCENA = { comer: 'crunch', banio: 'burbujas', jugar: 'rebote' };
   function reaccionar(r, conEscena) {
     if (!r || !r.ok) return;
+    if (conEscena) S.tocar(SONIDO_ESCENA[conEscena.tipo]);
+    terminarGesto();
     if (r.cumplioDeseo) mostrarGlobo();
     C.feedback(r.cumplioDeseo ? 'good' : 'tap');
     // a wish fulfilled is joy; otherwise eating chews (ñam) and a bath blushes
