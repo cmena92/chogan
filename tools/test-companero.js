@@ -1064,6 +1064,75 @@ async function testGanasPagina() {
   });
 }
 
+/* ------------------------------------------------ gestures, strokes and sounds (#40) */
+
+// Injected before the page loads: the idle wait of 8 to 15 s becomes 1/100 of it, the page can be
+// told it is hidden, and every sound made (an oscillator or a buffer played) is counted. The core
+// opens its own AudioContext on the first touch even with sound off, so contexts prove nothing.
+// The app itself carries no test hook.
+const SONDA = `(() => {
+  const st = window.setTimeout;
+  window.setTimeout = (f, ms, ...a) => st(f, ms >= 8000 && ms <= 15000 ? ms / 100 : ms, ...a);
+  window.__oculto = false;
+  Object.defineProperty(Document.prototype, 'hidden', { configurable: true, get: () => window.__oculto });
+  window.__audios = 0;
+  const B = window.BaseAudioContext || window.AudioContext;
+  for (const m of ['createOscillator', 'createBufferSource']) {
+    const f = B.prototype[m];
+    B.prototype[m] = function (...x) { window.__audios++; return f.apply(this, x); };
+  }
+})();`;
+
+async function testGestos() {
+  head('Gestos en reposo, caricias con el dedo, doble toque y sonidos (#40)');
+  await navegador(async ({ abrir, evaluar, cdp }) => {
+    await cdp('Page.addScriptToEvaluateOnNewDocument', { source: SONDA });
+    // every gesture seen in 2.5 s of leaving it alone
+    const mirar = `new Promise((r) => { const vistos = new Set(); const t = setInterval(() => { const g = document.querySelector('.cp-compa').dataset.gesto; if (g) vistos.add(g); }, 40); setTimeout(() => { clearInterval(t); r([...vistos]); }, 2500); })`;
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 100, settings: { sfx: false, music: false } }));
+    await abrir('/games/companero/index.html');
+    const vistos = await evaluar(mirar);
+    ok(vistos.length >= 1 && vistos.every((g) => ['estirar', 'bostezar', 'saludar', 'bailar', 'mirar'].includes(g)), 'en reposo hace gestos: ' + vistos.join(', '));
+    await evaluar(`window.__oculto = true; document.dispatchEvent(new Event('visibilitychange')); true`); await evaluar(pausa(200));
+    ok((await evaluar(mirar)).length === 0, 'con la pantalla oculta no hace ninguno');
+    await evaluar(`window.__oculto = false; document.dispatchEvent(new Event('visibilitychange')); true`);
+
+    // a stroke of the finger across the companion
+    const v0 = await evaluar(`+document.querySelector('[data-vinculo]').dataset.vinculo`);
+    // the visit's wish is random: a cuddle it wished for adds its +3 too
+    const extra = (await evaluar(`document.querySelector('[data-deseo]').dataset.deseo`)) === 'caricias' ? 3 : 0;
+    const caricia = (y) => `(() => { const c = document.querySelector('.cp-compa'), r = c.getBoundingClientRect(), y = r.top + r.height * ${y};
+      const ev = (t, x) => c.dispatchEvent(new PointerEvent(t, { bubbles: true, pointerId: 7, pointerType: 'touch', clientX: x, clientY: y }));
+      ev('pointerdown', r.left + 60); for (let i = 1; i <= 8; i++) ev('pointermove', r.left + 60 + i * 18); ev('pointerup', r.left + 204); return true; })()`;
+    await evaluar(caricia(0.45)); await evaluar(pausa(150));
+    const tras = await evaluar(`({ v: +document.querySelector('[data-vinculo]').dataset.vinculo, e: document.querySelector('.cp-compa').dataset.expresion, corazones: document.querySelectorAll('.cp-compa .cp-corazon').length, r: document.querySelector('.cp-compa').dataset.reaccion })`);
+    ok(tras.v === v0 + 1 + extra && tras.e === 'feliz', 'deslizar el dedo lo acaricia: +1 de vínculo y cara feliz');
+    ok(tras.corazones >= 2, 'aparecen corazones por donde pasa el dedo (' + tras.corazones + ')');
+    await evaluar(caricia(0.6)); await evaluar(pausa(150));
+    ok(await evaluar(`+document.querySelector('[data-vinculo]').dataset.vinculo`) === v0 + 1 + extra, 'otra caricia dentro de 30 s no vuelve a sumar');
+
+    await evaluar(pausa(2700));
+    await evaluar(`(() => { const c = document.querySelector('.cp-compa'); c.click(); c.click(); return true; })()`); await evaluar(pausa(100));
+    ok(await evaluar(`document.querySelector('.cp-compa').dataset.reaccion`) === 'doble' && await evaluar(`document.querySelector('.cp-compa').dataset.expresion`) === 'feliz', 'un doble toque da un saltito y una risa');
+
+    await evaluar(`document.querySelector('[data-accion="jugar"]').click(); true`);
+    await evaluar(`document.querySelector('[data-consumible="fruta"]').click(); true`); await evaluar(pausa(200)); await evaluar(aceptar);
+    ok(await evaluar(`window.__audios`) === 0, 'con el sonido apagado en Ajustes no suena nada');
+
+    await abrir('/games/companero/index.html');
+    await evaluar(preparar({ monedas: 100, settings: { sfx: true, music: false } }));
+    await abrir('/games/companero/index.html');
+    // a double tap always laughs
+    await evaluar(`(() => { const c = document.querySelector('.cp-compa'); c.click(); c.click(); return true; })()`); await evaluar(pausa(200));
+    ok(await evaluar(`window.__audios`) >= 1, 'con el sonido encendido, la risa suena tras tocarlo');
+
+    await cdp('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await abrir('/games/companero/index.html');
+    ok((await evaluar(mirar)).length === 0, 'con movimiento reducido no hay gestos sueltos');
+  });
+}
+
 /* ------------------------------------------------ run */
 
 const GROUPS = [...fs.readFileSync(__filename, 'utf8').matchAll(/^(?:async )?function (test[A-Za-z0-9]+)\(\) \{/gm)].map((m) => m[1]);
