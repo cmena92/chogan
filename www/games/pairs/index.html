@@ -7,6 +7,7 @@
 <title>جفت‌ها — چوگان</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* Card faces are pale ivory in both themes, so every symbol keeps its colour in light
      and dark; dark mode only deepens the backs and the shadow */
@@ -25,10 +26,10 @@
     touch-action: manipulation; user-select: none; -webkit-user-select: none;
   }
   .pr-card { position: relative; padding: 0; border: 0; background: none; cursor: pointer; perspective: 600px; min-width: 0; min-height: 0; }
-  .pr-in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 320ms var(--ease); }
+  .pr-in { position: absolute; top: 0; right: 0; bottom: 0; left: 0; transform-style: preserve-3d; transition: transform 320ms var(--ease); }
   .pr-card--up .pr-in, .pr-card--found .pr-in { transform: rotateY(180deg); }
   .pr-still .pr-in { transition: none; }
-  .pr-face, .pr-back { position: absolute; inset: 0; border-radius: 12%; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 2px 5px var(--pr-shadow); }
+  .pr-face, .pr-back { position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 12%; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 2px 5px var(--pr-shadow); }
   .pr-back {
     background:
       radial-gradient(circle at 50% 50%, var(--pr-back-2) 0 14%, transparent 15%),
@@ -151,7 +152,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = PairsEngin
   C.boot({});
   var ctx = C.game({
     id: 'pairs',
-    name: { fa: 'جفت‌ها', en: 'Pairs', zh: '翻牌配对', de: 'Paare', es: 'Parejas' },
+    name: { fa: 'جفت‌ها', en: 'Pairs', zh: '翻牌配对', de: 'Paare', es: 'Parejas', pl: 'Pary', fr: 'Paires', ar: 'الأزواج', hi: 'जोड़ियाँ' },
     accent: '#7C3AED',
     mood: 'sudoku',
     strings: {
@@ -174,6 +175,46 @@ if (typeof module !== 'undefined' && module.exports) module.exports = PairsEngin
         tutTitle2: 'Remember', tutText2: 'If they don\'t match, they turn back. Remember where they were to win in fewer moves.',
         s0: 'red circle', s1: 'blue square', s2: 'green triangle', s3: 'gold diamond', s4: 'purple star', s5: 'pink heart', s6: 'teal hexagon', s7: 'brown plus', s8: 'navy moon',
         s9: 'orange sun', s10: 'blue drop', s11: 'green leaf', s12: 'magenta flower', s13: 'black bolt', s14: 'teal ring', s15: 'grey arrow', s16: 'brick house', s17: 'violet fish'
+      },
+      pl: {
+        moves: 'Ruchy', movesN: '{n} ruchów', fewestN: 'Najlepszy: {n} ruchów', size: 'Rozmiar', newDeal: 'Nowe rozdanie', pairsLeftN: 'Pozostałe pary: {n}',
+        allPairs: 'Wszystkie sparowane!', dailyPr: 'Codzienne Pary', board: 'Stół karciany', cardDown: 'Zakryta karta', cardUp: 'Odkryta: {s}', cardFound: 'Sparowana: {s}',
+        keysMove: 'Przemieść między kartami', keysFlip: 'Odwróć kartę', slips: 'Pominięte pary',
+        rules: 'Wszystkie karty leżą zakryte, a każdy obrazek pojawia się dwukrotnie. Odwracaj po dwie karty na raz: jeśli pasują do siebie, pozostają odkryte; jeśli nie, odwrócą się z powrotem przy Twoim następnym dotknięciu. Zapamiętuj położenie kart i sparuj je wszystkie w jak najmniejszej liczbie ruchów. Każde odwrócenie dwóch kart to jeden ruch. Gra nie jest na czas. Codzienne wyzwanie to jedna plansza 4×6, taka sama dla wszystkich.',
+        tutTitle1: 'Dwie na raz', tutText1: 'Odwróć dwie karty. Jeśli obrazki pasują do siebie, tworzą parę i pozostają odkryte.',
+        tutTitle2: 'Zapamiętaj', tutText2: 'Jeśli do siebie nie pasują, odwrócą się z powrotem. Zapamiętaj, gdzie leżały, aby wygrać w mniejszej liczbie ruchów.',
+        s0: 'czerwone koło', s1: 'niebieski kwadrat', s2: 'zielony trójkąt', s3: 'złoty romb', s4: 'fioletowa gwiazda', s5: 'różowe serce', s6: 'morski sześciokąt', s7: 'brązowy plus', s8: 'granatowy księżyc',
+        s9: 'pomarańczowe słońce', s10: 'niebieska kropla', s11: 'zielony liść', s12: 'magentowy kwiat', s13: 'czarny piorun', s14: 'morski pierścień', s15: 'szara strzałka', s16: 'ceglany dom', s17: 'fiołkowa ryba'
+      },
+      fr: {
+        moves: 'Coups', movesN: '{n} coups', fewestN: 'Record : {n} coups', size: 'Taille', newDeal: 'Nouvelle donne', pairsLeftN: 'Encore {n} paires',
+        allPairs: 'Tout est apparié !', dailyPr: 'Paires du jour', board: 'Table de cartes', cardDown: 'Carte face cachée', cardUp: 'Face visible : {s}', cardFound: 'Appariée : {s}',
+        keysMove: 'Aller d’une carte à l’autre', keysFlip: 'Retourner une carte', slips: 'Paires ratées',
+        rules: 'Toutes les cartes sont face cachée, et chaque image apparaît deux fois. Retourne deux cartes à la fois : si elles vont ensemble, elles restent visibles ; sinon, elles se retournent à ta touche suivante. Retiens où sont les cartes et forme toutes les paires en un minimum de coups. Chaque paire de cartes retournées compte pour un coup. Il n’y a pas de chrono. Le défi du jour est une table de 4×6, la même pour tous.',
+        tutTitle1: 'Deux à la fois', tutText1: 'Retourne deux cartes. Si les images sont identiques, elles forment une paire et restent visibles.',
+        tutTitle2: 'Mémorise', tutText2: 'Si elles sont différentes, elles se retournent. Retiens où elles étaient pour gagner en moins de coups.',
+        s0: 'rond rouge', s1: 'carré bleu', s2: 'triangle vert', s3: 'losange doré', s4: 'étoile violette', s5: 'cœur rose', s6: 'hexagone turquoise', s7: 'plus marron', s8: 'lune bleu marine',
+        s9: 'soleil orange', s10: 'goutte bleue', s11: 'feuille verte', s12: 'fleur magenta', s13: 'éclair noir', s14: 'anneau turquoise', s15: 'flèche grise', s16: 'maison brique', s17: 'poisson violet'
+      },
+      ar: {
+        moves: 'الحركات', movesN: '{n} حركات', fewestN: 'الأفضل: {n} حركات', size: 'الحجم', newDeal: 'توزيع جديد', pairsLeftN: 'بقي {n} أزواج',
+        allPairs: 'اكتملت الأزواج!', dailyPr: 'أزواج اليوم', board: 'طاولة الأوراق', cardDown: 'ورقة مقلوبة', cardUp: 'مكشوفة: {s}', cardFound: 'مطابقة: {s}',
+        keysMove: 'تنقل بين الأوراق', keysFlip: 'اقلب ورقة', slips: 'أزواج فاتتك',
+        rules: 'كل الأوراق مقلوبة على وجهها، وكل صورة تظهر مرتين. اقلب ورقتين في كل مرة: إن تطابقتا بقيتا مكشوفتين، وإلا انقلبتا عند نقرتك التالية. تذكّر أماكن الأوراق وطابقها كلها بأقل عدد ممكن من الحركات. كل ورقتين تقلبهما حركة واحدة. لا توجد ساعة. تحدي اليوم طاولة واحدة 4×6، هي نفسها للجميع.',
+        tutTitle1: 'ورقتان كل مرة', tutText1: 'اقلب ورقتين. إن تطابقت الصورتان فهما زوج وتبقيان مكشوفتين.',
+        tutTitle2: 'تذكّر', tutText2: 'إن لم تتطابقا انقلبتا من جديد. تذكّر مكانهما لتفوز بحركات أقل.',
+        s0: 'دائرة حمراء', s1: 'مربع أزرق', s2: 'مثلث أخضر', s3: 'معين ذهبي', s4: 'نجمة بنفسجية', s5: 'قلب وردي', s6: 'مسدس فيروزي', s7: 'علامة زائد بنية', s8: 'هلال كحلي',
+        s9: 'شمس برتقالية', s10: 'قطرة زرقاء', s11: 'ورقة شجر خضراء', s12: 'زهرة أرجوانية', s13: 'برق أسود', s14: 'حلقة فيروزية', s15: 'سهم رمادي', s16: 'بيت قرميدي', s17: 'سمكة بنفسجية'
+      },
+      hi: {
+        moves: 'चालें', movesN: '{n} चालें', fewestN: 'सर्वश्रेष्ठ: {n} चालें', size: 'आकार', newDeal: 'नया खेल', pairsLeftN: '{n} जोड़ियाँ बाक़ी',
+        allPairs: 'सब जोड़ियाँ बन गईं!', dailyPr: 'रोज़ की जोड़ियाँ', board: 'कार्डों की मेज़', cardDown: 'उल्टा कार्ड', cardUp: 'सीधा: {s}', cardFound: 'जोड़ी बनी: {s}',
+        keysMove: 'कार्डों के बीच जाएँ', keysFlip: 'कार्ड पलटें', slips: 'छूटी जोड़ियाँ',
+        rules: 'सारे कार्ड उल्टे रखे हैं, और हर चित्र दो बार आता है। एक बार में दो कार्ड पलटें: मेल खाएँ तो वे सीधे रहते हैं; न खाएँ तो अगली बार छूने पर फिर उल्टे हो जाते हैं। याद रखें कि कौन-सा कार्ड कहाँ है, और कम से कम चालों में सबकी जोड़ियाँ बनाएँ। हर दो पलटे कार्ड एक चाल हैं। कोई घड़ी नहीं है। रोज़ की चुनौती एक 4×6 मेज़ है, सबके लिए एक जैसी।',
+        tutTitle1: 'दो-दो करके', tutText1: 'दो कार्ड पलटें। चित्र मेल खाएँ तो जोड़ी बनती है और वे सीधे रहते हैं।',
+        tutTitle2: 'याद रखें', tutText2: 'मेल न खाएँ तो वे फिर उल्टे हो जाते हैं। उनकी जगह याद रखें ताकि कम चालों में जीतें।',
+        s0: 'लाल गोला', s1: 'नीला वर्ग', s2: 'हरा त्रिकोण', s3: 'सुनहरा हीरा', s4: 'बैंगनी तारा', s5: 'गुलाबी दिल', s6: 'फ़िरोज़ी षट्भुज', s7: 'भूरा धन चिह्न', s8: 'गहरा नीला चाँद',
+        s9: 'नारंगी सूरज', s10: 'नीली बूँद', s11: 'हरी पत्ती', s12: 'मैजेंटा फूल', s13: 'काली बिजली', s14: 'फ़िरोज़ी छल्ला', s15: 'सलेटी तीर', s16: 'ईंटों का घर', s17: 'जामुनी मछली'
       },
       zh: {
         moves: '步数', movesN: '{n} 步', fewestN: '最佳：{n} 步', size: '尺寸', newDeal: '新一局', pairsLeftN: '还剩 {n} 对',

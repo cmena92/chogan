@@ -7,6 +7,7 @@
 <title>ماهجونگ — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* کاشی شیء فیزیکی است و در هر دو تم رنگ عاج دارد تا نقش‌ها همیشه خوانا باشند */
   :root { --mj-face: #FBF7EE; --mj-side: #D9CDB4; --mj-edge: #B9AB8E; }
@@ -24,7 +25,7 @@
   /* The matched pair flies to the middle of the view and strikes there (#272); fixed to the
      viewport, so the zoomed and panned board cannot clip or shift it */
   .mj-fly { position: fixed; z-index: 100000; pointer-events: none; margin: 0; }
-  .mj-fly .mj-tile { position: absolute; inset: 0; transition: none; }
+  .mj-fly .mj-tile { position: absolute; top: 0; right: 0; bottom: 0; left: 0; transition: none; }
   @keyframes mj-spark { from { opacity: 1; transform: scale(.4); } 60% { opacity: 1; } to { opacity: 0; transform: scale(1.25); } }
   .mj-tile {
     position: absolute; padding: 0; border: 0; cursor: pointer; border-radius: 6px;
@@ -35,6 +36,8 @@
   @media (prefers-reduced-motion: no-preference) {
     .mj-tile { transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), left .3s var(--ease), top .3s var(--ease), width .3s var(--ease), height .3s var(--ease); }
   }
+  /* the Motion choice On (#881) animates although the system asks for less; Off stops it in the core */
+  :root[data-motion="on"] .mj-tile { transition: transform var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease), left .3s var(--ease), top .3s var(--ease), width .3s var(--ease), height .3s var(--ease); }
   .mj-tile--sel { transform: translate(-2px, -3px); box-shadow: 0 0 0 3px var(--game), 5px 6px 0 var(--mj-side), 6px 7px 0 var(--mj-edge), 6px 10px 12px rgba(0,0,0,.3); }
   .mj-tile--hint { box-shadow: 0 0 0 3px var(--c-good), 3px 3px 0 var(--mj-side), 4px 4px 0 var(--mj-edge); }
   .mj-tile--cur { outline: 2px dashed var(--game); outline-offset: 3px; }
@@ -271,7 +274,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = MahjongEng
   C.boot({});
   var ctx = C.game({
     id: 'mahjong',
-    name: { fa: 'ماهجونگ', en: 'Mahjong Solitaire', zh: '麻将接龙', de: 'Mahjong', es: 'Mahjong' },
+    name: { fa: 'ماهجونگ', en: 'Mahjong Solitaire', zh: '麻将接龙', de: 'Mahjong', es: 'Mahjong', pl: 'Mahjong', fr: 'Mahjong', ar: 'ماهجونغ', hi: 'माहजोंग' },
     accent: '#1F8A82',
     mood: 'menu',
     strings: {
@@ -298,6 +301,54 @@ if (typeof module !== 'undefined' && module.exports) module.exports = MahjongEng
         tutTitle1: 'Free pairs', tutText1: 'Tap two matching tiles. Both must be free: nothing on top, and the left or right side open.',
         tutTitle2: 'Flowers and seasons', tutText2: 'Flowers match each other and seasons match each other, even when the pictures differ.',
         tutTitle3: 'Stuck?', tutText3: 'Every deal has a solution. A hint shows a pair, a shuffle re-deals the tiles left so they can still be solved, and undo is unlimited.'
+      },
+      pl: {
+        small: 'Mała', medium: 'Średnia', turtle: 'Żółw', left: 'Pozostało', pairs: 'Wolne pary',
+        untimed: 'Bez czasu', timed: 'Na czas', timeUp: 'Czas minął', timeUpSub: 'Graj dalej; przepada tylko bonus za prędkość.', speedBonus: 'Bonus za prędkość',
+        shuffle: 'Przetasuj', shufflesLeft: 'Pozostałe przetasowania: {n}', hintKey: 'Podpowiedź', undoMove: 'Cofnij',
+        newDeal: 'Nowe rozdanie', noPairs: 'Brak wolnych par', noPairsSub: 'Przetasuj lub cofnij kilka ruchów.',
+        blocked: 'Ta płytka nie jest wolna', dailyMj: 'Codzienny Mahjong', turtleNote: 'Uszczypnij, aby przybliżyć, przeciągnij, aby przesunąć', fit: 'Dopasuj planszę',
+        tile: 'Płytka', board: 'Plansza do mahjonga', move: 'Przemieść między wolnymi płytkami', select: 'Wybierz płytkę',
+        rules: 'Dotknij dwóch pasujących do siebie płytek, które są wolne, aby je usunąć. Płytka jest wolna, gdy nic na niej nie leży, a jej lewy lub prawy bok jest odsłonięty. Każdy kwiat pasuje do każdego kwiatu, a każda pora roku pasuje do każdej pory roku. Usuń wszystkie płytki, aby wygrać. Każde rozdanie da się rozwiązać; jeśli utkniesz, użyj przetasowania lub cofnij ruch.',
+        tutTitle1: 'Wolne pary', tutText1: 'Dotknij dwóch pasujących płytek. Obie muszą być wolne: nic na nich nie leży, a ich lewy lub prawy bok jest odsłonięty.',
+        tutTitle2: 'Kwiaty i pory roku', tutText2: 'Kwiaty pasują do siebie nawzajem, a pory roku pasują do siebie nawzajem, nawet jeśli obrazki się różnią.',
+        tutTitle3: 'Utknąłeś?', tutText3: 'Każde rozdanie ma rozwiązanie. Podpowiedź wskazuje parę, przetasowanie zmienia układ pozostałych płytek tak, że nadal da się je rozwiązać, a liczba cofnięć ruchów jest nieograniczona.'
+      },
+      fr: {
+        small: 'Petit', medium: 'Moyen', turtle: 'Tortue', left: 'Restantes', pairs: 'Paires libres',
+        untimed: 'Sans chrono', timed: 'Chronométré', timeUp: 'Temps écoulé', timeUpSub: 'Continue ; seul le bonus de vitesse est perdu.', speedBonus: 'Bonus de vitesse',
+        shuffle: 'Mélanger', shufflesLeft: 'Encore {n} mélanges', hintKey: 'Indice', undoMove: 'Annuler',
+        newDeal: 'Nouvelle donne', noPairs: 'Plus de paire libre', noPairsSub: 'Mélange, ou annule quelques coups.',
+        blocked: 'Cette tuile n’est pas libre', dailyMj: 'Mahjong du jour', turtleNote: 'Pince pour zoomer, glisse pour déplacer', fit: 'Ajuster',
+        tile: 'Tuile', board: 'Plateau de mahjong', move: 'Aller d’une tuile libre à l’autre', select: 'Choisir une tuile',
+        rules: 'Touche deux tuiles identiques et libres pour les retirer. Une tuile est libre quand rien n’est posé dessus et que son côté gauche ou droit est dégagé. Toute fleur va avec toute fleur, et toute saison avec toute saison. Retire toutes les tuiles pour gagner. Chaque donne a une solution ; si tu bloques, mélange ou annule.',
+        tutTitle1: 'Paires libres', tutText1: 'Touche deux tuiles identiques. Les deux doivent être libres : rien dessus, et le côté gauche ou droit dégagé.',
+        tutTitle2: 'Fleurs et saisons', tutText2: 'Les fleurs vont ensemble et les saisons aussi, même si les dessins diffèrent.',
+        tutTitle3: 'Bloqué ?', tutText3: 'Chaque donne a une solution. Un indice montre une paire, un mélange redistribue les tuiles restantes en gardant une solution, et l’annulation est illimitée.'
+      },
+      ar: {
+        small: 'صغيرة', medium: 'متوسطة', turtle: 'السلحفاة', left: 'الباقي', pairs: 'أزواج حرة',
+        untimed: 'بلا وقت', timed: 'بالوقت', timeUp: 'انتهى الوقت', timeUpSub: 'تابع اللعب؛ لم تخسر إلا مكافأة السرعة.', speedBonus: 'مكافأة السرعة',
+        shuffle: 'خلط', shufflesLeft: 'بقي {n} خلطات', hintKey: 'تلميح', undoMove: 'تراجع',
+        newDeal: 'توزيع جديد', noPairs: 'لا أزواج حرة', noPairsSub: 'اخلط، أو تراجع بضع حركات.',
+        blocked: 'هذه القطعة ليست حرة', dailyMj: 'ماهجونغ اليوم', turtleNote: 'اقرص للتكبير، واسحب للتحريك', fit: 'ملاءمة',
+        tile: 'قطعة', board: 'لوحة ماهجونغ', move: 'تنقّل بين القطع الحرة', select: 'اختر قطعة',
+        rules: 'انقر قطعتين متطابقتين حرتين لإزالتهما. تكون القطعة حرة إذا لم يكن فوقها شيء وكان جانبها الأيسر أو الأيمن مفتوحًا. أي زهرة تطابق أي زهرة، وأي فصل يطابق أي فصل. أزل كل القطع لتفوز. لكل توزيع حل؛ وإن علقت فاخلط أو تراجع.',
+        tutTitle1: 'أزواج حرة', tutText1: 'انقر قطعتين متطابقتين. يجب أن تكون كلتاهما حرة: لا شيء فوقها، وجانبها الأيسر أو الأيمن مفتوح.',
+        tutTitle2: 'الأزهار والفصول', tutText2: 'الأزهار تتطابق فيما بينها والفصول كذلك، حتى لو اختلفت الصور.',
+        tutTitle3: 'علقت؟', tutText3: 'لكل توزيع حل. التلميح يُظهر زوجًا، والخلط يعيد توزيع القطع الباقية مع بقاء الحل ممكنًا، والتراجع بلا حدود.'
+      },
+      hi: {
+        small: 'छोटा', medium: 'मध्यम', turtle: 'कछुआ', left: 'बाक़ी', pairs: 'खुले जोड़े',
+        untimed: 'बिना घड़ी', timed: 'समय के साथ', timeUp: 'समय ख़त्म', timeUpSub: 'खेलते रहें; बस तेज़ी का बोनस गया।', speedBonus: 'तेज़ी का बोनस',
+        shuffle: 'फेंटें', shufflesLeft: '{n} बार फेंटना बाक़ी', hintKey: 'संकेत', undoMove: 'वापस',
+        newDeal: 'नई बाज़ी', noPairs: 'कोई खुला जोड़ा नहीं बचा', noPairsSub: 'फेंटें, या कुछ चालें वापस लें।',
+        blocked: 'यह टाइल खुली नहीं है', dailyMj: 'रोज़ का माहजोंग', turtleNote: 'ज़ूम के लिए चुटकी, खिसकाने के लिए खींचें', fit: 'बोर्ड फ़िट करें',
+        tile: 'टाइल', board: 'माहजोंग बोर्ड', move: 'खुली टाइलों के बीच जाएँ', select: 'टाइल चुनें',
+        rules: 'दो मिलती-जुलती खुली टाइलें छुएँ, वे हट जाएँगी। टाइल तब खुली है जब उस पर कुछ न रखा हो और उसका बायाँ या दायाँ किनारा खुला हो। कोई भी फूल किसी भी फूल से मिलता है, और कोई भी मौसम किसी भी मौसम से। जीतने के लिए सारी टाइलें हटाएँ। हर बाज़ी हल हो सकती है; अटक जाएँ तो फेंटें या वापस लें।',
+        tutTitle1: 'खुले जोड़े', tutText1: 'दो मिलती-जुलती टाइलें छुएँ। दोनों खुली होनी चाहिए: ऊपर कुछ न हो, और बायाँ या दायाँ किनारा खुला हो।',
+        tutTitle2: 'फूल और मौसम', tutText2: 'फूल आपस में मिलते हैं और मौसम आपस में, चाहे तस्वीरें अलग हों।',
+        tutTitle3: 'अटक गए?', tutText3: 'हर बाज़ी का हल है। संकेत एक जोड़ा दिखाता है, फेंटने से बची टाइलें ऐसे बिछती हैं कि फिर भी हल हो सकें, और वापस लेने की कोई सीमा नहीं।'
       },
       zh: {
         small: '小', medium: '中', turtle: '乌龟', left: '剩余', pairs: '可配对',

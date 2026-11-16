@@ -8,6 +8,7 @@
 <title>حریم خصوصی — Capybara privacy policy</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="lib/chogan.css">
+<script src="lib/early.js"></script>
 <style>
   .pv { max-width: 720px; margin: 0 auto; padding: var(--s-5) var(--s-4) var(--s-7); }
   .pv section { margin-bottom: var(--s-6); }
@@ -54,8 +55,9 @@
   (function () {
     var lang = 'fa';
     try { lang = JSON.parse(localStorage.getItem('chogan.app.settings') || '{}').lang || 'fa'; } catch (e) { /* keep Persian */ }
-    var names = { fa: 'حریم خصوصی', en: 'Privacy', zh: '隐私', de: 'Datenschutz', es: 'Privacidad' };
-    if (lang !== 'fa') {
+    var names = { fa: 'حریم خصوصی', en: 'Privacy', zh: '隐私', de: 'Datenschutz', es: 'Privacidad', pl: 'Prywatność', fr: 'Confidentialité', ar: 'الخصوصية', hi: 'निजता' };
+    // Arabic reads right to left like Persian; its policy text is the English one (#855)
+    if (lang !== 'fa' && lang !== 'ar') {
       document.getElementById('bar').setAttribute('dir', 'ltr');
       document.getElementById('backPath').setAttribute('d', 'M15 5l-7 7 7 7');
     }
@@ -71,45 +73,67 @@
 
   <section lang="fa" dir="rtl">
     <h1>حریم خصوصی کاپیبارا</h1>
-    <p class="ch-dim">آخرین به‌روزرسانی: ۱۷ مهر ۱۴۰۵ (۹ اکتبر ۲۰۲۶)</p>
+    <p class="ch-dim">آخرین به‌روزرسانی: ۲۴ آبان ۱۴۰۵ (۱۵ نوامبر ۲۰۲۶)</p>
     <p>کاپیبارا هیچ اطلاعاتی از تو جمع نمی‌کند، نمی‌فرستد و با کسی به اشتراک نمی‌گذارد.</p>
     <h2>چه چیزی ذخیره می‌شود</h2>
     <ul>
       <li>پیشرفت بازی‌ها، رکوردها، سکه، دستاوردها، تنظیمات و نامی که خودت وارد می‌کنی، فقط روی همین دستگاه و در حافظه‌ی محلی مرورگر یا اپ ذخیره می‌شود.</li>
       <li>نسخه‌ی اندروید اجازه‌ی دسترسی به اینترنت ندارد؛ تنها اجازه‌اش لرزش است. پشتیبان‌گیری خودکار اندروید هم خاموش است.</li>
-      <li>تبلیغ، تحلیل‌گر، ردیاب، حساب کاربری و سرور نداریم.</li>
+      <li>تبلیغ، تحلیل‌گر، ردیاب و حساب کاربری نداریم و خود اپ به هیچ سروری وصل نمی‌شود.</li>
+    </ul>
+    <h2>گزارش‌ها</h2>
+    <ul>
+      <li>برای فرستادن باگ یا پیشنهاد، از اپ پیوندی به <a href="https://github.com/cmena92/chogan/issues" rel="noopener">github.com/cmena92/chogan/issues</a> هست. در مرورگر باز می‌شود، نه داخل اپ، و خود اپ چیزی نمی‌فرستد. ایشوهای گیت‌هاب عمومی‌اند، پس چیز خصوصی در آن ننویس. <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">سیاست حریم خصوصی گیت‌هاب</a></li>
     </ul>
     <h2>نسخه‌ی وب</h2>
     <p>نسخه‌ی وب روی GitHub Pages است. مثل هر سایتی، گیت‌هاب ممکن است گزارش‌های فنی معمول درخواست‌ها (مثل آدرس IP) را نگه دارد؛ ما به آن‌ها دسترسی نداریم و چیزی از آن‌ها برنمی‌داریم. <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">بیانیه‌ی حریم خصوصی گیت‌هاب</a></p>
     <h2>پاک کردن داده‌ها</h2>
-    <p>از بخش «پروفایل» داخل اپ، یا با پاک کردن داده‌ی اپ در تنظیمات اندروید، یا پاک کردن داده‌ی سایت در مرورگر، یا حذف اپ. چون چیزی جای دیگری نیست، همین کافی است.</p>
+    <p>از بخش «پروفایل» داخل اپ، یا با پاک کردن داده‌ی اپ در تنظیمات اندروید، یا پاک کردن داده‌ی سایت در مرورگر، یا حذف اپ. چون چیزی جای دیگری نیست، همین کافی است. برای پاک شدن زودتر یک گزارش فرستاده‌شده، به ایمیل پایین بنویس.</p>
     <h2>کودکان</h2>
-    <p>چون هیچ داده‌ای جمع نمی‌شود، از کودکان هم داده‌ای جمع نمی‌شود.</p>
+    <p>اپ هیچ داده‌ای جمع نمی‌کند، پس از کودکان هم داده‌ای جمع نمی‌شود. فرم گزارش فقط چیزی را می‌گیرد که خود فرستنده می‌نویسد یا انتخاب می‌کند.</p>
     <h2>تماس</h2>
-    <p><a href="mailto:choganhq@gmail.com">choganhq@gmail.com</a> · کد منبع: <a href="https://github.com/choganhq/chogan" rel="noopener">github.com/choganhq/chogan</a></p>
+    <p><a href="https://github.com/cmena92/chogan/issues" rel="noopener">github.com/cmena92/chogan/issues</a> · کد منبع: <a href="https://github.com/cmena92/chogan" rel="noopener">github.com/cmena92/chogan</a>، بر پایه‌ی <a href="https://github.com/choganhq/chogan" rel="noopener">چوگان</a></p>
   </section>
 
   <hr>
 
   <section lang="en" dir="ltr">
     <h1>Capybara privacy policy</h1>
-    <p class="ch-dim">Last updated: 9 October 2026</p>
+    <p class="ch-dim">Last updated: 15 November 2026</p>
     <p>Capybara does not collect, send or share any information about you.</p>
     <h2>What is stored</h2>
     <ul>
       <li>Game progress, records, coins, achievements, settings and the name you type in are stored only on this device, in the browser's or app's local storage.</li>
       <li>The Android app has no internet permission; its only permission is vibration. Android auto-backup is turned off.</li>
-      <li>There are no ads, analytics, trackers, accounts or servers.</li>
+      <li>There are no ads, analytics, trackers or accounts, and the app itself connects to no server.</li>
+    </ul>
+    <h2>Reports</h2>
+    <ul>
+      <li>To send a bug or an idea, the app links to <a href="https://github.com/cmena92/chogan/issues" rel="noopener">github.com/cmena92/chogan/issues</a>. It opens in your browser, not inside the app, and the app itself sends nothing. GitHub issues are public, so do not write anything private in them. <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub's privacy statement</a></li>
     </ul>
     <h2>Web version</h2>
     <p>The web version is hosted on GitHub Pages. Like any website, GitHub may keep standard technical request logs (such as IP addresses); we have no access to them and take nothing from them. <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub's privacy statement</a></p>
     <h2>Deleting your data</h2>
-    <p>Use the Profile page in the app, clear the app's data in Android settings, clear the site's data in your browser, or uninstall the app. Nothing is stored anywhere else, so that is all it takes.</p>
+    <p>Use the Profile page in the app, clear the app's data in Android settings, clear the site's data in your browser, or uninstall the app. Nothing is stored anywhere else, so that is all it takes. To have a report you sent deleted sooner, write to the address below.</p>
     <h2>Children</h2>
-    <p>Since no data is collected at all, none is collected from children either.</p>
+    <p>The app collects no data, so none is collected from children either. The report form takes only what its sender writes or picks.</p>
     <h2>Contact</h2>
-    <p><a href="mailto:choganhq@gmail.com">choganhq@gmail.com</a> · Source code: <a href="https://github.com/choganhq/chogan" rel="noopener">github.com/choganhq/chogan</a></p>
+    <p><a href="https://github.com/cmena92/chogan/issues" rel="noopener">github.com/cmena92/chogan/issues</a> · Source code: <a href="https://github.com/cmena92/chogan" rel="noopener">github.com/cmena92/chogan</a>, based on <a href="https://github.com/choganhq/chogan" rel="noopener">Chogan</a></p>
   </section>
 </main>
+<script>
+  // Opened from the app in English, the page showed the Persian policy first and the
+  // English one only after scrolling (#671). Any language but Persian reads English first.
+  (function () {
+    var lang = 'fa';
+    try { lang = JSON.parse(localStorage.getItem('chogan.app.settings') || '{}').lang || 'fa'; } catch (e) { /* keep Persian */ }
+    if (lang === 'fa') return;
+    var main = document.querySelector('main.pv');
+    var en = main.querySelector('section[lang="en"]');
+    var hr = main.querySelector('hr');
+    main.insertBefore(en, main.firstElementChild);
+    if (hr) main.insertBefore(hr, en.nextElementSibling);
+  })();
+</script>
 </body>
 </html>

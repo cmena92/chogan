@@ -7,6 +7,7 @@
 <title>ریورسی — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* رنگ مهره‌ها جزو قاعده‌ی بازی است، نه تم: سیاه و سفید باید در هر دو تم
      سیاه و سفید بمانند. نمد تخته در تاریک کمی تیره‌تر است تا چشم را نزند. */
@@ -15,6 +16,8 @@
   :root[data-theme="dark"] { --rv-felt: #23705A; --rv-grid: rgba(0, 0, 0, .4); }
 
   .rv-top { display: flex; gap: var(--s-2); flex-wrap: wrap; justify-content: center; }
+  /* A badge never wraps, so the two-phones sentence ran off both sides of a phone (#693) */
+  .rv-top .rv-link { white-space: normal; text-align: center; max-width: 100%; line-height: 1.4; padding: 4px 12px; border-radius: var(--r-md); }
   .rv-players { display: flex; gap: var(--s-2); width: 100%; max-width: 520px; }
   .rv-player {
     flex: 1; display: flex; align-items: center; gap: var(--s-2);
@@ -305,7 +308,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
   C.boot({});
   var ctx = C.game({
     id: 'reversi',
-    name: { fa: 'ریورسی', en: 'Reversi', zh: '黑白棋', de: 'Reversi', es: 'Reversi' },
+    name: { fa: 'ریورسی', en: 'Reversi', zh: '黑白棋', de: 'Reversi', es: 'Reversi', pl: 'Reversi', fr: 'Reversi', ar: 'ريفرسي', hi: 'रिवर्सी' },
     accent: '#2F8F6B',
     // آهنگ آرام سودوکو؛ ریورسی هم بازی فکر کردن است، نه سرعت
     mood: 'sudoku',
@@ -318,6 +321,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
         dailyReversi: 'ریورسی روزانه', vsHard: 'مقابل حریف سخت',
         passNote: '{n} حرکتی ندارد و نوبتش رد شد',
         boardLabel: 'تخته‌ی ریورسی',
+        twoPhones: 'دو گوشی', hostGame: 'میزبان', joinGame: 'مهمان', linkPick: 'یک گوشی میزبان شود و دیگری مهمان. میزبان سیاه است و اول بازی می‌کند.', linkSearching: 'در جست‌وجوی گوشی دیگر…', linkConnected: 'وصل شد', linkLost: 'اتصال قطع شد؛ دوباره دنبالش می‌گردد…', linkMismatch: 'نسخه‌ی دو گوشی یکی نیست؛ هر دو را به‌روز کن', linkError: 'اتصال راه نیفتاد؛ دوباره امتحان کن', linkPermission: 'اجازه‌ی «دستگاه‌های نزدیک» داده نشده: تنظیمات ← برنامه‌ها ← چوگان پلاس ← اجازه‌ها', linkBluetooth: 'بلوتوث خاموش است؛ روشنش کن و دوباره امتحان کن',
         tutTitle1: 'محاصره کن', tutText1: 'مهره‌ات را جایی بگذار که مهره‌های حریف در یک خط، بین آن و یکی از مهره‌های خودت گیر بیفتند. همه‌شان رنگ تو می‌شوند.',
         tutTitle2: 'خانه‌های مجاز', tutText2: 'فقط جایی می‌شود گذاشت که دست‌کم یک مهره برگردد؛ نقطه‌های کوچک همین خانه‌ها را نشان می‌دهند. اگر حرکتی نداری، نوبتت رد می‌شود.',
         tutTitle3: 'گوشه‌ها', tutText3: 'مهره‌ی گوشه هیچ‌وقت برنمی‌گردد. وقتی هیچ‌کدام حرکتی نداشته باشید بازی تمام است و مهره‌ی بیشتر می‌برد.'
@@ -330,9 +334,62 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
         dailyReversi: 'Daily reversi', vsHard: 'against the hard AI',
         passNote: '{n} has no move and passes',
         boardLabel: 'Reversi board',
+        twoPhones: 'Two phones', hostGame: 'Host', joinGame: 'Join', linkPick: 'One phone hosts, the other joins. The host plays black and moves first.', linkSearching: 'Looking for the other phone…', linkConnected: 'Connected', linkLost: 'Connection lost; looking again…', linkMismatch: 'The two phones run different versions; update both', linkError: 'Could not connect; try again', linkPermission: 'The nearby devices permission is off: Settings → Apps → Chogan Plus → Permissions', linkBluetooth: 'Bluetooth is off; turn it on and try again',
         tutTitle1: 'Outflank', tutText1: 'Place a disc so that a line of your rival\'s discs is trapped between it and one of yours. They all turn your colour.',
         tutTitle2: 'Legal moves', tutText2: 'You may only play where at least one disc flips; the small dots show those squares. With no move, you pass.',
         tutTitle3: 'Corners', tutText3: 'A corner disc can never flip. When neither of you can move the game ends, and more discs wins.'
+      },
+      pl: {
+        twoPlayers: 'Dwóch graczy', vsAi: 'Przeciwko SI',
+        you: 'Ty', rival: 'Rywal', player2: 'Gracz 2', renameP2: 'Nazwa Gracza 2',
+        draw: 'Remis', playerWon: '{n} wygrywa', move: 'Ruch', discs: 'Krążki',
+        newMatch: 'Nowy mecz', undoMove: 'Cofnij ruch',
+        dailyReversi: 'Codzienne Reversi', vsHard: 'przeciwko trudnej SI',
+        passNote: '{n} nie ma ruchu i pasuje',
+        boardLabel: 'Plansza do reversi',
+        twoPhones: 'Dwa telefony', hostGame: 'Gospodarz', joinGame: 'Dołącz', linkPick: 'Jeden telefon jest gospodarzem, drugi dołącza. Gospodarz gra czarnymi i zaczyna.', linkSearching: 'Szukam drugiego telefonu…', linkConnected: 'Połączono', linkLost: 'Połączenie przerwane; szukam ponownie…', linkMismatch: 'Telefony mają różne wersje; zaktualizuj oba', linkError: 'Nie udało się połączyć; spróbuj ponownie', linkPermission: 'Brak uprawnienia do urządzeń w pobliżu: Ustawienia → Aplikacje → Chogan Plus → Uprawnienia', linkBluetooth: 'Bluetooth jest wyłączony; włącz go i spróbuj ponownie',
+        tutTitle1: 'Oskrzydlenie', tutText1: 'Umieść krążek tak, aby linia krążków rywala została uwięziona między nim a jednym z Twoich. Wszystkie one zmienią kolor na Twój.',
+        tutTitle2: 'Dozwolone ruchy', tutText2: 'Możesz zagrać tylko tam, gdzie obróci się co najmniej jeden krążek; małe kropki wskazują te pola. Gdy nie masz ruchu, pasujesz.',
+        tutTitle3: 'Narożniki', tutText3: 'Krążek w narożniku nigdy nie może się obrócić. Gra kończy się, gdy żaden z graczy nie może wykonać ruchu, a wygrywa ten, kto ma więcej krążków.'
+      },
+      fr: {
+        twoPlayers: 'Deux joueurs', vsAi: 'Contre l’IA',
+        you: 'Toi', rival: 'Adversaire', player2: 'Joueur 2', renameP2: 'Nom du joueur 2',
+        draw: 'Égalité', playerWon: '{n} gagne', move: 'Déplacer', discs: 'Pions',
+        newMatch: 'Nouvelle partie', undoMove: 'Annuler le coup',
+        dailyReversi: 'Reversi du jour', vsHard: 'contre l’IA difficile',
+        passNote: '{n} ne peut pas jouer et passe',
+        boardLabel: 'Plateau de reversi',
+        twoPhones: 'Deux téléphones', hostGame: 'Héberger', joinGame: 'Rejoindre', linkPick: 'Un téléphone héberge, l’autre rejoint. L’hôte joue les noirs et commence.', linkSearching: 'Recherche de l’autre téléphone…', linkConnected: 'Connecté', linkLost: 'Connexion perdue ; nouvelle recherche…', linkMismatch: 'Les deux téléphones n’ont pas la même version ; mets-les à jour', linkError: 'Connexion impossible ; réessaie', linkPermission: 'L’autorisation Appareils à proximité est désactivée : Paramètres → Applications → Chogan Plus → Autorisations', linkBluetooth: 'Le Bluetooth est désactivé ; active-le et réessaie',
+        tutTitle1: 'Encadrer', tutText1: 'Pose un pion pour qu’une ligne de pions adverses soit coincée entre lui et un des tiens. Ils prennent tous ta couleur.',
+        tutTitle2: 'Coups permis', tutText2: 'Tu ne peux jouer que là où au moins un pion se retourne ; les petits points montrent ces cases. Sans coup possible, tu passes.',
+        tutTitle3: 'Les coins', tutText3: 'Un pion dans un coin ne se retourne jamais. Quand personne ne peut jouer, la partie finit, et le plus de pions gagne.'
+      },
+      ar: {
+        twoPlayers: 'لاعبان', vsAi: 'ضد الروبوت',
+        you: 'أنت', rival: 'المنافس', player2: 'اللاعب 2', renameP2: 'اسم اللاعب 2',
+        draw: 'تعادل', playerWon: '{n} يفوز', move: 'تحريك', discs: 'الأقراص',
+        newMatch: 'لعبة جديدة', undoMove: 'تراجع',
+        dailyReversi: 'ريفرسي اليوم', vsHard: 'ضد الروبوت الصعب',
+        passNote: 'لا حركة لدى {n} فيمرّر الدور',
+        boardLabel: 'لوحة ريفرسي',
+        twoPhones: 'هاتفان', hostGame: 'استضف', joinGame: 'انضم', linkPick: 'هاتف يستضيف والآخر ينضم. المضيف يلعب بالأسود ويبدأ أولًا.', linkSearching: 'جارٍ البحث عن الهاتف الآخر…', linkConnected: 'متصل', linkLost: 'انقطع الاتصال؛ جارٍ البحث مجددًا…', linkMismatch: 'الهاتفان يعملان بإصدارين مختلفين؛ حدّث كليهما', linkError: 'تعذّر الاتصال؛ حاول مجددًا', linkPermission: 'إذن الأجهزة القريبة متوقف: الإعدادات ← التطبيقات ← Chogan Plus ← الأذونات', linkBluetooth: 'البلوتوث متوقف؛ شغّله وحاول مجددًا',
+        tutTitle1: 'احصر', tutText1: 'ضع قرصًا بحيث يُحصر صف من أقراص منافسك بينه وبين أحد أقراصك. فتنقلب كلها إلى لونك.',
+        tutTitle2: 'الحركات المسموحة', tutText2: 'لا يمكنك اللعب إلا حيث ينقلب قرص واحد على الأقل؛ النقاط الصغيرة تُظهر تلك الخانات. إذا لم تكن لديك حركة، يمرّ الدور.',
+        tutTitle3: 'الزوايا', tutText3: 'القرص في الزاوية لا ينقلب أبدًا. عندما لا يستطيع أي منكما اللعب تنتهي اللعبة، ومن لديه أقراص أكثر يفوز.'
+      },
+      hi: {
+        twoPlayers: 'दो खिलाड़ी', vsAi: 'कंप्यूटर से',
+        you: 'आप', rival: 'विरोधी', player2: 'खिलाड़ी 2', renameP2: 'खिलाड़ी 2 का नाम',
+        draw: 'बराबरी', playerWon: '{n} जीत गए', move: 'चाल', discs: 'गोटियाँ',
+        newMatch: 'नया मुक़ाबला', undoMove: 'चाल वापस',
+        dailyReversi: 'रोज़ का रिवर्सी', vsHard: 'कठिन कंप्यूटर से',
+        passNote: '{n} के पास कोई चाल नहीं, बारी छोड़ी',
+        boardLabel: 'रिवर्सी बोर्ड',
+        twoPhones: 'दो फ़ोन', hostGame: 'होस्ट', joinGame: 'जुड़ें', linkPick: 'एक फ़ोन होस्ट करता है, दूसरा जुड़ता है। होस्ट काली गोटियों से खेलता है और पहली चाल चलता है।', linkSearching: 'दूसरा फ़ोन ढूँढ रहे हैं…', linkConnected: 'जुड़ गए', linkLost: 'कनेक्शन टूट गया; फिर ढूँढ रहे हैं…', linkMismatch: 'दोनों फ़ोन में अलग संस्करण हैं; दोनों को अपडेट करें', linkError: 'जुड़ नहीं सके; फिर कोशिश करें', linkPermission: 'आस-पास के डिवाइस की अनुमति बंद है: सेटिंग्स → ऐप्स → Chogan Plus → अनुमतियाँ', linkBluetooth: 'ब्लूटूथ बंद है; उसे चालू करके फिर कोशिश करें',
+        tutTitle1: 'घेरें', tutText1: 'गोटी ऐसे रखें कि विरोधी की गोटियों की एक कतार उसके और आपकी किसी गोटी के बीच फँस जाए। वे सब आपके रंग की हो जाती हैं।',
+        tutTitle2: 'सही चालें', tutText2: 'आप वहीं खेल सकते हैं जहाँ कम से कम एक गोटी पलटे; छोटे बिंदु वे खाने दिखाते हैं। कोई चाल न हो तो बारी छोड़ें।',
+        tutTitle3: 'कोने', tutText3: 'कोने की गोटी कभी नहीं पलटती। जब दोनों में से कोई न चल सके, खेल ख़त्म होता है, और ज़्यादा गोटियों वाला जीतता है।'
       },
       zh: {
         twoPlayers: '双人', vsAi: '对战电脑',
@@ -342,6 +399,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
         dailyReversi: '每日黑白棋', vsHard: '对战困难电脑',
         passNote: '{n} 无处可下，跳过一回合',
         boardLabel: '黑白棋棋盘',
+        twoPhones: '两部手机', hostGame: '主机', joinGame: '加入', linkPick: '一部手机做主机，另一部加入。主机执黑先走。', linkSearching: '正在寻找另一部手机…', linkConnected: '已连接', linkLost: '连接已断开，正在重新寻找…', linkMismatch: '两部手机版本不同，请都更新', linkError: '无法连接，请重试', linkPermission: '未授予“附近设备”权限：设置 → 应用 → Chogan Plus → 权限', linkBluetooth: '蓝牙已关闭，请打开后重试',
         tutTitle1: '夹住对手', tutText1: '落子时让对手的一排棋子夹在新子和你已有的棋子之间，它们都会变成你的颜色。',
         tutTitle2: '可落子处', tutText2: '只能下在至少能翻转一枚棋子的位置，小圆点标出了这些格子。无处可下时跳过一回合。',
         tutTitle3: '角落', tutText3: '角上的棋子永远不会被翻转。双方都无处可下时对局结束，棋子多者获胜。'
@@ -354,6 +412,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
         dailyReversi: 'Tägliches Reversi', vsHard: 'gegen die starke KI',
         passNote: '{n}: kein Zug möglich, Pass',
         boardLabel: 'Reversi-Brett',
+        twoPhones: 'Zwei Handys', hostGame: 'Gastgeber', joinGame: 'Beitreten', linkPick: 'Ein Handy ist Gastgeber, das andere tritt bei. Der Gastgeber spielt Schwarz und beginnt.', linkSearching: 'Suche das andere Handy…', linkConnected: 'Verbunden', linkLost: 'Verbindung verloren; suche erneut…', linkMismatch: 'Die Handys haben verschiedene Versionen; aktualisiere beide', linkError: 'Keine Verbindung; versuche es erneut', linkPermission: 'Die Berechtigung „Geräte in der Nähe“ fehlt: Einstellungen → Apps → Chogan Plus → Berechtigungen', linkBluetooth: 'Bluetooth ist aus; schalte es ein und versuche es erneut',
         tutTitle1: 'Einschließen', tutText1: 'Setz einen Stein so, dass eine Reihe gegnerischer Steine zwischen ihm und einem deiner Steine eingeschlossen ist. Sie nehmen alle deine Farbe an.',
         tutTitle2: 'Gültige Züge', tutText2: 'Du darfst nur dort setzen, wo mindestens ein Stein umgedreht wird; die kleinen Punkte zeigen diese Felder. Ohne Zug passt du.',
         tutTitle3: 'Ecken', tutText3: 'Ein Stein in der Ecke kann nie umgedreht werden. Kann keiner mehr ziehen, endet das Spiel, und wer mehr Steine hat, gewinnt.'
@@ -366,6 +425,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
         dailyReversi: 'Reversi diario', vsHard: 'contra la IA difícil',
         passNote: '{n}: sin movimiento, pasa turno',
         boardLabel: 'Tablero de Reversi',
+        twoPhones: 'Dos móviles', hostGame: 'Anfitrión', joinGame: 'Unirse', linkPick: 'Un móvil es anfitrión y el otro se une. El anfitrión juega con negras y empieza.', linkSearching: 'Buscando el otro móvil…', linkConnected: 'Conectado', linkLost: 'Conexión perdida; buscando de nuevo…', linkMismatch: 'Los móviles tienen versiones distintas; actualiza ambos', linkError: 'No se pudo conectar; vuelve a intentarlo', linkPermission: 'Falta el permiso de dispositivos cercanos: Ajustes → Aplicaciones → Chogan Plus → Permisos', linkBluetooth: 'El Bluetooth está apagado; actívalo y vuelve a intentarlo',
         tutTitle1: 'Encierra', tutText1: 'Coloca una ficha de modo que una línea de fichas del rival quede atrapada entre ella y una de las tuyas. Todas pasan a tu color.',
         tutTitle2: 'Jugadas válidas', tutText2: 'Solo puedes jugar donde al menos una ficha se voltee; los puntitos marcan esas casillas. Si no tienes jugada, pasas.',
         tutTitle3: 'Esquinas', tutText3: 'Una ficha en una esquina nunca se voltea. Cuando nadie puede mover, la partida termina y gana quien tenga más fichas.'
@@ -421,12 +481,25 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
   function newGame(mode, level, daily) {
     stopAi();
     anim = null;
-    var st = E.newState(mode);
+    var st = E.newState(mode === 'net' ? '2p' : mode);
+    var was = S;
     S = {
       mode: mode, level: level, daily: daily || null,
       board: st.board, turn: st.turn, history: [],
       done: false, startedAt: Date.now(), last: -1
     };
+    if (mode === 'net') {
+      // A new board in the same two-phone match keeps the role and the open link
+      S.side = was && was.mode === 'net' ? was.side : 0;
+      S.link = was && was.mode === 'net' ? was.link : 'idle';
+      S.peerName = was && was.mode === 'net' ? was.peerName : '';
+      S.linkWhy = was && was.mode === 'net' ? was.linkWhy : null;
+      // #752: both phones count their boards, so a resync after a restart knows which is newer
+      S.g = was && was.mode === 'net' ? (was.g | 0) + 1 : 0;
+    } else if (was && was.mode === 'net') {
+      wantLink = null;
+      C.link.close();
+    }
     if (daily) {
       var op = E.dailyOpening(C.daily('reversi', daily).rng, DAILY_PLIES);
       S.board = op.board;
@@ -570,7 +643,87 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
     };
   }
 
-  function busy() { return S.mode === 'ai' && S.turn === 2 && !S.done; }
+  function busy() {
+    if (S.mode === 'net') return !S.done && (S.link !== 'connected' || S.turn !== S.side);
+    return S.mode === 'ai' && S.turn === 2 && !S.done;
+  }
+
+  /* -------------------------------------------- Two phones (Chogan Plus) */
+  // Only Chogan Plus has the Nearby plugin (#691, choganhq/chogan-plus#4); elsewhere the
+  // option is never shown. The host plays black. Each move carries the ply it was made at,
+  // so a move that does not fit the board both phones should share is ignored, not guessed.
+  var LINK_TEXT = { searching: 'linkSearching', connected: 'linkConnected', lost: 'linkLost', mismatch: 'linkMismatch', error: 'linkError' };
+  // #744: a refused permission and Bluetooth switched off each say what to do; any other
+  // failure carries Nearby's status code, so a player's report can name it.
+  function linkText() {
+    if (!S.side) return C.t('linkPick');
+    var why = S.link === 'error' && S.linkWhy || {};
+    if (why.reason === 'permission') return C.t('linkPermission');
+    if (why.reason === 'bluetooth') return C.t('linkBluetooth');
+    return C.t(LINK_TEXT[S.link] || 'linkPick') + (S.link === 'error' && why.code ? ' (' + why.code + ')' : '');
+  }
+  var wantLink = null;
+  function openLink(role) {
+    S.side = role === 'host' ? 1 : 2;
+    S.link = 'idle';
+    wantLink = role;
+    C.link.open({
+      role: role, game: 'reversi', version: C.version, name: C.state.profile.name || '',
+      onStatus: function (st, info) {
+        if (!S || S.mode !== 'net') return;
+        if (st === 'mismatch') wantLink = null;
+        S.link = st;
+        S.linkWhy = st === 'error' ? info : null;
+        if (st === 'connected') {
+          C.link.send({ t: 'name', name: C.state.profile.name || '' });
+          // #752: after an app switch either phone may have restarted or missed a move;
+          // each says where its board is and the one behind catches up
+          C.link.send({ t: 'sync', g: S.g | 0, moves: S.history.map(function (h) { return h.i; }) });
+        }
+        render();
+      },
+      onMessage: onNet
+    });
+    render();
+  }
+  // The newer board wins: a later game, else the longer of two move lists that agree; if
+  // they disagree (a move lost both ways), the host's board stands.
+  function onSync(d) {
+    var theirs = Array.isArray(d.moves) ? d.moves : [], g = d.g | 0, mine = S.history.map(function (h) { return h.i; });
+    if (g < (S.g | 0)) return;
+    var take = g > (S.g | 0);
+    if (!take) {
+      var same = true;
+      for (var k = 0; k < Math.min(mine.length, theirs.length); k++) if (mine[k] !== theirs[k]) same = false;
+      take = same ? theirs.length > mine.length : S.side === 2;
+    }
+    if (!take) return;
+    var st = E.newState('2p'), T = { board: st.board, turn: st.turn, history: [] };
+    for (var j = 0; j < theirs.length; j++) {
+      if (!(theirs[j] >= 0 && theirs[j] < 64) || !E.applyMove(T, theirs[j])) return;
+    }
+    anim = null;
+    S.board = T.board; S.turn = T.turn; S.history = T.history; S.g = g;
+    S.done = false; S.last = theirs.length ? theirs[theirs.length - 1] : -1;
+    render(); drawPlayers(); draw(); save();
+    if (E.isOver(S.board)) finish();
+  }
+  function onNet(d) {
+    if (!S || S.mode !== 'net' || !d) return;
+    if (d.t === 'name') { S.peerName = String(d.name || '').slice(0, 16); drawPlayers(); }
+    else if (d.t === 'new') newGame('net', S.level);
+    else if (d.t === 'sync') onSync(d);
+    else if (d.t === 'move') {
+      if (S.done || S.turn === S.side || d.n !== S.history.length) return;
+      if (!(d.i >= 0 && d.i < 64) || !E.flipsFor(S.board, d.i, S.turn).length) return;
+      doMove(d.i, false);
+    }
+  }
+  window.addEventListener('pagehide', function () { if (S && S.mode === 'net') C.link.close(); });
+  // If the page was hidden long enough for the link to be closed, coming back reopens it
+  C.onResume(function () {
+    if (S && S.mode === 'net' && wantLink && C.link.status === 'idle') openLink(wantLink);
+  });
 
   function render() {
     top.innerHTML = '';
@@ -589,14 +742,25 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
         }
         go();
       };
-      top.appendChild(C.ui.segmented([
-        { value: 'ai', label: C.t('vsAi') }, { value: '2p', label: C.t('twoPlayers') }
-      ], S.mode, function (v) {
+      var modes = [{ value: 'ai', label: C.t('vsAi') }, { value: '2p', label: C.t('twoPlayers') }];
+      if (C.link.available() || S.mode === 'net') modes.push({ value: 'net', label: C.t('twoPhones') });
+      top.appendChild(C.ui.segmented(modes, S.mode, function (v) {
         guard(v === S.mode, function () {
-          prefs.mode = v; ctx.store.set('prefs', prefs);
+          // The two-phone mode is not remembered: the next visit may be in an app without it
+          if (v !== 'net') { prefs.mode = v; ctx.store.set('prefs', prefs); }
           newGame(v, S.level);
         });
       }));
+      if (S.mode === 'net') {
+        top.appendChild(C.ui.segmented([
+          { value: 'host', label: C.t('hostGame') }, { value: 'guest', label: C.t('joinGame') }
+        ], S.side ? (S.side === 1 ? 'host' : 'guest') : '', function (v) {
+          if (S.side === (v === 'host' ? 1 : 2) && S.link !== 'mismatch' && S.link !== 'error' && S.link !== 'idle') return;
+          newGame('net', S.level);
+          openLink(v);
+        }));
+        top.appendChild(el('span', { class: 'ch-badge rv-link', text: linkText() }));
+      }
       if (S.mode === 'ai') {
         top.appendChild(C.ui.segmented([
           { value: 'easy', label: C.t('easy') }, { value: 'medium', label: C.t('medium') }, { value: 'hard', label: C.t('hard') }
@@ -613,6 +777,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
   }
 
   function pname(i) {
+    if (S.mode === 'net') return i === S.side ? (C.state.profile.name || C.t('you')) : (S.peerName || C.t('rival'));
     if (i === 1) return C.state.profile.name || C.t('you');
     if (S.mode === 'ai') return C.t('rival') + ' · ' + C.t(S.level);
     return prefs.p2name || C.t('player2');
@@ -634,7 +799,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
           box.classList.add('ch-tap');
           box.addEventListener('click', renameP2);
         }
-        if (p === 2 && busy()) box.classList.add('rv-thinking');
+        if (busy() && p === (S.mode === 'net' ? 3 - S.side : 2)) box.classList.add('rv-thinking');
         playersRow.appendChild(box);
       })(i);
     }
@@ -665,6 +830,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
       draw();
       return;
     }
+    if (S.mode === 'net') C.link.send({ t: 'move', i: i, n: S.history.length });
     doMove(i, true);
   }
 
@@ -703,6 +869,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
 
   function undo() {
     if (!S || S.done) return;
+    // Taking a move back on one phone would split the two boards
+    if (S.mode === 'net') { C.feedback('bad'); return; }
     if (!S.history.length) { C.feedback('bad'); return; }
     stopAi();
     E.takeBack(S);
@@ -723,7 +891,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
     drawPlayers();
     draw();
     var n = E.count(S.board);
-    var s1 = n[1], s2 = n[2];
+    var me = S.mode === 'net' ? S.side : 1;
+    var s1 = n[me], s2 = n[3 - me];
     var won = s1 > s2;
     var tie = s1 === s2;
     var margin = s1 - s2;
@@ -754,26 +923,33 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
           : (won ? C.t('won') : C.t('lost'))),
       timeMs: S.elapsed, coins: coins, points: points,
       lines: [
-        { label: pname(1), value: C.num(s1) },
-        { label: pname(2), value: C.num(s2) }
+        { label: pname(me), value: C.num(s1) },
+        { label: pname(3 - me), value: C.num(s2) }
       ],
       shareText: 'کاپیبارا · ریورسی' +
         (S.daily ? ('\nروزانه ' + S.daily) : '') +
         '\n' + C.num(s1) + ' - ' + C.num(s2),
       paint: cardPaint(),
-      onAgain: S.daily ? null : function () { newGame(S.mode, S.level); }
+      onAgain: S.daily ? null : function () {
+        if (S.mode === 'net') C.link.send({ t: 'new' });
+        newGame(S.mode, S.level);
+      }
     });
   }
 
   /* --------------------------------------------------------- ذخیره */
 
   ctx.autosave(function () {
-    if (!S || S.done || !S.history.length) return { inProgress: false };
+    // #752: a two-phone game is kept too, with its role, because Android may kill the app
+    // during a switch; the reopened game reconnects and resyncs with the other phone
+    if (!S || S.done || !S.history.length || (S.mode === 'net' && !S.side)) return { inProgress: false };
     return {
       s: {
         mode: S.mode, level: S.level, daily: S.daily,
         board: S.board, turn: S.turn, history: S.history, last: S.last,
-        elapsed: Date.now() - S.startedAt
+        elapsed: Date.now() - S.startedAt,
+        side: S.mode === 'net' ? S.side : undefined, g: S.mode === 'net' ? S.g | 0 : undefined,
+        peerName: S.mode === 'net' ? S.peerName || '' : undefined
       },
       prefs: prefs
     };
@@ -786,9 +962,16 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
       board: v.board, turn: v.turn, history: v.history, last: typeof v.last === 'number' ? v.last : -1,
       done: false, startedAt: Date.now() - (v.elapsed || 0)
     };
+    // A two-phone game needs the link: without Chogan Plus's plugin it goes on as one phone
+    if (v.mode === 'net') {
+      if (C.link.available() && (v.side === 1 || v.side === 2)) {
+        S.side = v.side; S.g = v.g | 0; S.peerName = String(v.peerName || ''); S.link = 'idle'; S.linkWhy = null;
+      } else S.mode = '2p';
+    }
     render();
     // اگر صفحه درست بعد از حرکت آخر بسته شده بود، دست تمام‌شده باید نتیجه بگیرد نه قفل بماند
     if (E.isOver(S.board)) finish(); else maybeAi();
+    if (S.mode === 'net' && !S.done) openLink(S.side === 1 ? 'host' : 'guest');
   }
   function validSave(sv) {
     return !!(sv && sv.s && Array.isArray(sv.s.board) && sv.s.board.length === 64 &&
@@ -800,7 +983,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
     function go() {
       // داخل روزانه باید همان دست روزانه دوباره ساخته شود، نه یک مسابقه‌ی عادی
       if (dd) newGame('ai', 'hard', dd);
-      else newGame(S ? S.mode : prefs.mode, S ? S.level : prefs.level);
+      else {
+        if (S && S.mode === 'net') C.link.send({ t: 'new' });
+        newGame(S ? S.mode : prefs.mode, S ? S.level : prefs.level);
+      }
     }
     if (!S || S.done || !S.history.length) { go(); return; }
     C.ui.confirm({ title: C.t('newMatch'), body: C.t('resetWarn'), onOk: go });
@@ -928,7 +1114,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ReversiEng
     if (saved.prefs) prefs = saved.prefs;
     restore(saved.s);
   } else {
-    newGame(prefs.mode || 'ai', prefs.level || 'medium');
+    newGame(prefs.mode === '2p' ? '2p' : 'ai', prefs.level || 'medium');
     ctx.tutorialIfNew(TUT);
   }
 })();

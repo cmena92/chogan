@@ -7,6 +7,7 @@
 <title>بیست‌ویک — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* cards grow with the game area (#359); at 76px at most they were small on a tablet or laptop */
   .bj-wrap { --cw: clamp(52px, min(16cqw, (100cqh - 260px) / 4), 130px); margin-block: auto; width: 100%; max-width: max(560px, calc(var(--cw) * 7.4)); display: flex; flex-direction: column; align-items: center; gap: var(--s-3); }
@@ -137,7 +138,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = BlackjackE
   C.boot({});
   var ctx = C.game({
     id: 'blackjack',
-    name: { fa: 'بیست‌ویک', en: 'Blackjack', zh: '二十一点', de: 'Blackjack', es: 'Blackjack' },
+    name: { fa: 'بیست‌ویک', en: 'Blackjack', zh: '二十一点', de: 'Blackjack', es: 'Blackjack', pl: 'Oczko', fr: 'Vingt-et-un', ar: 'واحد وعشرون', hi: 'ब्लैकजैक' },
     accent: '#2E7D5B',
     mood: 'menu',
     cardSpeed: true,
@@ -164,6 +165,50 @@ if (typeof module !== 'undefined' && module.exports) module.exports = BlackjackE
         tutTitle1: 'Close to 21', tutText1: 'Your cards should add up closer to 21 than the dealer\'s. Go over 21 and you lose the hand.',
         tutTitle2: 'Hit or stand', tutText2: 'Hit takes another card; Stand passes to the dealer, who draws up to 17.',
         tutTitle3: 'Ten hands', tutText3: 'A match is ten hands, with no betting. Not sure? The advice button tells you the right move.'
+      },
+      pl: {
+        dealer: 'Krupier', you: 'Ty', hit: 'Dobierz', stand: 'Pasuj', nextHand: 'Następne rozdanie', handN: 'Rozdanie {n} z {m}',
+        wins: 'Wygrane', losses: 'Przegrane', pushes: 'Remisy', advice: 'Porada', adviceHit: 'Porada: dobierz', adviceStand: 'Porada: pasuj',
+        rWin: 'Wygrywasz!', rBlackjack: 'Oczko! 21 w dwóch kartach', rLose: 'Krupier wygrywa', rBust: 'Powyżej 21 – przegrywasz', rPush: 'Remis', rDealerBust: 'Krupier przekroczył 21 – wygrywasz!',
+        dailyBj: 'Codzienne Oczko', matchWon: 'Wygrałeś mecz', matchLost: 'Przegrałeś mecz', matchDraw: 'Mecz zakończył się remisem',
+        rules: 'Zbliż się do 21 bardziej niż krupier, ale nie przekraczaj tej liczby. Karty z numerami mają wartość swojej cyfry, walety, damy i króle liczą się jako 10, a as liczy się jako 1 lub 11. Dobieraj kolejne karty tak często, jak chcesz, i pasuj, gdy masz wystarczająco. Krupier dobiera poniżej 17 punktów i pasuje przy 17. As i karta o wartości 10 punktów jako pierwsze dwie karty to oczko. Mecz składa się z dziesięciu rozdań bez zakładów.',
+        keyboard: 'Klawiatura',
+        tutTitle1: 'Blisko 21', tutText1: 'Suma Twoich kart powinna być bliższa 21 niż suma kart krupiera. Przekroczenie 21 oznacza przegraną rozdania.',
+        tutTitle2: 'Dobierz lub pasuj', tutText2: '„Dobierz” dodaje kolejną kartę; „Pasuj” oddaje ruch krupierowi, który dobiera karty do momentu uzyskania co najmniej 17 punktów.',
+        tutTitle3: 'Dziesięć rozdań', tutText3: 'Mecz składa się z dziesięciu rozdań bez obstawiania zakładów. Nie masz pewności? Przycisk porady podpowie Ci właściwy ruch.'
+      },
+      fr: {
+        dealer: 'Croupier', you: 'Toi', hit: 'Carte', stand: 'Rester', nextHand: 'Main suivante', handN: 'Main {n} sur {m}',
+        wins: 'Gagnées', losses: 'Perdues', pushes: 'Égalité', advice: 'Conseil', adviceHit: 'Conseil : carte', adviceStand: 'Conseil : reste',
+        rWin: 'Tu gagnes !', rBlackjack: 'Blackjack ! 21 avec deux cartes', rLose: 'Le croupier gagne', rBust: 'Plus de 21, tu perds', rPush: 'Égalité', rDealerBust: 'Le croupier a dépassé 21, tu gagnes !',
+        dailyBj: 'Vingt-et-un du jour', matchWon: 'Tu as gagné le match', matchLost: 'Tu as perdu le match', matchDraw: 'Le match est nul',
+        rules: 'Approche-toi plus de 21 que le croupier sans dépasser. Les cartes à chiffres valent leur chiffre, valets, dames et rois valent dix, et l’as vaut un ou onze. Demande une carte autant de fois que tu veux, et reste quand tu en as assez. Le croupier tire en dessous de 17 et reste à 17. Un as et une carte à dix points en deux premières cartes font un blackjack. Un match dure dix mains, sans mise.',
+        keyboard: 'Clavier',
+        tutTitle1: 'Près de 21', tutText1: 'Tes cartes doivent faire plus près de 21 que celles du croupier. Dépasse 21 et tu perds la main.',
+        tutTitle2: 'Carte ou rester', tutText2: 'Carte en prend une autre ; Rester passe la main au croupier, qui tire jusqu’à 17.',
+        tutTitle3: 'Dix mains', tutText3: 'Un match dure dix mains, sans mise. Un doute ? Le bouton Conseil te dit le bon coup.'
+      },
+      ar: {
+        dealer: 'الموزّع', you: 'أنت', hit: 'اسحب', stand: 'اكتفِ', nextHand: 'اليد التالية', handN: 'اليد {n} من {m}',
+        wins: 'فوز', losses: 'خسارة', pushes: 'تعادل', advice: 'نصيحة', adviceHit: 'نصيحة: اسحب', adviceStand: 'نصيحة: اكتفِ',
+        rWin: 'فزت!', rBlackjack: 'واحد وعشرون! 21 بورقتين', rLose: 'الموزّع يفوز', rBust: 'تجاوزت 21، خسرت', rPush: 'تعادل', rDealerBust: 'تجاوز الموزّع 21، فزت!',
+        dailyBj: 'واحد وعشرون اليومي', matchWon: 'فزت بالمباراة', matchLost: 'خسرت المباراة', matchDraw: 'انتهت المباراة بالتعادل',
+        rules: 'اقترب من 21 أكثر من الموزّع دون أن تتجاوزه. أوراق الأرقام تُحسب برقمها، والولد والملكة والملك بعشرة، والآس بواحد أو أحد عشر. اسحب ورقة أخرى كلما شئت، واكتفِ حين يكفيك ما معك. يسحب الموزّع ما دام دون 17 ويكتفي عند 17. الآس مع ورقة قيمتها عشرة في أول ورقتين هي «واحد وعشرون». المباراة عشر أيدٍ، بلا رهان.',
+        keyboard: 'لوحة المفاتيح',
+        tutTitle1: 'قريبًا من 21', tutText1: 'يجب أن يكون مجموع أوراقك أقرب إلى 21 من مجموع أوراق الموزّع. إن تجاوزت 21 خسرت اليد.',
+        tutTitle2: 'اسحب أو اكتفِ', tutText2: 'اسحب يعطيك ورقة أخرى؛ واكتفِ ينقل الدور إلى الموزّع، الذي يسحب حتى 17.',
+        tutTitle3: 'عشر أيدٍ', tutText3: 'المباراة عشر أيدٍ، بلا رهان. لست متأكدًا؟ زر النصيحة يخبرك بالحركة الصحيحة.'
+      },
+      hi: {
+        dealer: 'डीलर', you: 'आप', hit: 'पत्ता लें', stand: 'रुकें', nextHand: 'अगला हाथ', handN: 'हाथ {n} / {m}',
+        wins: 'जीते', losses: 'हारे', pushes: 'बराबरी', advice: 'सलाह', adviceHit: 'सलाह: पत्ता लें', adviceStand: 'सलाह: रुकें',
+        rWin: 'आप जीत गए!', rBlackjack: 'ब्लैकजैक! दो पत्तों में 21', rLose: 'डीलर जीत गया', rBust: '21 से ज़्यादा, आप हार गए', rPush: 'बराबरी', rDealerBust: 'डीलर 21 से ऊपर गया, आप जीत गए!',
+        dailyBj: 'रोज़ का ब्लैकजैक', matchWon: 'आप मुक़ाबला जीत गए', matchLost: 'आप मुक़ाबला हार गए', matchDraw: 'मुक़ाबला बराबरी पर रहा',
+        rules: 'डीलर से ज़्यादा 21 के क़रीब पहुँचें, पर 21 से ऊपर न जाएँ। अंक वाले पत्ते अपने अंक के बराबर गिने जाते हैं, ग़ुलाम, बेगम और बादशाह दस, और इक्का एक या ग्यारह। जितनी बार चाहें एक और पत्ता लें, और काफ़ी हो जाए तो रुकें। डीलर 17 से कम पर पत्ता उठाता है और 17 पर रुकता है। पहले दो पत्तों में इक्का और दस अंक का पत्ता ब्लैकजैक है। एक मुक़ाबला दस हाथों का होता है, बिना दाँव के।',
+        keyboard: 'कीबोर्ड',
+        tutTitle1: '21 के क़रीब', tutText1: 'आपके पत्तों का जोड़ डीलर से ज़्यादा 21 के क़रीब होना चाहिए। 21 से ऊपर गए तो वह हाथ हार जाएँगे।',
+        tutTitle2: 'लें या रुकें', tutText2: '«पत्ता लें» से एक और पत्ता मिलता है; «रुकें» से बारी डीलर की हो जाती है, जो 17 तक पत्ते उठाता है।',
+        tutTitle3: 'दस हाथ', tutText3: 'एक मुक़ाबला दस हाथों का होता है, बिना दाँव के। पक्का नहीं? सलाह बटन सही चाल बताता है।'
       },
       zh: {
         dealer: '庄家', you: '你', hit: '要牌', stand: '停牌', nextHand: '下一手', handN: '第 {n} 手，共 {m} 手',

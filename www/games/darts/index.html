@@ -7,6 +7,7 @@
 <title>دارت — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* Player colours mark whose darts are on the board; red and green are left out
      because the board itself is red and green. */
@@ -224,7 +225,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = DartsEngin
   C.boot({});
   var ctx = C.game({
     id: 'darts',
-    name: { fa: 'دارت', en: 'Darts', zh: '飞镖', de: 'Darts', es: 'Dardos' },
+    name: { fa: 'دارت', en: 'Darts', zh: '飞镖', de: 'Darts', es: 'Dardos', pl: 'Rzutki', fr: 'Fléchettes', ar: 'رمي السهام', hi: 'डार्ट्स' },
     accent: '#B8322A',
     mood: 'menu',
     strings: {
@@ -259,6 +260,70 @@ if (typeof module !== 'undefined' && module.exports) module.exports = DartsEngin
         tutTitle1: 'Take aim', tutText1: 'Drag your finger over the board and let go to throw. Your hand wobbles a little; when you let go matters.',
         tutTitle2: 'Doubles and trebles', tutText2: 'The outer ring doubles a number, the middle ring trebles it. Treble 20 is the biggest score.',
         tutTitle3: 'Finish on a double', tutText3: 'Reach exactly zero, with the last dart on a double or the bullseye. A suggested finish shows under the board.'
+      },
+      pl: {
+        vsBot: 'Przeciwko botowi', people: 'Dwóch graczy', you: 'Ty', playerN: 'Gracz {n}', bot: 'Bot',
+        newMatch: 'Nowa gra', resetWarn: 'To zakończy bieżącą grę. Kontynuować?', boardLabel: 'Tarcza do darta',
+        aim: 'Wyceluj i puść', aimTouch: 'Przeciągnij palcem – celownik znajduje się nieco powyżej niego', botThrows: '{n} rzuca',
+        bust: 'Fura! Wynik wraca do poprzedniego stanu', turnTotal: 'W tej turze: {n}', finish: 'Koniec', noFinish: 'Brak możliwości zakończenia',
+        miss: 'Pudło', bull: 'Środek (Bull)', outerBull: '25', turnOf: 'Ruch gracza {n}', yourTurn: 'Twoja kolej', playerWon: '{n} wygrywa',
+        dailyDarts: 'Codzienny rzut', dailySolo: '301 samotnie, w jak najmniejszej liczbie rzutów', dartsLabel: 'Twoje rzutki', bestTurn: 'Najlepsza tura',
+        outOf: 'Koniec rzutek', checkoutLabel: 'Zakończenie',
+        rules: 'Każdy gracz zaczyna z liczbą 501 (lub 301) punktów i wykonuje trzy rzuty w turze; punkty z każdej rzutki są odejmowane od wyniku. Zewnętrzny pierścień podwaja punkty, a środkowy potraja. Środek tarczy jest wart 50 punktów, a pierścień wokół niego 25. Musisz zejść do dokładnie zera punktów, kończąc ostatni rzut podwojeniem lub środkiem tarczy. Zejście poniżej zera, uzyskanie wyniku równego 1 lub osiągnięcie zera bez podwojenia to tzw. „fura” – tura natychmiast się kończy, a wynik wraca do stanu sprzed jej rozpoczęcia. Wygrywa ten, kto pierwszy osiągnie dokładnie zero punktów.',
+        keyboard: 'Klawiatura', aimKey: 'Ruch celownikiem', throwKey: 'Rzut',
+        aimMode: 'Celowanie', aimDrag: 'Przeciąganie', aimBars: 'Dwie linie', barX: 'Dotknij, aby zatrzymać pionową linię', barY: 'Dotknij ponownie, aby zatrzymać poziomą linię', stopKey: 'Zatrzymaj linię',
+        aimHelp: 'Istnieją dwa sposoby celowania – możesz je przełączać przyciskiem nad tarczą. Przeciąganie: przeciągnij palcem i puść, aby rzucić. Dwie linie: dotknij raz, aby zatrzymać pionową linię, i drugi raz, aby zatrzymać poziomą; rzutka poleci w miejsce ich przecięcia.',
+        tutTitle1: 'Wyceluj', tutText1: 'Przeciągnij palcem po tarczy i puść, aby wykonać rzut. Twoja ręka lekko drży, więc moment puszczenia ma kluczowe znaczenie.',
+        tutTitle2: 'Podwojenia i potrojenia', tutText2: 'Zewnętrzny pierścień podwaja wartość pola, a środkowy ją potraja. Potrójna dwudziestka (treble 20) daje najwyższy możliwy wynik.',
+        tutTitle3: 'Kończ podwojeniem', tutText3: 'Musisz osiągnąć dokładnie zero punktów, kończąc ostatni rzut podwojeniem lub środkiem tarczy. Sugerowana ścieżka zakończenia wyświetla się pod tarczą.'
+      },
+      fr: {
+        vsBot: 'Contre le robot', people: 'Deux joueurs', you: 'Toi', playerN: 'Joueur {n}', bot: 'Robot',
+        newMatch: 'Nouvelle partie', resetWarn: 'Cela met fin à la partie en cours. Continuer ?', boardLabel: 'Cible de fléchettes',
+        aim: 'Vise et lâche', aimTouch: 'Fais glisser ton doigt ; le viseur est un peu au-dessus', botThrows: '{n} lance',
+        bust: 'Dépassé ! Le score revient', turnTotal: 'Ce tour : {n}', finish: 'Finish', noFinish: 'Pas encore de finish',
+        miss: 'Raté', bull: 'Bull', outerBull: '25', turnOf: 'Au tour de {n}', yourTurn: 'À toi', playerWon: '{n} gagne',
+        dailyDarts: 'Fléchettes du jour', dailySolo: '301 seul, en le moins de fléchettes possible', dartsLabel: 'Tes fléchettes', bestTurn: 'Meilleur tour',
+        outOf: 'Plus de fléchettes', checkoutLabel: 'Finish',
+        rules: 'Chacun part de 501 (ou 301) et lance trois fléchettes par tour ; le score de chaque fléchette est retiré. L’anneau extérieur double, l’anneau du milieu triple ; le centre vaut 50 et l’anneau autour 25. Tu dois arriver pile à zéro, avec la dernière fléchette sur un double ou au centre. Passer sous zéro, arriver à un, ou atteindre zéro sans double, c’est dépassé : le tour s’arrête et le score revient à son point de départ. Le premier à zéro gagne.',
+        keyboard: 'Clavier', aimKey: 'Déplacer le viseur', throwKey: 'Lancer',
+        aimMode: 'Visée', aimDrag: 'Glisser', aimBars: 'Deux lignes', barX: 'Touche pour arrêter la ligne verticale', barY: 'Touche encore pour arrêter la ligne horizontale', stopKey: 'Arrêter la ligne',
+        aimHelp: 'Il y a deux façons de viser ; change avec le bouton au-dessus de la cible. Glisser : fais glisser ton doigt et lâche. Deux lignes : touche une fois pour arrêter la ligne verticale et encore pour l’horizontale ; la fléchette va où elles se croisent.',
+        tutTitle1: 'Vise', tutText1: 'Fais glisser ton doigt sur la cible et lâche pour lancer. Ta main tremble un peu ; le moment où tu lâches compte.',
+        tutTitle2: 'Doubles et triples', tutText2: 'L’anneau extérieur double un nombre, l’anneau du milieu le triple. Le triple 20 est le plus gros score.',
+        tutTitle3: 'Finis sur un double', tutText3: 'Arrive pile à zéro, avec la dernière fléchette sur un double ou au centre. Un finish conseillé s’affiche sous la cible.'
+      },
+      ar: {
+        vsBot: 'ضد الروبوت', people: 'لاعبان', you: 'أنت', playerN: 'اللاعب {n}', bot: 'الروبوت',
+        newMatch: 'لعبة جديدة', resetWarn: 'سينهي هذا اللعبة الحالية. هل تتابع؟', boardLabel: 'لوحة السهام',
+        aim: 'صوّب ثم أفلت', aimTouch: 'اسحب إصبعك؛ المنظار فوقه بقليل', botThrows: '{n} يرمي',
+        bust: 'تجاوز! تعود النقاط', turnTotal: 'هذا الدور: {n}', finish: 'الإنهاء', noFinish: 'لا إنهاء بعد',
+        miss: 'خطأ', bull: 'المركز', outerBull: '25', turnOf: 'دور {n}', yourTurn: 'دورك', playerWon: 'فاز {n}',
+        dailyDarts: 'سهام اليوم', dailySolo: '301 وحدك، بأقل عدد ممكن من السهام', dartsLabel: 'سهامك', bestTurn: 'أفضل دور',
+        outOf: 'نفدت السهام', checkoutLabel: 'الإنهاء',
+        rules: 'يبدأ الجميع من 501 (أو 301) ويرمي كل لاعب ثلاثة سهام في الدور؛ وتُطرح نقاط كل سهم. الحلقة الخارجية تضاعف الرقم، والحلقة الوسطى تضاعفه ثلاث مرات؛ المركز 50 والحلقة حوله 25. يجب أن تصل إلى الصفر تمامًا، ويكون السهم الأخير في حلقة المضاعفة أو في المركز. النزول تحت الصفر، أو الوصول إلى 1، أو بلوغ الصفر دون مضاعفة يُعد تجاوزًا: ينتهي الدور وتعود النقاط إلى ما كانت عليه في بدايته. أول من يصل إلى الصفر يفوز.',
+        keyboard: 'لوحة المفاتيح', aimKey: 'حرّك المنظار', throwKey: 'ارمِ',
+        aimMode: 'التصويب', aimDrag: 'سحب', aimBars: 'خطان', barX: 'انقر لإيقاف الخط العمودي', barY: 'انقر مجددًا لإيقاف الخط الأفقي', stopKey: 'أوقف الخط',
+        aimHelp: 'للتصويب طريقتان؛ بدّل بينهما بالزر فوق اللوحة. السحب: اسحب إصبعك ثم أفلته. الخطان: انقر مرة لإيقاف الخط العمودي ومرة أخرى لإيقاف الخط الأفقي؛ يذهب السهم إلى نقطة تقاطعهما.',
+        tutTitle1: 'صوّب', tutText1: 'اسحب إصبعك على اللوحة وأفلته لترمي. يدك تهتز قليلًا؛ لحظة الإفلات مهمة.',
+        tutTitle2: 'المضاعفة والتثليث', tutText2: 'الحلقة الخارجية تضاعف الرقم، والحلقة الوسطى تضاعفه ثلاث مرات. ثلاثة أضعاف 20 هي أعلى نتيجة.',
+        tutTitle3: 'أنهِ بالمضاعفة', tutText3: 'صل إلى الصفر تمامًا، ويكون السهم الأخير في حلقة المضاعفة أو في المركز. يظهر إنهاء مقترح تحت اللوحة.'
+      },
+      hi: {
+        vsBot: 'बॉट से', people: 'दो खिलाड़ी', you: 'आप', playerN: 'खिलाड़ी {n}', bot: 'बॉट',
+        newMatch: 'नया खेल', resetWarn: 'इससे मौजूदा खेल ख़त्म हो जाएगा। जारी रखें?', boardLabel: 'डार्टबोर्ड',
+        aim: 'निशाना लगाएँ और छोड़ें', aimTouch: 'उँगली खींचें; निशाना उससे थोड़ा ऊपर रहता है', botThrows: '{n} का थ्रो',
+        bust: 'बस्ट! स्कोर वापस गया', turnTotal: 'इस बारी: {n}', finish: 'फ़िनिश', noFinish: 'अभी कोई फ़िनिश नहीं',
+        miss: 'चूक', bull: 'बुल', outerBull: '25', turnOf: '{n} की बारी', yourTurn: 'आपकी बारी', playerWon: '{n} की जीत',
+        dailyDarts: 'रोज़ के डार्ट्स', dailySolo: 'अकेले 301, जितने कम डार्ट में हो सके', dartsLabel: 'आपके डार्ट', bestTurn: 'सबसे अच्छी बारी',
+        outOf: 'डार्ट ख़त्म', checkoutLabel: 'चेकआउट',
+        rules: 'सब 501 (या 301) से शुरू करते हैं और हर बारी में तीन डार्ट फेंकते हैं; हर डार्ट का स्कोर घटता है। बाहरी छल्ला दुगुना करता है, बीच का छल्ला तिगुना; बीच का बुल 50 का है और उसके चारों ओर का छल्ला 25 का। आपको ठीक शून्य तक पहुँचना है, आख़िरी डार्ट डबल या बुल पर। शून्य से नीचे जाना, एक पर पहुँचना, या बिना डबल के शून्य पर पहुँचना बस्ट है: बारी ख़त्म होती है और स्कोर वहीं लौट जाता है जहाँ से बारी शुरू हुई थी। जो पहले शून्य पर पहुँचे, वह जीतता है।',
+        keyboard: 'कीबोर्ड', aimKey: 'निशाना हिलाएँ', throwKey: 'फेंकें',
+        aimMode: 'निशाना', aimDrag: 'खींचें', aimBars: 'दो रेखाएँ', barX: 'खड़ी रेखा रोकने के लिए छुएँ', barY: 'पड़ी रेखा रोकने के लिए फिर छुएँ', stopKey: 'रेखा रोकें',
+        aimHelp: 'निशाना लगाने के दो तरीक़े हैं; बोर्ड के ऊपर वाले बटन से बदलें। खींचें: उँगली खींचें और छोड़ें। दो रेखाएँ: खड़ी रेखा रोकने के लिए एक बार छुएँ और पड़ी रेखा के लिए फिर से; डार्ट वहाँ जाता है जहाँ दोनों मिलती हैं।',
+        tutTitle1: 'निशाना लगाएँ', tutText1: 'बोर्ड पर उँगली खींचें और फेंकने के लिए छोड़ें। आपका हाथ थोड़ा काँपता है; छोड़ने का पल मायने रखता है।',
+        tutTitle2: 'डबल और ट्रेबल', tutText2: 'बाहरी छल्ला अंक को दुगुना करता है, बीच का छल्ला तिगुना। ट्रेबल 20 सबसे बड़ा स्कोर है।',
+        tutTitle3: 'डबल पर ख़त्म करें', tutText3: 'ठीक शून्य तक पहुँचें, आख़िरी डार्ट डबल या बुल पर। सुझाया गया फ़िनिश बोर्ड के नीचे दिखता है।'
       },
       zh: {
         vsBot: '对战电脑', people: '双人', you: '你', playerN: '玩家{n}', bot: '电脑',

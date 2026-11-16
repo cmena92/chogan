@@ -7,6 +7,7 @@
 <title>ایرهاکی — چوگان</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   .ah-wrap > .ch-fit { --fit-ar: calc(360 / 640); }
   .ch-fit > .ah-box { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
@@ -122,7 +123,15 @@ function AirHockeyEngineFactory() {
       else moveMallet(S.mal[s], s, input ? input[s] : null, HAND, DT);
     }
     var P = S.puck;
-    if (S.wait > 0) { S.wait -= DT; return ev; }
+    // After a goal the puck rests a moment, but a mallet that reaches it ends the rest at
+    // once: while resting it skipped the mallets, so a player swung straight through it and,
+    // when it woke under or behind the mallet, knocked it into their own goal (#592).
+    if (S.wait > 0) {
+      var touch = false;
+      for (var w = 0; w < 2; w++) if (Math.hypot(P.x - S.mal[w].x, P.y - S.mal[w].y) < RP + RM) touch = true;
+      if (!touch) { S.wait -= DT; return ev; }
+      S.wait = 0;
+    }
     var drag = Math.exp(-DRAG * DT);
     P.vx *= drag; P.vy *= drag;
     P.x += P.vx * DT; P.y += P.vy * DT;
@@ -182,7 +191,7 @@ if (typeof module !== 'undefined') module.exports = AirHockeyEngineFactory;
   C.boot({});
   var ctx = C.game({
     id: 'airhockey',
-    name: { fa: 'ایرهاکی', en: 'Air Hockey', zh: '桌上冰球', de: 'Airhockey', es: 'Air hockey' },
+    name: { fa: 'ایرهاکی', en: 'Air Hockey', zh: '桌上冰球', de: 'Airhockey', es: 'Air hockey', pl: 'Cymbergaj', fr: 'Air hockey', ar: 'هوكي الهواء', hi: 'एयर हॉकी' },
     accent: '#C000F4',
     mood: 'menu',
     strings: {
@@ -205,6 +214,46 @@ if (typeof module !== 'undefined') module.exports = AirHockeyEngineFactory;
         tutTitle1: 'The goal', tutText1: 'Hit the puck into the top goal and keep it out of yours. First to seven.',
         tutTitle2: 'Your mallet', tutText2: 'Drag your finger on the bottom half; the mallet follows. A fast hit is a fast shot.',
         tutTitle3: 'The boards', tutText3: 'The puck bounces off the boards. Bank it off a side to get past the other mallet.'
+      },
+      pl: {
+        rink: 'Stół do cymbergaja widziany z góry', vsBot: 'Przeciwko botowi', people: 'Dwóch graczy', bot: 'Bot', playerN: 'Gracz {n}', newMatch: 'Nowy mecz',
+        howBot: 'Przeciągaj odbijak po swojej połowie i wbij krążek do górnej bramki.', howTwo: 'Każdy gracz przeciąga odbijak po swojej połowie.',
+        tapGo: 'Dotknij, aby kontynuować', goalOf: 'Gol dla: {n}!', playerWon: '{n} wygrywa', dailyAh: 'Codzienny Cymbergaj', ahScore: 'Gole', ahHits: 'Uderzenia', firstTo: 'Do {n} trafień',
+        kMove: 'Ruch dolnym odbijakiem', kMove2: 'Ruch górnym odbijakiem (dwóch graczy)',
+        rules: 'Widzisz stół z góry: Twój odbijak jest na dole, a Twoja bramka za Tobą. Przesuwaj odbijak palcem i wbijaj krążek do górnej bramki. Im szybciej odbijak uderzy w krążek, tym szybciej on poleci; krążek odbija się od band. Odbijak nie może przekroczyć środka stołu. Po stracie bramki krążek trafia do gracza, który ją przepuścił. Wygrywa ten, kto pierwszy zdobędzie siedem goli. Codzienne wyzwanie to mecz przeciwko botowi na średnim poziomie trudności.',
+        tutTitle1: 'Cel gry', tutText1: 'Wbij krążek do górnej bramki i broń własnej. Gra toczy się do siedmiu goli.',
+        tutTitle2: 'Twój odbijak', tutText2: 'Przeciągaj palcem po dolnej połowie – odbijak podąży za nim. Szybkie uderzenie to szybki strzał.',
+        tutTitle3: 'Bandy', tutText3: 'Krążek odbija się od band. Odbij go od bocznej ściany, aby ominąć odbijak przeciwnika.'
+      },
+      fr: {
+        rink: 'Table d’air hockey vue de dessus', vsBot: 'Contre le robot', people: 'Deux joueurs', bot: 'Robot', playerN: 'Joueur {n}', newMatch: 'Nouveau match',
+        howBot: 'Fais glisser ton maillet sur ta moitié et envoie le palet dans le but du haut.', howTwo: 'Chaque joueur fait glisser son maillet sur sa moitié.',
+        tapGo: 'Touche pour continuer', goalOf: 'But pour {n} !', playerWon: '{n} gagne', dailyAh: 'Air hockey du jour', ahScore: 'Buts', ahHits: 'Frappes', firstTo: 'Premier à {n}',
+        kMove: 'Déplacer le maillet du bas', kMove2: 'Déplacer le maillet du haut (deux joueurs)',
+        rules: 'Tu vois la table de dessus : ton maillet en bas, ton but derrière toi. Déplace le maillet avec le doigt et envoie le palet dans le but du haut. Plus le maillet le frappe vite, plus le palet va vite ; il rebondit sur les bandes. Un maillet ne peut pas franchir le milieu de la table. Après un but, le palet va au joueur qui l’a encaissé. Le premier à sept buts gagne. Le défi du jour est un match contre le robot moyen.',
+        tutTitle1: 'Le but', tutText1: 'Envoie le palet dans le but du haut et protège le tien. Le premier à sept.',
+        tutTitle2: 'Ton maillet', tutText2: 'Fais glisser ton doigt sur la moitié du bas ; le maillet suit. Frappe vite, tir rapide.',
+        tutTitle3: 'Les bandes', tutText3: 'Le palet rebondit sur les bandes. Joue la bande pour passer l’autre maillet.'
+      },
+      ar: {
+        rink: 'طاولة هوكي الهواء من الأعلى', vsBot: 'ضد الروبوت', people: 'لاعبان', bot: 'الروبوت', playerN: 'اللاعب {n}', newMatch: 'مباراة جديدة',
+        howBot: 'اسحب مضربك في نصفك واضرب القرص نحو المرمى العلوي.', howTwo: 'كل لاعب يسحب مضربه في نصفه.',
+        tapGo: 'انقر للمتابعة', goalOf: 'هدف لـ{n}!', playerWon: 'فاز {n}', dailyAh: 'هوكي اليوم', ahScore: 'الأهداف', ahHits: 'الضربات', firstTo: 'أول من يسجل {n}',
+        kMove: 'حرّك المضرب السفلي', kMove2: 'حرّك المضرب العلوي (لاعبان)',
+        rules: 'ترى الطاولة من الأعلى: مضربك في الأسفل ومرماك خلفك. حرّك المضرب بإصبعك واضرب القرص نحو المرمى العلوي. كلما كان المضرب أسرع عند الضربة، انطلق القرص أسرع؛ ويرتد عن الحواف. لا يستطيع المضرب عبور منتصف الطاولة. بعد الهدف يذهب القرص إلى اللاعب الذي استقبله. أول من يسجل سبعة أهداف يفوز. تحدي اليوم مباراة ضد الروبوت المتوسط.',
+        tutTitle1: 'الهدف', tutText1: 'اضرب القرص نحو المرمى العلوي واحمِ مرماك. أول من يسجل سبعة.',
+        tutTitle2: 'مضربك', tutText2: 'اسحب إصبعك في النصف السفلي؛ يتبعه المضرب. الضربة السريعة تسديدة سريعة.',
+        tutTitle3: 'الحواف', tutText3: 'يرتد القرص عن الحواف. اضربه نحو أحد الجانبين لتتجاوز المضرب الآخر.'
+      },
+      hi: {
+        rink: 'ऊपर से दिखती एयर हॉकी की मेज़', vsBot: 'बॉट से', people: 'दो खिलाड़ी', bot: 'बॉट', playerN: 'खिलाड़ी {n}', newMatch: 'नया मुक़ाबला',
+        howBot: 'अपने आधे हिस्से में स्ट्राइकर खींचें और पक को ऊपर वाले गोल में मारें।', howTwo: 'हर खिलाड़ी अपने आधे हिस्से में अपना स्ट्राइकर खींचता है।',
+        tapGo: 'आगे बढ़ने के लिए छुएँ', goalOf: '{n} का गोल!', playerWon: '{n} की जीत', dailyAh: 'रोज़ की एयर हॉकी', ahScore: 'गोल', ahHits: 'वार', firstTo: 'पहले {n} तक',
+        kMove: 'नीचे वाला स्ट्राइकर चलाएँ', kMove2: 'ऊपर वाला स्ट्राइकर चलाएँ (दो खिलाड़ी)',
+        rules: 'आप मेज़ को ऊपर से देखते हैं: आपका स्ट्राइकर नीचे है, आपका गोल आपके पीछे। उँगली से स्ट्राइकर चलाएँ और पक को ऊपर वाले गोल में मारें। स्ट्राइकर जितनी तेज़ी से टकराए, पक उतना तेज़ जाता है; वह किनारों से टकराकर लौटता है। स्ट्राइकर मेज़ के बीच से आगे नहीं जा सकता। गोल के बाद पक उस खिलाड़ी को मिलता है जिसने गोल खाया। पहले सात गोल करने वाला जीतता है। रोज़ की चुनौती मध्यम बॉट से एक मुक़ाबला है।',
+        tutTitle1: 'लक्ष्य', tutText1: 'पक को ऊपर वाले गोल में मारें और अपने गोल से दूर रखें। पहले सात तक।',
+        tutTitle2: 'आपका स्ट्राइकर', tutText2: 'नीचे वाले आधे में उँगली खींचें; स्ट्राइकर पीछे आता है। तेज़ वार, तेज़ शॉट।',
+        tutTitle3: 'किनारे', tutText3: 'पक किनारों से टकराकर लौटता है। दूसरे स्ट्राइकर से आगे निकालने के लिए उसे किनारे से टकराकर मारें।'
       },
       zh: {
         rink: '俯视的桌上冰球台', vsBot: '对战电脑', people: '双人', bot: '电脑', playerN: '玩家 {n}', newMatch: '新比赛',

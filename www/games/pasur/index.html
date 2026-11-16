@@ -7,6 +7,7 @@
 <title>پاسور — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   :root { --ps-face: var(--c-surface); --ps-rival: #8C6BB1; --ch-pface: var(--ps-face); }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ps-face: var(--c-surface-3); } }
@@ -392,7 +393,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = PasurEngin
   C.boot({});
   var ctx = C.game({
     id: 'pasur',
-    name: { fa: 'پاسور', en: 'Pasur', zh: '帕苏尔', de: 'Pasur', es: 'Pasur' },
+    name: { fa: 'پاسور', en: 'Pasur', zh: '帕苏尔', de: 'Pasur', es: 'Pasur', pl: 'Pasur', fr: 'Pasur', ar: 'باسور', hi: 'पासुर' },
     accent: '#4A7C59',
     mood: 'menu',
     cardSpeed: true,
@@ -427,6 +428,62 @@ if (typeof module !== 'undefined' && module.exports) module.exports = PasurEngin
         tutTitle1: 'Make eleven', tutText1: 'Play a number card that adds up to 11 with table cards, and you take them all. If there are several ways, you pick the table cards yourself.',
         tutTitle2: 'Jack, queen, king', tutText2: 'A jack sweeps everything on the table except kings and queens. A queen takes a queen, a king takes a king.',
         tutTitle3: 'Sur and points', tutText3: 'Clear the table and you score a sur: five points. At the end, most clubs is worth 7, the 10 of diamonds 3, the 2 of clubs 2, and every ace and jack 1.'
+      },
+      pl: {
+        you: 'Ty', rival: 'Rywal', thinking: 'Myślenie…', yourTurn: 'Twoja kolej, wyłóż kartę', youStart: 'Rozpoczynasz tę grę', rivalStarts: 'Rywal rozpoczyna tę grę',
+        deck: 'Talia', taken: 'Karty zebrane', clubs: 'Trefle', surs: 'Sury', sur: 'Sur!', gone: 'Karty rozegrane', goneSub: 'Zaszarowane karty zostały już zebrane',
+        newDeal: 'Nowe rozdanie', undoMove: 'Cofnij ruch', pickTake: 'Wybierz karty ze stołu, które zbierasz',
+        cancelPick: 'Anuluj', rivalTook: 'Rywal wyłożył {c} i zebrał {n} kart(y)', rivalPut: 'Rywal położył {c} na stole',
+        lastSweep: 'Karty pozostałe na stole trafiły do gracza, który wykonał ostatnie bicie', draw: 'Remis', dailyPs: 'Codzienny Pasur', vsHard: 'przeciwko trudnej SI',
+        table: 'Stół', hand: 'Twoja ręka', rivalHand: 'Ręka rywala', playN: 'Karta numer', pointsLine: 'Punkty',
+        clubsPts: 'Najwięcej trefli', tenD: '10 karo', twoC: '2 trefl', acesJacks: 'Asy i walety',
+        rules: 'Karta numeryczna zbiera ze stołu karty, które wraz z nią sumują się do 11 (as liczy się jako 1). Walet zbiera wszystko, co znajduje się na stole, z wyjątkiem królów i dam. Dama zbiera jedną damę, a król jednego króla. Jeśli Twoja karta może wykonać bicie, musi to zrobić; w przeciwnym razie trafia na stół. Oczyszczenie całego stołu to „sur”, warte pięć punktów (bicie wykonane waletem nie liczy się jako sur). Na koniec gry przyznawane są punkty: najwięcej trefli – 7 pkt, 10 karo – 3 pkt, 2 trefl – 2 pkt, każdy as oraz każdy walet – po 1 pkt. Karty pozostałe na stole na koniec rundy trafiają do gracza, który jako ostatni zebrał karty.',
+        move: 'Przemieść między kartami na stole', toggle: 'Wybierz kartę ze stołu', cancelKey: 'Anuluj wybór',
+        tutTitle1: 'Uzyskaj jedenaście', tutText1: 'Wyłóż kartę numeryczną, która sumuje się do 11 z kartami na stole, aby zebrać je wszystkie. Jeśli istnieje kilka sposobów, samodzielnie wybierasz karty do zebrania.',
+        tutTitle2: 'Walet, dama, król', tutText2: 'Walet czyści cały stół z wyjątkiem królów i dam. Dama zbiera damę, a król zbiera króla.',
+        tutTitle3: 'Sur i punkty', tutText3: 'Oczyszczając cały stół, zdobywasz „sur” warty 5 punktów. Na koniec rundy najwięcej trefli daje 7 pkt, 10 karo – 3 pkt, 2 trefl – 2 pkt, a każdy as i walet – po 1 pkt.'
+      },
+      fr: {
+        you: 'Toi', rival: 'Adversaire', thinking: 'Réflexion…', yourTurn: 'À toi, joue une carte', youStart: 'Tu commences cette partie', rivalStarts: 'Ton adversaire commence cette partie',
+        deck: 'Paquet', taken: 'Cartes', clubs: 'Trèfles', surs: 'Surs', sur: 'Sur !', gone: 'Cartes jouées', goneSub: 'Les cartes estompées ont été prises',
+        newDeal: 'Nouvelle donne', undoMove: 'Annuler le coup', pickTake: 'Choisis les cartes de la table à prendre',
+        cancelPick: 'Annuler', rivalTook: 'L’adversaire a joué {c} et pris {n} cartes', rivalPut: 'L’adversaire a posé {c} sur la table',
+        lastSweep: 'Les cartes restées sur la table vont à la dernière prise', draw: 'Égalité', dailyPs: 'Pasur du jour', vsHard: 'contre l’IA difficile',
+        table: 'Table', hand: 'Ta main', rivalHand: 'Main de l’adversaire', playN: 'Numéro de carte', pointsLine: 'Points',
+        clubsPts: 'Plus de trèfles', tenD: '10 de carreau', twoC: '2 de trèfle', acesJacks: 'As et valets',
+        rules: 'Une carte numérotée prend les cartes de la table qui font 11 avec elle (l’as vaut 1). Un valet prend tout sur la table sauf les rois et les dames. Une dame prend une dame, un roi un roi. Si ta carte peut prendre, elle doit prendre ; sinon elle va sur la table. Vider la table est un sur, qui vaut cinq points, mais pas avec un valet. À la fin : le plus de trèfles 7, le 10 de carreau 3, le 2 de trèfle 2, chaque as et chaque valet 1. Les cartes restées sur la table vont au dernier à avoir pris.',
+        move: 'Aller d’une carte de la table à l’autre', toggle: 'Choisir une carte de la table', cancelKey: 'Annuler le choix',
+        tutTitle1: 'Faire onze', tutText1: 'Joue une carte numérotée qui fait 11 avec des cartes de la table, et tu les prends toutes. S’il y a plusieurs façons, tu choisis toi-même les cartes.',
+        tutTitle2: 'Valet, dame, roi', tutText2: 'Un valet rafle tout sur la table sauf les rois et les dames. Une dame prend une dame, un roi prend un roi.',
+        tutTitle3: 'Sur et points', tutText3: 'Vide la table et tu marques un sur : cinq points. À la fin, le plus de trèfles vaut 7, le 10 de carreau 3, le 2 de trèfle 2, et chaque as et valet 1.'
+      },
+      ar: {
+        you: 'أنت', rival: 'المنافس', thinking: 'يفكر…', yourTurn: 'دورك، العب ورقة', youStart: 'أنت تبدأ هذه اللعبة', rivalStarts: 'منافسك يبدأ هذه اللعبة',
+        deck: 'الرزمة', taken: 'الأوراق', clubs: 'السباتي', surs: 'السور', sur: 'سور!', gone: 'الأوراق الملعوبة', goneSub: 'الأوراق الباهتة أُخذت',
+        newDeal: 'توزيع جديد', undoMove: 'تراجع', pickTake: 'اختر أوراق الطاولة التي تأخذها',
+        cancelPick: 'إلغاء', rivalTook: 'لعب المنافس {c} وأخذ {n} أوراق', rivalPut: 'وضع المنافس {c} على الطاولة',
+        lastSweep: 'الأوراق الباقية على الطاولة ذهبت لآخر من أخذ', draw: 'تعادل', dailyPs: 'باسور اليوم', vsHard: 'ضد الروبوت الصعب',
+        table: 'الطاولة', hand: 'أوراقك', rivalHand: 'أوراق المنافس', playN: 'رقم الورقة', pointsLine: 'النقاط',
+        clubsPts: 'أكثر السباتي', tenD: '10 الديناري', twoC: '2 السباتي', acesJacks: 'الآسات والأولاد',
+        rules: 'الورقة ذات الرقم تأخذ أوراق الطاولة التي يكون مجموعها معها 11 (الآس بـ 1). الولد يأخذ كل ما على الطاولة ما عدا الملوك والملكات. الملكة تأخذ ملكة، والملك يأخذ ملكًا. إذا كانت ورقتك تستطيع الأخذ فعليها أن تأخذ؛ وإلا فتوضع على الطاولة. تنظيف الطاولة يسمّى سور، ويساوي خمس نقاط، لكن ليس بالولد. في النهاية: أكثر السباتي 7، و10 الديناري 3، و2 السباتي 2، وكل آس وكل ولد 1. الأوراق الباقية على الطاولة تذهب لآخر من أخذ.',
+        move: 'التنقل بين أوراق الطاولة', toggle: 'اختر ورقة من الطاولة', cancelKey: 'إلغاء الاختيار',
+        tutTitle1: 'اصنع 11', tutText1: 'العب ورقة ذات رقم يكون مجموعها مع أوراق الطاولة 11، فتأخذها كلها. إذا وُجدت عدة طرق، تختار أوراق الطاولة بنفسك.',
+        tutTitle2: 'الولد والملكة والملك', tutText2: 'الولد يكنس كل ما على الطاولة ما عدا الملوك والملكات. الملكة تأخذ ملكة، والملك يأخذ ملكًا.',
+        tutTitle3: 'السور والنقاط', tutText3: 'نظّف الطاولة فتسجّل سور: خمس نقاط. في النهاية، أكثر السباتي بـ 7، و10 الديناري بـ 3، و2 السباتي بـ 2، وكل آس وولد بـ 1.'
+      },
+      hi: {
+        you: 'आप', rival: 'विरोधी', thinking: 'सोच रहा है…', yourTurn: 'आपकी बारी, एक पत्ता खेलें', youStart: 'यह खेल आप शुरू करेंगे', rivalStarts: 'यह खेल विरोधी शुरू करेगा',
+        deck: 'गड्डी', taken: 'पत्ते', clubs: 'चिड़ी', surs: 'सूर', sur: 'सूर!', gone: 'खेले गए पत्ते', goneSub: 'हल्के पत्ते उठाए जा चुके हैं',
+        newDeal: 'नई बाज़ी', undoMove: 'चाल वापस', pickTake: 'मेज़ के वे पत्ते चुनें जो आप उठाएँगे',
+        cancelPick: 'रद्द करें', rivalTook: 'विरोधी ने {c} खेला और {n} पत्ते उठाए', rivalPut: 'विरोधी ने {c} मेज़ पर रखा',
+        lastSweep: 'मेज़ पर बचे पत्ते आख़िरी बार उठाने वाले को मिले', draw: 'बराबरी', dailyPs: 'रोज़ का पासुर', vsHard: 'कठिन कंप्यूटर के ख़िलाफ़',
+        table: 'मेज़', hand: 'आपके पत्ते', rivalHand: 'विरोधी के पत्ते', playN: 'पत्ता नंबर', pointsLine: 'अंक',
+        clubsPts: 'सबसे ज़्यादा चिड़ी', tenD: 'ईंट का 10', twoC: 'चिड़ी का 2', acesJacks: 'इक्के और ग़ुलाम',
+        rules: 'नंबर वाला पत्ता मेज़ के उन पत्तों को उठाता है जिनका जोड़ उसके साथ 11 हो (इक्का 1 है)। ग़ुलाम मेज़ पर बादशाह और बेगम छोड़कर सब कुछ उठाता है। बेगम एक बेगम और बादशाह एक बादशाह उठाता है। अगर आपका पत्ता उठा सकता है तो उसे उठाना ही होगा; नहीं तो वह मेज़ पर रखा जाता है। मेज़ ख़ाली करना सूर है, पाँच अंक का, पर ग़ुलाम से नहीं। आख़िर में: सबसे ज़्यादा चिड़ी 7, ईंट का 10 पर 3, चिड़ी का 2 पर 2, हर इक्का और हर ग़ुलाम 1। मेज़ पर बचे पत्ते आख़िरी बार उठाने वाले को मिलते हैं।',
+        move: 'मेज़ के पत्तों के बीच जाएँ', toggle: 'मेज़ का पत्ता चुनें', cancelKey: 'चुनाव रद्द करें',
+        tutTitle1: 'ग्यारह बनाएँ', tutText1: 'ऐसा नंबर वाला पत्ता खेलें जो मेज़ के पत्तों के साथ 11 बनाए, और वे सब आपके। कई तरीक़े हों तो मेज़ के पत्ते आप ख़ुद चुनें।',
+        tutTitle2: 'ग़ुलाम, बेगम, बादशाह', tutText2: 'ग़ुलाम मेज़ पर बादशाह और बेगम छोड़कर सब समेट लेता है। बेगम बेगम को उठाती है, बादशाह बादशाह को।',
+        tutTitle3: 'सूर और अंक', tutText3: 'मेज़ ख़ाली करें तो सूर बनता है: पाँच अंक। आख़िर में सबसे ज़्यादा चिड़ी के 7, ईंट के 10 के 3, चिड़ी के 2 के 2, और हर इक्के और ग़ुलाम का 1 अंक।'
       },
       zh: {
         you: '你', rival: '对手', thinking: '思考中…', yourTurn: '轮到你了，出一张牌', youStart: '这一局你先出', rivalStarts: '这一局对手先出',
@@ -519,7 +576,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = PasurEngin
   // A short riffle before the deal, so a new hand feels shuffled, not swapped in
   var dealing = false;
   function shuffleAnim(done) {
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var reduce = C.ui.reduceMotion();
     if (reduce) { done(); return; }
     dealing = true;
     var box = el('div', { class: 'ps-shuffle', 'aria-hidden': 'true' });

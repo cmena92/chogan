@@ -575,6 +575,10 @@ function testDeseosSinCarencia() {
     de: ['hunger', 'hungrig', 'traurig', 'schmutzig', 'einsam', 'allein', 'vermiss'],
     zh: ['饿', '伤心', '难过', '脏', '孤单', '寂寞', '想你'],
     fa: ['گرسنه', 'غمگین', 'ناراحت', 'کثیف', 'تنها', 'دلتنگ'],
+    pl: ['głod', 'głodn', 'smutn', 'brudn', 'samotn', 'tęskn'],
+    fr: ['faim', 'affam', 'triste', 'sale', 'seul', 'manque'],
+    ar: ['جائع', 'جوع', 'حزين', 'متسخ', 'وسخ', 'وحيد', 'اشتقت'],
+    hi: ['भूख', 'भूखा', 'उदास', 'दुखी', 'गंदा', 'अकेला', 'याद आ'],
   };
   const claves = (K ? K.DESEOS.map((d) => 'deseo_' + d.id) : []).concat(['deseoCumplido', 'gana_comer', 'gana_jugar', 'gana_banio']);
   for (const l of Object.keys(PROHIBIDAS)) {
@@ -638,13 +642,13 @@ function testEstados() {
   if (!bloque) return;
   const T = vm.runInNewContext('(' + bloque.slice(bloque.indexOf('{'), bloque.lastIndexOf('}') + 1) + ')');
   const claves = ['cargando', 'vacio', 'sinMonedas', 'equipado'];
-  for (const l of ['fa', 'en', 'zh', 'de', 'es']) ok(claves.every((k) => typeof T[l][k] === 'string' && T[l][k].length > 2), l + ': los cuatro estados tienen texto');
+  for (const l of LANGS) ok(claves.every((k) => typeof T[l][k] === 'string' && T[l][k].length > 2), l + ': los cuatro estados tienen texto');
   ok(/juega/i.test(T.es.sinMonedas) && /play/i.test(T.en.sinMonedas), 'sin monedas dice qué hacer: jugar para ganarlas');
 }
 
 /* ------------------------------------------------ final integration (#10) */
 
-const LANGS = ['fa', 'en', 'zh', 'de', 'es'];
+const LANGS = ['fa', 'en', 'zh', 'de', 'es', 'pl', 'fr', 'ar', 'hi'];
 const textos = () => {
   const html = fs.readFileSync(PAGINA, 'utf8');
   const bloque = (html.match(/\/\* ==== TEXTOS START ==== \*\/([\s\S]*?)\/\* ==== TEXTOS END ==== \*\//) || [])[1];

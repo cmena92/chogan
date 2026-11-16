@@ -7,6 +7,7 @@
 <title>واکنش زنجیره‌ای — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* The four player colours are part of the rules (they tell whose cell is whose),
      so they are the game's own tokens and stay the same in both themes. They differ
@@ -289,7 +290,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ChainEngin
   C.boot({});
   var ctx = C.game({
     id: 'chain',
-    name: { fa: 'واکنش زنجیره‌ای', en: 'Chain Reaction', zh: '连锁反应', de: 'Kettenreaktion', es: 'Reacción en cadena' },
+    name: { fa: 'واکنش زنجیره‌ای', en: 'Chain Reaction', zh: '连锁反应', de: 'Kettenreaktion', es: 'Reacción en cadena', pl: 'Reakcja łańcuchowa', fr: 'Réaction en chaîne', ar: 'التفاعل المتسلسل', hi: 'चेन रिएक्शन' },
     accent: '#AE3A92',
     mood: 'sudoku',
     strings: {
@@ -316,6 +317,54 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ChainEngin
         tutTitle1: 'Add an orb', tutText1: 'Take turns adding one orb to an empty cell or to one of your own cells.',
         tutTitle2: 'Full cells burst', tutText2: 'A cell bursts when it holds as many orbs as it has neighbours: 2 in a corner, 3 on an edge, 4 in the middle. The orbs fly to the neighbours and those cells take your colour.',
         tutTitle3: 'Chain reactions', tutText3: 'One burst can tip a full neighbour over, and so on across the board. A colour wiped off the board is out; the last colour left wins.'
+      },
+      pl: {
+        players: 'gracze', vsBots: 'Przeciwko botom', people: 'Podaj i graj', you: 'Ty', playerN: 'Gracz {n}', bot: 'Bot',
+        small: 'Mała', large: 'Duża', playerWon: '{n} wygrywa',
+        newMatch: 'Nowa gra', undoMove: 'Cofnij ruch', resetWarn: 'To zakończy bieżącą grę. Kontynuować?',
+        boardLabel: 'Plansza reakcji łańcuchowej', dailyChain: 'Codzienna reakcja', vsMedium: 'przeciwko botowi na średnim poziomie',
+        movesLabel: 'Twoje ruchy', bestChain: 'Najdłuższy łańcuch',
+        rules: 'Dodawajcie na zmianę po jednej kuli do pustego pola lub do pola z własną kulą. Pole, które zawiera tyle kul, ilu ma sąsiadów, wybucha – 2 w rogu, 3 na krawędzi, 4 na środku. Wybuch wysyła po jednej kuli do każdego sąsiada i przejmuje te pola na Twój kolor, co może wywołać ich kolejne wybuchy. Gracz, któremu po pierwszej turze nie zostanie żadna kula, odpada; wygrywa ostatni kolor na planszy.',
+        keyboard: 'Klawiatura', moveCursor: 'Ruch kursorem', place: 'Dodaj kulę',
+        tutTitle1: 'Dodaj kulę', tutText1: 'Dodawajcie na zmianę po jednej kuli do pustego pola lub do jednego ze swoich pól.',
+        tutTitle2: 'Pełne pola wybuchają', tutText2: 'Pole wybucha, gdy zawiera tyle kul, ilu ma sąsiadów: 2 w rogu, 3 na krawędzi, 4 na środku. Kule lecą do sąsiednich pól, a te pola przyjmują Twój kolor.',
+        tutTitle3: 'Reakcje łańcuchowe', tutText3: 'Jeden wybuch może doprowadzić do wybuchu pełnego sąsiada i tak dalej na całej planszy. Kolor całkowicie usunięty z planszy odpada; wygrywa ostatni pozostały kolor.'
+      },
+      fr: {
+        players: 'joueurs', vsBots: 'Contre les robots', people: 'Chacun son tour', you: 'Toi', playerN: 'Joueur {n}', bot: 'Robot',
+        small: 'Petit', large: 'Grand', playerWon: '{n} gagne',
+        newMatch: 'Nouvelle partie', undoMove: 'Annuler le coup', resetWarn: 'Cela met fin à la partie en cours. Continuer ?',
+        boardLabel: 'Plateau de Réaction en chaîne', dailyChain: 'Chaîne du jour', vsMedium: 'contre le robot moyen',
+        movesLabel: 'Tes coups', bestChain: 'Plus longue chaîne',
+        rules: 'Chacun son tour, ajoute une bille dans une case vide ou dans une des tiennes. Une case qui a autant de billes que de voisines explose : 2 dans un coin, 3 sur un bord, 4 au milieu. Une explosion envoie une bille à chaque voisine et te donne ces cases, qui peuvent exploser à leur tour. Qui n’a plus de bille après son premier tour est éliminé ; la dernière couleur sur le plateau gagne.',
+        keyboard: 'Clavier', moveCursor: 'Déplacer le curseur', place: 'Ajouter une bille',
+        tutTitle1: 'Ajoute une bille', tutText1: 'Chacun son tour, ajoute une bille dans une case vide ou dans une de tes cases.',
+        tutTitle2: 'Les cases pleines explosent', tutText2: 'Une case explose quand elle a autant de billes que de voisines : 2 dans un coin, 3 sur un bord, 4 au milieu. Les billes partent vers les voisines et ces cases prennent ta couleur.',
+        tutTitle3: 'Réactions en chaîne', tutText3: 'Une explosion peut faire déborder une voisine pleine, et ainsi de suite sur tout le plateau. Une couleur effacée du plateau est éliminée ; la dernière couleur restante gagne.'
+      },
+      ar: {
+        players: 'لاعبين', vsBots: 'ضد الروبوتات', people: 'بالتناوب', you: 'أنت', playerN: 'اللاعب {n}', bot: 'الروبوت',
+        small: 'صغيرة', large: 'كبيرة', playerWon: 'فاز {n}',
+        newMatch: 'لعبة جديدة', undoMove: 'تراجع', resetWarn: 'سينهي هذا اللعبة الحالية. هل تتابع؟',
+        boardLabel: 'لوحة التفاعل المتسلسل', dailyChain: 'السلسلة اليومية', vsMedium: 'ضد الروبوت المتوسط',
+        movesLabel: 'حركاتك', bestChain: 'أطول سلسلة',
+        rules: 'أضف كرة بالتناوب إلى خانة فارغة أو إلى إحدى خاناتك. الخانة التي تحمل عددًا من الكرات يساوي عدد جيرانها تنفجر: 2 في الزاوية، و3 على الحافة، و4 في الوسط. يرسل الانفجار كرة إلى كل جار ويجعل تلك الخانات لك، وقد تنفجر هي أيضًا. من لم يبقَ له أي كرات بعد دوره الأول يخرج، وآخر لون يبقى على اللوحة يفوز.',
+        keyboard: 'لوحة المفاتيح', moveCursor: 'حرّك المؤشر', place: 'أضف كرة',
+        tutTitle1: 'أضف كرة', tutText1: 'أضف كرة واحدة بالتناوب إلى خانة فارغة أو إلى إحدى خاناتك.',
+        tutTitle2: 'الخانات الممتلئة تنفجر', tutText2: 'تنفجر الخانة عندما تحمل عددًا من الكرات يساوي عدد جيرانها: 2 في الزاوية، و3 على الحافة، و4 في الوسط. تطير الكرات إلى الجيران وتأخذ تلك الخانات لونك.',
+        tutTitle3: 'تفاعلات متسلسلة', tutText3: 'قد يفجّر انفجار واحد جارًا ممتلئًا، وهكذا عبر اللوحة. اللون الذي يُمحى من اللوحة يخرج، وآخر لون يبقى يفوز.'
+      },
+      hi: {
+        players: 'खिलाड़ी', vsBots: 'बॉट से', people: 'बारी-बारी', you: 'आप', playerN: 'खिलाड़ी {n}', bot: 'बॉट',
+        small: 'छोटा', large: 'बड़ा', playerWon: '{n} जीत गए',
+        newMatch: 'नया खेल', undoMove: 'चाल वापस', resetWarn: 'इससे मौजूदा खेल ख़त्म हो जाएगा। जारी रखें?',
+        boardLabel: 'चेन रिएक्शन बोर्ड', dailyChain: 'रोज़ की चेन', vsMedium: 'मध्यम बॉट के ख़िलाफ़',
+        movesLabel: 'आपकी चालें', bestChain: 'सबसे लंबी चेन',
+        rules: 'बारी-बारी से किसी ख़ाली ख़ाने में या अपने ख़ाने में एक गोला जोड़ें। जिस ख़ाने में उतने गोले हो जाएँ जितने उसके पड़ोसी हैं, वह फट जाता है: कोने में 2, किनारे पर 3, बीच में 4। धमाका हर पड़ोसी को एक गोला भेजता है और वे ख़ाने आपके हो जाते हैं, जिससे वे भी फट सकते हैं। पहली बारी के बाद जिसके पास कोई गोला न बचे, वह बाहर; बोर्ड पर बचा आख़िरी रंग जीतता है।',
+        keyboard: 'कीबोर्ड', moveCursor: 'कर्सर हिलाएँ', place: 'गोला जोड़ें',
+        tutTitle1: 'गोला जोड़ें', tutText1: 'बारी-बारी से किसी ख़ाली ख़ाने में या अपने किसी ख़ाने में एक गोला जोड़ें।',
+        tutTitle2: 'भरे ख़ाने फटते हैं', tutText2: 'ख़ाना तब फटता है जब उसमें उतने गोले हों जितने उसके पड़ोसी हैं: कोने में 2, किनारे पर 3, बीच में 4। गोले पड़ोसियों में उड़ जाते हैं और वे ख़ाने आपके रंग के हो जाते हैं।',
+        tutTitle3: 'चेन रिएक्शन', tutText3: 'एक धमाका भरे पड़ोसी को भी फोड़ सकता है, और ऐसे ही पूरे बोर्ड पर। जो रंग बोर्ड से मिट जाए, वह बाहर; आख़िरी बचा रंग जीतता है।'
       },
       zh: {
         players: '名玩家', vsBots: '对战电脑', people: '轮流对战', you: '你', playerN: '玩家{n}', bot: '电脑',
