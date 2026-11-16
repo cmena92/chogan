@@ -7,6 +7,7 @@
 <title>هفت خبیث — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   :root { --ch-pface: var(--c-surface); }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ch-pface: var(--c-surface-3); } }
@@ -31,7 +32,7 @@
   .ce-stock--hint .ch-pback { outline: 3px solid var(--game); outline-offset: 3px; }
   .ce-left { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: var(--fs-xs, 12px); font-weight: 700; color: var(--c-text-dim); }
   .ce-pile { position: relative; width: var(--cw); aspect-ratio: 5 / 7; }
-  .ce-pile .ch-pcard { --pw: var(--cw); position: absolute; inset: 0; cursor: default; }
+  .ce-pile .ch-pcard { --pw: var(--cw); position: absolute; top: 0; right: 0; bottom: 0; left: 0; cursor: default; }
   .ce-suit { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 52px; font-size: var(--fs-xs, 12px); font-weight: 700; color: var(--c-text-dim); }
   .ce-suit b { font-size: calc(var(--cw) * .5); line-height: 1; color: var(--c-text); }
   .ce-suit--red b { color: var(--c-bad); }
@@ -294,7 +295,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = CrazyEight
   C.boot({});
   var ctx = C.game({
     id: 'crazyeights',
-    name: { fa: 'هفت خبیث', en: 'Crazy Eights', zh: '疯狂八', de: 'Verrückte Acht', es: 'Ocho loco' },
+    name: { fa: 'هفت خبیث', en: 'Crazy Eights', zh: '疯狂八', de: 'Verrückte Acht', es: 'Ocho loco', pl: 'Makao', fr: 'Huit américain', ar: 'السبعة الماكرة', hi: 'क्रेज़ी एट्स' },
     accent: '#A06420',
     mood: 'menu',
     cardSpeed: true,
@@ -327,6 +328,62 @@ if (typeof module !== 'undefined' && module.exports) module.exports = CrazyEight
         tutTitle1: 'Match', tutText1: 'Play a card that matches the top card by suit or by rank.',
         tutTitle2: 'Eights', tutText2: 'An eight goes on anything, and you name the next suit.',
         tutTitle3: 'Empty your hand', tutText3: 'If nothing fits, draw from the stock. The first to empty their hand scores the cards the others still hold.'
+      },
+      pl: {
+        you: 'Ty', rivalN: 'Rywal {n}', cardsN: 'Karty: {n}', roundN: 'Runda {n}', toN: 'Do {n} punktów', dailyCe: 'Codzienne Makao',
+        yourTurn: 'Twoja kolej: dopasuj kolor, wartość lub wyłóż ósemkę', mustDraw: 'Nic nie pasuje – dobierz kartę ze stosu', playDrawn: 'Nowa karta pasuje – wyłóż ją lub spasuj',
+        canPlayFirst: 'Masz pasującą kartę', nameSuit: 'Wybierz nowy kolor (żądanie)', suitNow: 'Aktualny kolor', passTurn: 'Pas', thinking: '{n} myśli…',
+        drewN: '{n} dobrał kartę', passedN: '{n} spasował', changedN: '{n} zmienił kolor na {s}', roundWon: '{n} wygrał rundę', youWonRound: 'Wygrywasz rundę!',
+        plusPts: '+{n} punktów', blocked: 'Karty na stosie skończyły się i nikt nie mógł wykonać ruchu – wygrał gracz z najniższą liczbą punktów', nextRound: 'Następna runda', matchWon: 'Wygrywasz mecz!', matchLost: 'Gracz {n} wygrał mecz',
+        newMatch: 'Nowy mecz', rivals: 'Rywale', level: 'Poziom', optNote: 'Zmiany wejdą w życie od następnego meczu.', points: 'Punkty', rounds: 'Rundy',
+        rulesSet: 'Zasady', rulesIran: 'Irańskie', rulesIntl: 'Międzynarodowe', takeN: '{k} kar karnych: wyłóż siódemkę lub je dobierz', tookN: '{n} dobrał karty ({k})', youTook: 'Dobierasz karty ({k})', eightAgain: 'Ósemka: wyłóż jeszcze jedną kartę', skippedN: 'Pominięcie tury: {n}', reversed: 'Kierunek gry został odwrócony', pendingN: '+{k}', rulesIranText: 'Ta aplikacja korzysta z irańskich zasad Haft Khabis (różnią się one w zależności od miasta): każdy gracz otrzymuje po siedem kart. Wyłóż kartę pasującą do karty na górze kolorem lub wartością. Walet pasuje do wszystkiego i pozwala wybrać żądany kolor. Siódemka: następny gracz dobiera dwie karty, chyba że również wyłoży siódemkę – wtedy kary się sumują i przechodzą dalej. Ósemka: wyłóż jeszcze jedną kartę. Dziesiątka: zmiana kierunku gry. As: następny gracz czeka kolejkę. Jeśli nic nie pasuje, dobierz jedną kartę ze stosu. Pierwszy gracz, który pozbędzie się kart, otrzymuje punkty za karty pozostałe w rękach innych graczy: walety 50, siódemki, ósemki, dziesiątki i asy 20, króle i damy 10, reszta zgodnie z numerem. Mecz wygrywa ten, kto pierwszy zdobędzie 100 punktów. Międzynarodowe zasady znajdziesz pod ikoną koła zębatego.', tutTitle2i: 'Karty specjalne', tutText2i: 'Walet zmienia kolor. Siódemka: następny gracz dobiera dwie karty. Ósemka: grasz ponownie. Dziesiątka: odwrócenie kierunku. As: pominięcie następnego gracza.', 
+        kbCards: 'Przechodzenie między kartami', kbPlay: 'Wyłóż kartę', kbDraw: 'Dobierz ze stosu', kbPass: 'Pas',
+        rules: 'Wyłóż kartę pasującą do karty na górze kolorem lub wartością. Ósemka pasuje do wszystkiego i pozwala wybrać żądany kolor. Jeśli nic nie pasuje, dobierz jedną kartę ze stosu; wyłóż ją, jeśli pasuje, w przeciwnym razie Twoja tura przechodzi na kolejnego gracza. Pierwszy gracz, który pozbędzie się kart, wygrywa rundę i otrzymuje punkty za karty pozostałe w rękach innych: ósemki 50, króle, damy i walety 10, asy 1, reszta zgodnie z numerem. Mecz wygrywa ten, kto pierwszy zdobędzie 100 punktów. Są to międzynarodowe zasady gry Crazy Eights; irańskie zasady Haft Khabis znajdziesz pod ikoną koła zębatego.',
+        tutTitle1: 'Dopasowanie', tutText1: 'Wyłóż kartę pasującą do karty na górze kolorem lub wartością.',
+        tutTitle2: 'Ósemki', tutText2: 'Ósemka pasuje do wszystkiego i pozwala wybrać żądany kolor.',
+        tutTitle3: 'Pozbądź się kart', tutText3: 'Jeśli nic nie pasuje, dobierz kartę ze stosu. Pierwszy gracz, który opróżni swoją rękę, zdobywa punkty za karty pozostałe u rywali.'
+      },
+      fr: {
+        you: 'Toi', rivalN: 'Adversaire {n}', cardsN: '{n} cartes', roundN: 'Manche {n}', toN: 'En {n} points', dailyCe: 'Huit américain du jour',
+        yourTurn: 'À toi : même couleur ou même valeur, ou joue un huit', mustDraw: 'Rien ne va ; pioche', playDrawn: 'La nouvelle carte va ; joue-la ou passe',
+        canPlayFirst: 'Tu as une carte qui va', nameSuit: 'Choisis la prochaine couleur', suitNow: 'Couleur', passTurn: 'Passer', thinking: '{n} réfléchit…',
+        drewN: '{n} a pioché', passedN: '{n} a passé', changedN: '{n} a changé la couleur en {s}', roundWon: '{n} a gagné la manche', youWonRound: 'Tu as gagné la manche !',
+        plusPts: '+{n} points', blocked: 'La pioche est vide et personne ne peut jouer ; la main la plus faible gagne', nextRound: 'Manche suivante', matchWon: 'Tu as gagné le match !', matchLost: '{n} a gagné le match',
+        newMatch: 'Nouveau match', rivals: 'Adversaires', level: 'Niveau', optNote: 'S’applique dès le prochain match.', points: 'Points', rounds: 'Manches',
+        rulesSet: 'Règles', rulesIran: 'Iraniennes', rulesIntl: 'Internationales', takeN: '{k} cartes de pénalité : joue un sept ou prends-les', tookN: '{n} a pris {k} cartes', youTook: 'Tu as pris {k} cartes', eightAgain: 'Huit : joue encore une carte', skippedN: 'Passé : {n}', reversed: 'Le sens est inversé', pendingN: '+{k}', rulesIranText: 'Les règles iraniennes du Haft Khabis jouées ici (elles changent d’une ville à l’autre) : sept cartes chacun. Joue une carte de même couleur ou de même valeur que celle du dessus. Un valet va sur tout, et tu choisis la prochaine couleur. Sept : le joueur suivant pioche deux cartes, sauf s’il joue aussi un sept ; la pénalité s’additionne alors et passe au suivant. Huit : joue encore une carte. Dix : le sens s’inverse. As : le joueur suivant passe son tour. Si rien ne va, pioche une carte. Le premier à vider sa main marque les cartes restées dans les mains des autres : valets 50, sept, huit, dix et as 20, rois et dames 10, les autres leur valeur. Le premier à 100 gagne le match. Les règles internationales sont derrière la roue dentée.', tutTitle2i: 'Cartes spéciales', tutText2i: 'Un valet change la couleur. Sept : le suivant pioche deux cartes. Huit : rejoue. Dix : changement de sens. As : le suivant passe son tour.', 
+        kbCards: 'Passer d’une carte à l’autre', kbPlay: 'Jouer la carte', kbDraw: 'Piocher', kbPass: 'Passer',
+        rules: 'Joue une carte de même couleur ou de même valeur que celle du dessus. Un huit va sur tout, et tu choisis la prochaine couleur. Si rien ne va, pioche une carte ; joue-la si elle va, sinon ton tour passe. Le premier à vider sa main gagne la manche et marque les cartes restées dans les mains des autres : huit 50, rois, dames et valets 10, as 1, les autres leur valeur. Le premier à 100 gagne le match. Ce sont les règles internationales du Huit américain ; les règles iraniennes du Haft Khabis sont derrière la roue dentée.',
+        tutTitle1: 'Même carte', tutText1: 'Joue une carte de même couleur ou de même valeur que celle du dessus.',
+        tutTitle2: 'Les huit', tutText2: 'Un huit va sur tout, et tu choisis la prochaine couleur.',
+        tutTitle3: 'Vide ta main', tutText3: 'Si rien ne va, pioche. Le premier à vider sa main marque les cartes que les autres ont encore.'
+      },
+      ar: {
+        you: 'أنت', rivalN: 'الخصم {n}', cardsN: '{n} ورقة', roundN: 'الجولة {n}', toN: 'حتى {n} نقطة', dailyCe: 'السبعة الماكرة اليومية',
+        yourTurn: 'دورك: طابق الشكل أو الرقم، أو العب ثمانية', mustDraw: 'لا ورقة تناسب؛ اسحب من الكومة', playDrawn: 'الورقة الجديدة تناسب؛ العبها أو مرّر',
+        canPlayFirst: 'لديك ورقة تناسب', nameSuit: 'اختر الشكل التالي', suitNow: 'الشكل', passTurn: 'مرّر', thinking: '{n} يفكر…',
+        drewN: '{n} سحب ورقة', passedN: '{n} مرّر', changedN: '{n} غيّر الشكل إلى {s}', roundWon: '{n} فاز بالجولة', youWonRound: 'فزت بالجولة!',
+        plusPts: '+{n} نقطة', blocked: 'نفدت الكومة ولم يستطع أحد اللعب؛ فازت اليد الأقل', nextRound: 'الجولة التالية', matchWon: 'فزت بالمباراة!', matchLost: '{n} فاز بالمباراة',
+        newMatch: 'مباراة جديدة', rivals: 'الخصوم', level: 'المستوى', optNote: 'يُطبَّق من المباراة التالية.', points: 'النقاط', rounds: 'الجولات',
+        rulesSet: 'القواعد', rulesIran: 'إيرانية', rulesIntl: 'دولية', takeN: '{k} أوراق عقوبة: العب سبعة أو اسحبها', tookN: '{n} سحب {k} أوراق', youTook: 'سحبت {k} أوراق', eightAgain: 'ثمانية: العب ورقة أخرى', skippedN: 'تخطّي: {n}', reversed: 'انعكس اتجاه اللعب', pendingN: '+{k}', rulesIranText: 'قواعد «السبعة الماكرة» الإيرانية التي يلعبها هذا التطبيق (تختلف من مدينة إلى أخرى): سبع أوراق لكل لاعب. العب ورقة تطابق الورقة العليا في الشكل أو الرقم. الولد يوضع على أي ورقة، وتختار أنت الشكل التالي. السبعة: يسحب اللاعب التالي ورقتين، إلا إذا لعب سبعة أيضًا؛ عندها تتراكم العقوبة وتنتقل إلى من بعده. الثمانية: العب ورقة أخرى. العشرة: ينعكس اتجاه اللعب. الآس: يُتخطّى اللاعب التالي. إن لم تناسبك أي ورقة فاسحب ورقة من الكومة. أول من يفرغ يده يكسب نقاط الأوراق الباقية في أيدي الآخرين: الولد 50، والسبعة والثمانية والعشرة والآس 20، والملك والملكة 10، والباقي بقيمة رقمه. أول من يصل إلى 100 يفوز بالمباراة. القواعد الدولية خلف الترس.', tutTitle2i: 'أوراق خاصة', tutText2i: 'الولد يغيّر الشكل. السبعة: يسحب التالي ورقتين. الثمانية: العب مجددًا. العشرة: عكس الاتجاه. الآس: تخطّي اللاعب التالي.',
+        kbCards: 'التنقل بين الأوراق', kbPlay: 'لعب الورقة', kbDraw: 'السحب من الكومة', kbPass: 'تمرير',
+        rules: 'العب ورقة تطابق الورقة العليا في الشكل أو الرقم. الثمانية توضع على أي ورقة، وتختار أنت الشكل التالي. إن لم تناسبك أي ورقة فاسحب ورقة من الكومة؛ العبها إن ناسبت، وإلا ينتقل الدور. أول من يفرغ يده يفوز بالجولة ويكسب نقاط الأوراق الباقية في أيدي الآخرين: الثمانية 50، والملك والملكة والولد 10، والآس 1، والباقي بقيمة رقمه. أول من يصل إلى 100 يفوز بالمباراة. هذه هي القواعد الدولية للعبة «الثمانية المجنونة»؛ وقواعد «السبعة الماكرة» الإيرانية خلف الترس.',
+        tutTitle1: 'طابق', tutText1: 'العب ورقة تطابق الورقة العليا في الشكل أو الرقم.',
+        tutTitle2: 'الثمانية', tutText2: 'الثمانية توضع على أي ورقة، وتختار أنت الشكل التالي.',
+        tutTitle3: 'أفرغ يدك', tutText3: 'إن لم تناسبك أي ورقة فاسحب من الكومة. أول من يفرغ يده يكسب نقاط الأوراق التي ما زالت مع الآخرين.'
+      },
+      hi: {
+        you: 'आप', rivalN: 'विरोधी {n}', cardsN: '{n} पत्ते', roundN: 'दौर {n}', toN: '{n} अंक तक', dailyCe: 'रोज़ का क्रेज़ी एट्स',
+        yourTurn: 'आपकी बारी: रंग या नंबर मिलाएँ, या आठ चलें', mustDraw: 'कुछ नहीं मिलता; गड्डी से उठाएँ', playDrawn: 'नया पत्ता मिलता है; चलें या छोड़ें',
+        canPlayFirst: 'आपके पास मिलता पत्ता है', nameSuit: 'अगला रंग चुनें', suitNow: 'रंग', passTurn: 'छोड़ें', thinking: '{n} सोच रहे हैं…',
+        drewN: '{n} ने पत्ता उठाया', passedN: '{n} ने बारी छोड़ी', changedN: '{n} ने रंग बदलकर {s} किया', roundWon: '{n} ने दौर जीता', youWonRound: 'आपने दौर जीता!',
+        plusPts: '+{n} अंक', blocked: 'गड्डी ख़त्म हो गई और कोई चल नहीं सका; सबसे कम पत्तों वाला हाथ जीता', nextRound: 'अगला दौर', matchWon: 'आपने मुक़ाबला जीता!', matchLost: '{n} ने मुक़ाबला जीता',
+        newMatch: 'नया मुक़ाबला', rivals: 'विरोधी', level: 'स्तर', optNote: 'अगले मुक़ाबले से लागू होगा।', points: 'अंक', rounds: 'दौर',
+        rulesSet: 'नियम', rulesIran: 'ईरानी', rulesIntl: 'अंतरराष्ट्रीय', takeN: '{k} जुर्माने के पत्ते: सत्ता चलें या उन्हें उठाएँ', tookN: '{n} ने {k} पत्ते उठाए', youTook: 'आपने {k} पत्ते उठाए', eightAgain: 'आठ: एक पत्ता और चलें', skippedN: 'बारी गई: {n}', reversed: 'दिशा उलट गई', pendingN: '+{k}', rulesIranText: 'इस ऐप में खेले जाने वाले ईरानी हफ़्त ख़बीस नियम (ये शहर-शहर में बदलते हैं): हर किसी को सात पत्ते। ऊपर वाले पत्ते से रंग या नंबर में मिलता पत्ता चलें। ग़ुलाम किसी भी पत्ते पर चलता है, और आप अगला रंग चुनते हैं। सत्ता: अगला खिलाड़ी दो पत्ते उठाता है, जब तक वह भी सत्ता न चले; तब जुर्माना जुड़कर आगे बढ़ता है। आठ: एक पत्ता और चलें। दहला: दिशा उलट जाती है। इक्का: अगले खिलाड़ी की बारी छूट जाती है। कुछ न मिले तो गड्डी से एक पत्ता उठाएँ। जो पहले हाथ ख़ाली करे, उसे दूसरों के हाथ में बचे पत्तों के अंक मिलते हैं: ग़ुलाम 50, सत्ता, आठ, दहला और इक्का 20, बादशाह और बेगम 10, बाक़ी अपने नंबर जितने। 100 तक पहले पहुँचने वाला मुक़ाबला जीतता है। अंतरराष्ट्रीय नियम गियर के पीछे हैं।', tutTitle2i: 'ख़ास पत्ते', tutText2i: 'ग़ुलाम रंग बदलता है। सत्ता: अगला खिलाड़ी दो उठाता है। आठ: फिर चलें। दहला: दिशा उलटें। इक्का: अगले की बारी छूटती है।',
+        kbCards: 'पत्तों के बीच जाएँ', kbPlay: 'पत्ता चलें', kbDraw: 'गड्डी से उठाएँ', kbPass: 'छोड़ें',
+        rules: 'ऊपर वाले पत्ते से रंग या नंबर में मिलता पत्ता चलें। आठ किसी भी पत्ते पर चलता है, और आप अगला रंग चुनते हैं। कुछ न मिले तो गड्डी से एक पत्ता उठाएँ; मिले तो चलें, वरना आपकी बारी चली जाती है। जो पहले हाथ ख़ाली करे, वह दौर जीतता है और दूसरों के हाथ में बचे पत्तों के अंक पाता है: आठ 50, बादशाह, बेगम और ग़ुलाम 10, इक्का 1, बाक़ी अपने नंबर जितने। 100 तक पहले पहुँचने वाला मुक़ाबला जीतता है। ये क्रेज़ी एट्स के अंतरराष्ट्रीय नियम हैं; ईरानी हफ़्त ख़बीस नियम गियर के पीछे हैं।',
+        tutTitle1: 'मिलाएँ', tutText1: 'ऊपर वाले पत्ते से रंग या नंबर में मिलता पत्ता चलें।',
+        tutTitle2: 'आठ', tutText2: 'आठ किसी भी पत्ते पर चलता है, और आप अगला रंग चुनते हैं।',
+        tutTitle3: 'हाथ ख़ाली करें', tutText3: 'कुछ न मिले तो गड्डी से उठाएँ। जो पहले हाथ ख़ाली करे, उसे दूसरों के बचे पत्तों के अंक मिलते हैं।'
       },
       zh: {
         you: '你', rivalN: '对手 {n}', cardsN: '{n} 张', roundN: '第 {n} 局', toN: '先到 {n} 分', dailyCe: '每日疯狂八',

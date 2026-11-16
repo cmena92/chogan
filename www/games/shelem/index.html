@@ -7,6 +7,7 @@
 <title>شلم — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   :root { --sh-gold: #D4A72C; --ch-pface: var(--c-surface); }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ch-pface: var(--c-surface-3); } }
@@ -46,7 +47,7 @@
   .sh-seat--left .sh-fan, .sh-seat--right .sh-fan { flex-direction: column; }
   .sh-seat--left .sh-fan .ch-pback + .sh-fan .ch-pback, .sh-seat--left .sh-fan .ch-pback + .ch-pback, .sh-seat--right .sh-fan .ch-pback + .ch-pback { margin-left: 0; margin-top: -18px; }
   .sh-trick { grid-area: trick; position: relative; height: calc(var(--cw) * 1.4 * 2.3); min-width: calc(var(--cw) * 2.6); }
-  .sh-widow { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .sh-widow { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: center; }
   .sh-widow .ch-pback { width: calc(var(--cw) * .8); margin-inline: calc(var(--cw) * -.22); }
   .sh-tcard { --pw: var(--cw); position: absolute; }
   .sh-tcard--b { left: 50%; bottom: 0; transform: translateX(-50%); }
@@ -397,7 +398,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ShelemEngi
   C.boot({});
   var ctx = C.game({
     id: 'shelem',
-    name: { fa: 'شلم', en: 'Shelem', zh: '谢勒姆', de: 'Shelem', es: 'Shelem' },
+    name: { fa: 'شلم', en: 'Shelem', zh: '谢勒姆', de: 'Shelem', es: 'Shelem', pl: 'Shelem', fr: 'Shelem', ar: 'شِلِم', hi: 'शेलेम' },
     accent: '#2D8627',
     mood: 'menu',
     cardSpeed: true,
@@ -438,6 +439,78 @@ if (typeof module !== 'undefined' && module.exports) module.exports = ShelemEngi
         tutTitle1: 'Bidding', tutText1: 'Each player says how many of the 165 points their team will take, from 100 up. The highest bid wins; a pass means you bid no more.',
         tutTitle2: 'Point cards', tutText2: 'Aces and tens are worth 10, fives 5, and every trick you take 5. The winner of the bidding takes the four middle cards and names trump.',
         tutTitle3: 'The contract', tutText3: 'Reach your bid and you score everything you took; fall short and you lose your bid. Every trick is a shelem: 330 points.'
+      },
+      pl: {
+        you: 'Ty', partner: 'Partner', right: 'Po prawej', left: 'Po lewej', us: 'My', them: 'Oni',
+        trump: 'Kozzer', bidWord: 'Licytacja', passed: 'Pas', passBtn: 'Pas', bidBtn: 'Licytuj {v}', noBid: 'Brak licytacji',
+        highBid: 'Najwyższa: {v} ({n})', yourBid: 'Twoja kolej na licytację lub pas.',
+        chooseTrump: 'Wybierz kolor atutowy', chooseSub: 'Wygrałeś licytację. Wybierz kolor atutowy (kozerę).',
+        buryTitle: 'Odłóż cztery karty', burySub: 'Wybierz cztery karty do odłożenia; ich punkty liczą się dla Twojej drużyny.', buryBtn: 'Odłóż karty',
+        yourTurn: 'Twoja kolej', thinking: 'Gracz {n} gra…', mustFollow: 'Musisz dołożyć do koloru',
+        contract: 'Kontrakt: {v} gra {n}', allPassed: 'Wszyscy spasowali; nowe rozdanie',
+        made: 'Kontrakt ugrany', down: 'Kontrakt przegrany', shelemWin: 'Shelem!',
+        resLine: 'Deklaracja: {v} · zdobyto: {m}', nextHand: 'Następne rozdanie', matchTo: 'Do {n} punktów', matchLen: 'Długość meczu', newMatch: 'Nowy mecz',
+        dailySh: 'Codzienny Shelem', vsHard: 'Przeciwko trudnej SI', points: 'Punkty', taken: 'Wzięte', handN: 'Rozdanie {n}', hand: 'Twoja ręka', table: 'Stół',
+        level: 'Poziom', optNote: 'Obowiązuje od następnego meczu.',
+        playKey: 'Zagraj wybraną kartę', moveKey: 'Przemieść między kartami', suitKey: 'Wybierz kolor atutowy', bidKeys: 'Zwiększ lub zmniejsz deklarację',
+        rules: 'Czterech graczy w dwóch drużynach; Twój partner siedzi naprzeciwko. Każdy otrzymuje dwanaście kart, a cztery zostają na środku. Po kolei każdy gracz deklaruje od 100 do 165 punktów (skok co pięć) lub pasuje i nie licytuje dalej. Jeśli wszyscy czterej spasują, karty są rozdawane ponownie. Zwycięzca licytacji bierze cztery karty ze środka, odrzuca cztery (ich punkty liczą się dla tej drużyny), wybiera kolor atutowy i wychodzi jako pierwszy. Musisz dołożyć do koloru, jeśli możesz, w przeciwnym razie zagraj dowolną kartę. Najwyższy atut, a w jego braku najwyższa karta w kolorze wyjścia, bierze lewę; asy są najstarsze. Asy i dziesiątki są warte 10 punktów, piątki 5 punktów, a każda lewa 5 punktów: łącznie 165 w rozdaniu. Jeśli drużyna licytująca zdobędzie co najmniej tyle, ile zadeklarowała, zapisuje na swoje konto wszystkie zdobyte punkty (330 za shelem, czyli wzięcie wszystkich lew); jeśli nie, traci wartość swojej deklaracji, a nawet podwójnie, jeśli druga drużyna zdobyła więcej. Druga drużyna zawsze zapisuje to, co zdobyła. Wygrywa drużyna, która jako pierwsza zdobędzie 505 (lub 1165) punktów.',
+        tutTitle1: 'Licytacja', tutText1: 'Każdy gracz określa, ile ze 165 punktów zdobędzie jego drużyna, zaczynając od 100. Najwyższa deklaracja wygrywa; pas oznacza wycofanie się z dalszej licytacji.',
+        tutTitle2: 'Punktacja kart', tutText2: 'Asy i dziesiątki są warte 10 punktów, piątki 5 punktów, a każda wzięta lewa 5 punktów. Zwycięzca licytacji zabiera cztery karty ze środka i wybiera kolor atutowy.',
+        tutTitle3: 'Kontrakt', tutText3: 'Osiągnij swoją deklarację, a zapiszesz wszystkie zdobyte punkty; jeśli Ci się nie uda, tracisz wartość licytacji. Wzięcie wszystkich lew to shelem: 330 punktów.'
+      },
+      fr: {
+        you: 'Toi', partner: 'Partenaire', right: 'Droite', left: 'Gauche', us: 'Nous', them: 'Eux',
+        trump: 'Atout', bidWord: 'Enchère', passed: 'Passe', passBtn: 'Passer', bidBtn: 'Annoncer {v}', noBid: 'Pas encore d’enchère',
+        highBid: 'La plus haute : {v} ({n})', yourBid: 'À toi d’annoncer, ou passe.',
+        chooseTrump: 'Choisis l’atout', chooseSub: 'Tu as remporté les enchères. Choisis la couleur d’atout.',
+        buryTitle: 'Écarte quatre cartes', burySub: 'Choisis quatre cartes à mettre de côté ; leurs points comptent pour ton équipe.', buryBtn: 'Écarter',
+        yourTurn: 'À toi', thinking: 'À {n} de jouer…', mustFollow: 'Tu dois fournir la couleur',
+        contract: 'Contrat : {v} par {n}', allPassed: 'Tout le monde a passé ; nouvelle donne',
+        made: 'Contrat réussi', down: 'Contrat chuté', shelemWin: 'Shelem !',
+        resLine: 'Enchère {v} · pris {m}', nextHand: 'Donne suivante', matchTo: 'En {n}', matchLen: 'Durée du match', newMatch: 'Nouveau match',
+        dailySh: 'Shelem du jour', vsHard: 'Contre l’IA difficile', points: 'Points', taken: 'Pris', handN: 'Donne {n}', hand: 'Ta main', table: 'Table',
+        level: 'Niveau', optNote: 'S’applique dès le prochain match.',
+        playKey: 'Jouer la carte choisie', moveKey: 'Aller d’une carte à l’autre', suitKey: 'Choisir l’atout', bidKeys: 'Monter ou baisser l’enchère',
+        rules: 'Quatre joueurs en deux équipes ; ton partenaire est en face. Chacun reçoit douze cartes et quatre restent au milieu. À tour de rôle, chacun annonce de 100 à 165 par pas de cinq, ou passe et n’annonce plus. Si les quatre passent, on redistribue. Le gagnant des enchères prend les quatre cartes du milieu, en écarte quatre (leurs points comptent pour son équipe), choisit l’atout et entame. Fournis la couleur si tu peux, sinon joue n’importe quelle carte. Le plus haut atout, sinon la plus haute carte de la couleur demandée, remporte le pli ; l’as est la plus forte. Les as et les dix valent 10, les cinq 5, et chaque pli 5 : 165 par donne. Si l’équipe preneuse fait au moins son enchère, elle marque tout ce qu’elle a pris, 330 pour un shelem (tous les plis) ; sinon elle perd son enchère, le double si l’autre équipe a pris plus. L’autre équipe marque toujours ce qu’elle a pris. La première équipe à 505 (ou 1165) gagne.',
+        tutTitle1: 'Les enchères', tutText1: 'Chacun dit combien des 165 points son équipe va prendre, à partir de 100. La plus haute enchère gagne ; passer veut dire ne plus annoncer.',
+        tutTitle2: 'Cartes à points', tutText2: 'Les as et les dix valent 10, les cinq 5, et chaque pli pris 5. Le gagnant des enchères prend les quatre cartes du milieu et choisit l’atout.',
+        tutTitle3: 'Le contrat', tutText3: 'Atteins ton enchère et tu marques tout ce que tu as pris ; sinon tu perds ton enchère. Tous les plis, c’est un shelem : 330 points.'
+      },
+      ar: {
+        you: 'أنت', partner: 'الشريك', right: 'اليمين', left: 'اليسار', us: 'نحن', them: 'هم',
+        trump: 'الحكم', bidWord: 'المزايدة', passed: 'باس', passBtn: 'باس', bidBtn: 'زايد {v}', noBid: 'لا مزايدة بعد',
+        highBid: 'الأعلى: {v} ({n})', yourBid: 'دورك لتزايد، أو قل باس.',
+        chooseTrump: 'اختر الحكم', chooseSub: 'ربحت المزايدة. اختر نوع الحكم.',
+        buryTitle: 'أعد أربع أوراق', burySub: 'اختر أربع أوراق لتضعها جانبًا؛ نقاطها تُحسب لفريقك.', buryBtn: 'أعد',
+        yourTurn: 'دورك', thinking: 'دور {n}…', mustFollow: 'عليك أن تلعب من النوع نفسه',
+        contract: 'العقد: {v} لـ {n}', allPassed: 'قال الجميع باس؛ توزيع جديد',
+        made: 'تحقق العقد', down: 'سقط العقد', shelemWin: 'شِلِم!',
+        resLine: 'المزايدة {v} · أخذ {m}', nextHand: 'الجولة التالية', matchTo: 'حتى {n}', matchLen: 'طول المباراة', newMatch: 'مباراة جديدة',
+        dailySh: 'شِلِم اليوم', vsHard: 'ضد الروبوت الصعب', points: 'النقاط', taken: 'المأخوذ', handN: 'الجولة {n}', hand: 'أوراقك', table: 'الطاولة',
+        level: 'المستوى', optNote: 'يُطبَّق من المباراة التالية.',
+        playKey: 'العب الورقة المختارة', moveKey: 'التنقل بين الأوراق', suitKey: 'اختر الحكم', bidKeys: 'ارفع المزايدة أو اخفضها',
+        rules: 'أربعة لاعبين في فريقين؛ شريكك يجلس مقابلك. يأخذ كل لاعب اثنتي عشرة ورقة وتبقى أربع في الوسط. بالدور، يزايد كل لاعب من 100 إلى 165 بخطوات من خمسة، أو يقول باس ولا يزايد بعدها. إذا قال الأربعة باس، تُوزَّع الأوراق من جديد. الفائز بالمزايدة يأخذ الأوراق الأربع من الوسط، ويعيد أربعًا (نقاطها تُحسب لفريقه)، ويسمّي الحكم ويبدأ اللعب. العب من النوع المطلوب إن استطعت، وإلا فالعب أي ورقة. أعلى ورقة حكم، وإلا فأعلى ورقة من النوع المطلوب، تأخذ اللمّة؛ والآس هو الأعلى. الآسات والعشرات بـ 10، والخمسات بـ 5، وكل لمّة بـ 5: المجموع 165 في الجولة. إذا أخذ الفريق المزايد مزايدته على الأقل، يسجّل كل ما أخذه، و330 للشِلِم (كل اللمّات)؛ وإلا يخسر مزايدته، ومضاعفة إذا أخذ الفريق الآخر أكثر. الفريق الآخر يسجّل دائمًا ما أخذه. أول فريق يصل إلى 505 (أو 1165) يفوز.',
+        tutTitle1: 'المزايدة', tutText1: 'يقول كل لاعب كم سيأخذ فريقه من النقاط الـ 165، من 100 فما فوق. أعلى مزايدة تفوز؛ وقول باس يعني أنك لن تزايد بعدها.',
+        tutTitle2: 'أوراق النقاط', tutText2: 'الآسات والعشرات بـ 10، والخمسات بـ 5، وكل لمّة تأخذها بـ 5. الفائز بالمزايدة يأخذ أوراق الوسط الأربع ويسمّي الحكم.',
+        tutTitle3: 'العقد', tutText3: 'حقق مزايدتك فتسجّل كل ما أخذته؛ وإن قصّرت تخسر مزايدتك. أخذ كل اللمّات هو الشِلِم: 330 نقطة.'
+      },
+      hi: {
+        you: 'आप', partner: 'साथी', right: 'दाएँ', left: 'बाएँ', us: 'हम', them: 'वे',
+        trump: 'तुरुप', bidWord: 'बोली', passed: 'पास', passBtn: 'पास', bidBtn: 'बोली {v}', noBid: 'अभी कोई बोली नहीं',
+        highBid: 'सबसे ऊँची: {v} ({n})', yourBid: 'आपकी बोली की बारी है, या पास करें।',
+        chooseTrump: 'तुरुप चुनें', chooseSub: 'आपने बोली जीत ली। तुरुप का रंग चुनें।',
+        buryTitle: 'चार पत्ते वापस रखें', burySub: 'अलग रखने के लिए चार पत्ते चुनें; उनके अंक आपकी टीम को मिलते हैं।', buryBtn: 'वापस रखें',
+        yourTurn: 'आपकी बारी', thinking: '{n} की बारी…', mustFollow: 'आपको वही रंग चलना होगा',
+        contract: 'बोली: {v} ({n})', allPassed: 'सबने पास किया; पत्ते फिर से बँटेंगे',
+        made: 'बोली पूरी हुई', down: 'बोली टूट गई', shelemWin: 'शेलेम!',
+        resLine: 'बोली {v} · लिए {m}', nextHand: 'अगली बाज़ी', matchTo: '{n} तक', matchLen: 'मुक़ाबले की लंबाई', newMatch: 'नया मुक़ाबला',
+        dailySh: 'रोज़ का शेलेम', vsHard: 'कठिन कंप्यूटर के ख़िलाफ़', points: 'अंक', taken: 'लिए', handN: 'बाज़ी {n}', hand: 'आपके पत्ते', table: 'मेज़',
+        level: 'स्तर', optNote: 'अगले मुक़ाबले से लागू होगा।',
+        playKey: 'चुना हुआ पत्ता चलें', moveKey: 'पत्तों के बीच जाएँ', suitKey: 'तुरुप चुनें', bidKeys: 'बोली बढ़ाएँ या घटाएँ',
+        rules: 'चार खिलाड़ी, दो टीमों में; आपका साथी सामने बैठता है। हर किसी को बारह पत्ते मिलते हैं और चार बीच में रहते हैं। बारी-बारी से हर खिलाड़ी 100 से 165 तक पाँच-पाँच बढ़ाकर बोली लगाता है, या पास करता है और फिर बोली नहीं लगाता। अगर चारों पास करें, तो पत्ते फिर से बाँटे जाते हैं। बोली जीतने वाला बीच के चार पत्ते लेता है, चार वापस रखता है (उनके अंक उसकी टीम को मिलते हैं), तुरुप चुनता है और पहली चाल चलता है। हो सके तो वही रंग चलें, वरना कोई भी पत्ता चलें। सबसे ऊँचा तुरुप, नहीं तो चले गए रंग का सबसे ऊँचा पत्ता हाथ जीतता है; इक्का सबसे बड़ा है। इक्के और दहले 10 के, पंजे 5 के, और हर हाथ 5 का: एक बाज़ी में 165। अगर बोली वाली टीम कम से कम अपनी बोली जितना ले, तो उसे जो लिया सब मिलता है, शेलेम (सारे हाथ) पर 330; नहीं तो उसकी बोली कटती है, और अगर दूसरी टीम ने ज़्यादा लिया तो दुगुनी। दूसरी टीम को हमेशा उतना मिलता है जितना उसने लिया। जो टीम पहले 505 (या 1165) तक पहुँचे, वह जीतती है।',
+        tutTitle1: 'बोली', tutText1: 'हर खिलाड़ी बताता है कि 165 में से कितने अंक उसकी टीम लेगी, 100 से ऊपर। सबसे ऊँची बोली जीतती है; पास का मतलब है अब और बोली नहीं।',
+        tutTitle2: 'अंक वाले पत्ते', tutText2: 'इक्के और दहले 10 के, पंजे 5 के, और हर जीता हुआ हाथ 5 का। बोली जीतने वाला बीच के चार पत्ते लेता है और तुरुप चुनता है।',
+        tutTitle3: 'बोली पूरी करें', tutText3: 'बोली पूरी करें तो जो लिया सब आपका; कम रहे तो बोली कटती है। सारे हाथ जीतना शेलेम है: 330 अंक।'
       },
       zh: {
         you: '你', partner: '搭档', right: '右家', left: '左家', us: '我方', them: '对方',

@@ -7,6 +7,7 @@
 <title>جین رامی — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   :root { --ch-pface: var(--c-surface); }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ch-pface: var(--c-surface-3); } }
@@ -27,7 +28,7 @@
   .gr-stock:disabled, .gr-pile:disabled { cursor: default; }
   .gr-left { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: var(--fs-xs, 12px); font-weight: 700; color: var(--c-text-dim); }
   .gr-pile { position: relative; width: var(--cw); aspect-ratio: 5 / 7; padding: 0; border: 2px dashed var(--c-line); border-radius: 8px; background: none; cursor: pointer; }
-  .gr-pile .ch-pcard { --pw: var(--cw); position: absolute; inset: -2px; }
+  .gr-pile .ch-pcard { --pw: var(--cw); position: absolute; top: -2px; right: -2px; bottom: -2px; left: -2px; }
   .gr-hint .ch-pback, .gr-hint.gr-pile { outline: 3px solid var(--game); outline-offset: 3px; }
   .gr-status { min-height: 1.5em; font-weight: 700; font-size: var(--fs-sm); color: var(--c-text-dim); text-align: center; }
   .gr-dw { font-variant-numeric: tabular-nums; }
@@ -306,7 +307,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = GinRummyEn
   C.boot({});
   var ctx = C.game({
     id: 'ginrummy',
-    name: { fa: 'جین رامی', en: 'Gin Rummy', zh: '金拉米', de: 'Gin Rommé', es: 'Gin Rummy' },
+    name: { fa: 'جین رامی', en: 'Gin Rummy', zh: '金拉米', de: 'Gin Rommé', es: 'Gin Rummy', pl: 'Gin Rummy', fr: 'Gin rami', ar: 'جين رامي', hi: 'जिन रमी' },
     accent: '#A45C54',
     mood: 'menu',
     cardSpeed: true,
@@ -339,6 +340,62 @@ if (typeof module !== 'undefined' && module.exports) module.exports = GinRummyEn
         tutTitle1: 'Make melds', tutText1: 'Three or four of a rank, or three in a row of one suit, make a meld.',
         tutTitle2: 'Draw, discard', tutText2: 'Each turn, draw one and discard one. Bring your deadwood down.',
         tutTitle3: 'Knock or gin', tutText3: 'Knock with 10 or less deadwood. With none at all it is gin, and a bonus.'
+      },
+      pl: {
+        you: 'Ty', bot: 'Rywal', handN: 'Rozdanie {n}', toN: 'Do {n} punktów', dailyGr: 'Codzienny Gin Rummy', deadwood: 'Deadwood: {n}',
+        drawHint: 'Dobierz ze stosu lub weź odkrytą kartę', discardHint: 'Wybierz kartę i odrzuć ją', arrange: 'Uporządkuj', discardBtn: 'Odrzuć', knock: 'Pukaj ({n})', gin: 'Gin!',
+        notTook: 'Karta, którą właśnie wziąłeś ze stosu, nie może od razu tam wrócić', pickFirst: 'Najpierw wybierz kartę ze swojej ręki', thinking: 'Rywal myśli…',
+        botTookUp: 'Rywal wziął odkrytą kartę', botTookStock: 'Rywal dobrał ze stosu', youKnock: 'Zapukałeś', botKnock: 'Rywal zapukał', youGin: 'Gin!', botGin: 'Rywal zdobył gina',
+        undercut: 'Undercut! Wygrywa ręka z niższą liczbą punktów', handDraw: 'Karty na stosie skończyły się; to rozdanie to remis', wonHand: 'Twoja ręka: +{n}', lostHand: 'Ręka rywala: +{n}',
+        melds: 'Układy', layoff: 'Karty dołożone do układów pukającego', nextHand: 'Następne rozdanie', matchWon: 'Wygrałeś mecz!', matchLost: 'Rywal wygrał mecz', level: 'Poziom', optNote: 'Obowiązuje od następnego meczu.',
+        newMatch: 'Nowy mecz', hands: 'Rozdania', points: 'Punkty',
+        kbCards: 'Ruch między kartami', kbPick: 'Wybierz kartę', kbStock: 'Dobierz ze stosu', kbPile: 'Weź odkrytą kartę', kbDiscard: 'Odrzuć', kbKnock: 'Pukanie lub gin', kbArrange: 'Uporządkuj',
+        rules: 'Każdy gracz ma dziesięć kart. W swojej turze dobierz ze stosu lub weź odkrytą kartę, a następnie odrzuć jedną. Trzy lub cztery karty tej samej wartości, albo trzy lub więcej w sekwencji jednego koloru tworzą układ (meld); reszta to karty niesparowane (deadwood). Asy liczą się jako 1, figury jako 10, a pozostałe według ich wartości. Mając 10 lub mniej punktów w deadwood, możesz zapukać (knock) podczas odrzucania karty; drugi gracz dokłada wtedy swoje niesparowane karty do Twoich układów, jeśli to możliwe, a gracz z niższą wartością deadwood zdobywa różnicę punktów. Jeśli broniący się ma tyle samo lub mniej punktów, jest to undercut i daje dodatkowe 25 punktów. Brak jakichkolwiek niesparowanych kart to gin: daje 25 punktów plus wartość deadwood przeciwnika, bez możliwości dokładania kart. Kto pierwszy zdobędzie 100 punktów, wygrywa mecz. Przeciągaj karty, aby zmienić ich kolejność, lub stuknij Uporządkuj.',
+        tutTitle1: 'Twórz układy', tutText1: 'Trzy lub cztery karty tej samej wartości, albo trzy w sekwencji jednego koloru tworzą układ.',
+        tutTitle2: 'Dobieraj i odrzucaj', tutText2: 'W każdej turze dobierz jedną kartę i jedną odrzuć. Zmniejszaj liczbę punktów w deadwood.',
+        tutTitle3: 'Pukanie lub gin', tutText3: 'Zapukaj, mając 10 lub mniej punktów w deadwood. Brak niesparowanych kart to gin i dodatkowa premia.'
+      },
+      fr: {
+        you: 'Toi', bot: 'Rival', handN: 'Manche {n}', toN: 'En {n} points', dailyGr: 'Gin Rummy du jour', deadwood: 'Points morts : {n}',
+        drawHint: 'Pioche dans le talon ou prends la carte visible', discardHint: 'Choisis une carte et défausse-la', arrange: 'Ranger', discardBtn: 'Défausser', knock: 'Frapper ({n})', gin: 'Gin !',
+        notTook: 'La carte que tu viens de prendre à la défausse ne peut pas y retourner tout de suite', pickFirst: 'Choisis d’abord une carte de ta main', thinking: 'Le rival réfléchit…',
+        botTookUp: 'Le rival a pris la carte visible', botTookStock: 'Le rival a pioché dans le talon', youKnock: 'Tu as frappé', botKnock: 'Le rival a frappé', youGin: 'Gin !', botGin: 'Le rival a fait gin',
+        undercut: 'Contre ! La main la plus basse gagne', handDraw: 'Le talon est vide ; manche nulle', wonHand: 'Ta main : +{n}', lostHand: 'Main du rival : +{n}',
+        melds: 'Combinaisons', layoff: 'Posées sur les combinaisons de celui qui frappe', nextHand: 'Manche suivante', matchWon: 'Tu gagnes la partie !', matchLost: 'Le rival gagne la partie', level: 'Niveau', optNote: 'S’applique dès la prochaine partie.',
+        newMatch: 'Nouvelle partie', hands: 'Manches', points: 'Points',
+        kbCards: 'Passer d’une carte à l’autre', kbPick: 'Choisir une carte', kbStock: 'Piocher dans le talon', kbPile: 'Prendre la carte visible', kbDiscard: 'Défausser', kbKnock: 'Frapper ou gin', kbArrange: 'Ranger',
+        rules: 'Chaque joueur a dix cartes. À ton tour, pioche dans le talon ou prends la carte visible, puis défausse une carte. Trois ou quatre cartes du même rang, ou trois cartes ou plus qui se suivent dans une couleur, forment une combinaison ; le reste, ce sont les points morts. L’as vaut 1, les figures 10, les autres leur valeur. Avec 10 points morts ou moins, tu peux frapper en défaussant ; l’autre joueur pose ce qu’il peut de ses points morts sur tes combinaisons, et le plus petit total marque la différence. Si le défenseur a autant ou moins, c’est un contre, qui rapporte 25 de plus. Aucun point mort, c’est gin : 25 plus les points morts de l’autre, sans pose. Le premier à 100 gagne la partie. Glisse les cartes pour les réordonner, ou touche Ranger.',
+        tutTitle1: 'Fais des combinaisons', tutText1: 'Trois ou quatre cartes du même rang, ou trois qui se suivent dans une couleur, forment une combinaison.',
+        tutTitle2: 'Pioche, défausse', tutText2: 'À chaque tour, pioche une carte et défausses-en une. Réduis tes points morts.',
+        tutTitle3: 'Frapper ou gin', tutText3: 'Frappe avec 10 points morts ou moins. Avec zéro, c’est gin, avec un bonus.'
+      },
+      ar: {
+        you: 'أنت', bot: 'الخصم', handN: 'اليد {n}', toN: 'حتى {n} نقطة', dailyGr: 'جين رامي اليومية', deadwood: 'الأوراق الميتة: {n}',
+        drawHint: 'اسحب من الكومة أو خذ الورقة المكشوفة', discardHint: 'اختر ورقة وارمها', arrange: 'رتّب', discardBtn: 'ارمِ', knock: 'اطرق ({n})', gin: 'جين!',
+        notTook: 'لا يمكن إعادة الورقة التي أخذتها للتو من الكومة المكشوفة فورًا', pickFirst: 'اختر ورقة من يدك أولًا', thinking: 'الخصم يفكر…',
+        botTookUp: 'أخذ الخصم الورقة المكشوفة', botTookStock: 'سحب الخصم من الكومة', youKnock: 'طرقت', botKnock: 'طرق الخصم', youGin: 'جين!', botGin: 'حقق الخصم جين',
+        undercut: 'قطع مضاد! تفوز اليد الأقل', handDraw: 'نفدت الكومة؛ هذه اليد تعادل', wonHand: 'يدك: +{n}', lostHand: 'يد الخصم: +{n}',
+        melds: 'المجموعات', layoff: 'أُلحقت بمجموعات من طرق', nextHand: 'اليد التالية', matchWon: 'فزت بالمباراة!', matchLost: 'فاز الخصم بالمباراة', level: 'المستوى', optNote: 'يُطبَّق من المباراة التالية.',
+        newMatch: 'مباراة جديدة', hands: 'الأيدي', points: 'النقاط',
+        kbCards: 'التنقل بين الأوراق', kbPick: 'اختيار ورقة', kbStock: 'السحب من الكومة', kbPile: 'أخذ الورقة المكشوفة', kbDiscard: 'رمي', kbKnock: 'طرق أو جين', kbArrange: 'ترتيب',
+        rules: 'لكل لاعب عشر أوراق. في دورك اسحب من الكومة أو خذ الورقة المكشوفة، ثم ارمِ ورقة. ثلاث أو أربع أوراق من الرقم نفسه، أو ثلاث أوراق متتالية أو أكثر من الشكل نفسه، تشكّل مجموعة؛ والباقي أوراق ميتة. الآس بنقطة واحدة، والصور بـ 10، والباقي بقيمة رقمه. إن كانت أوراقك الميتة 10 أو أقل يمكنك أن تطرق وأنت ترمي؛ فيُلحق اللاعب الآخر ما يستطيع من أوراقه الميتة بمجموعاتك، ويكسب صاحب الأوراق الميتة الأقل الفرق. إن كان لدى المدافع مثلها أو أقل فهذا قطع مضاد ويكسب 25 إضافية. إن لم تبقَ أي ورقة ميتة فهذا جين: 25 مع أوراق الآخر الميتة، بلا إلحاق. أول من يصل إلى 100 يفوز بالمباراة. اسحب الأوراق لإعادة ترتيبها، أو انقر «رتّب».',
+        tutTitle1: 'كوّن مجموعات', tutText1: 'ثلاث أو أربع أوراق من الرقم نفسه، أو ثلاث متتالية من الشكل نفسه، تشكّل مجموعة.',
+        tutTitle2: 'اسحب وارمِ', tutText2: 'في كل دور اسحب ورقة وارمِ ورقة. قلّل أوراقك الميتة.',
+        tutTitle3: 'اطرق أو جين', tutText3: 'اطرق إن كانت أوراقك الميتة 10 أو أقل. وإن لم يبقَ شيء فهذا جين مع مكافأة.'
+      },
+      hi: {
+        you: 'आप', bot: 'विरोधी', handN: 'बाज़ी {n}', toN: '{n} अंकों तक', dailyGr: 'रोज़ की जिन रमी', deadwood: 'बचे पत्ते: {n}',
+        drawHint: 'गड्डी से पत्ता उठाएँ या खुला पत्ता लें', discardHint: 'एक पत्ता चुनें और फेंकें', arrange: 'जमाएँ', discardBtn: 'फेंकें', knock: 'नॉक ({n})', gin: 'जिन!',
+        notTook: 'ढेर से अभी उठाया पत्ता तुरंत वापस नहीं फेंका जा सकता', pickFirst: 'पहले अपने हाथ से एक पत्ता चुनें', thinking: 'विरोधी सोच रहा है…',
+        botTookUp: 'विरोधी ने खुला पत्ता लिया', botTookStock: 'विरोधी ने गड्डी से पत्ता उठाया', youKnock: 'आपने नॉक किया', botKnock: 'विरोधी ने नॉक किया', youGin: 'जिन!', botGin: 'विरोधी ने जिन किया',
+        undercut: 'अंडरकट! कम अंक वाला हाथ जीता', handDraw: 'गड्डी ख़त्म हो गई; यह बाज़ी बराबरी पर रही', wonHand: 'आपकी बाज़ी: +{n}', lostHand: 'विरोधी की बाज़ी: +{n}',
+        melds: 'सेट', layoff: 'नॉक करने वाले के सेट में जोड़े गए', nextHand: 'अगली बाज़ी', matchWon: 'आप मुक़ाबला जीत गए!', matchLost: 'विरोधी मुक़ाबला जीत गया', level: 'स्तर', optNote: 'अगले मुक़ाबले से लागू होगा।',
+        newMatch: 'नया मुक़ाबला', hands: 'बाज़ियाँ', points: 'अंक',
+        kbCards: 'पत्तों के बीच जाएँ', kbPick: 'पत्ता चुनें', kbStock: 'गड्डी से उठाएँ', kbPile: 'खुला पत्ता लें', kbDiscard: 'फेंकें', kbKnock: 'नॉक या जिन', kbArrange: 'जमाएँ',
+        rules: 'हर खिलाड़ी के पास दस पत्ते होते हैं। अपनी बारी में गड्डी से पत्ता उठाएँ या खुला पत्ता लें, फिर एक पत्ता फेंकें। एक ही दर्जे के तीन या चार पत्ते, या एक ही रंग के लगातार तीन या ज़्यादा पत्ते, सेट बनाते हैं; बाक़ी बचे पत्ते हैं। इक्का 1 गिना जाता है, तस्वीर वाले पत्ते 10, बाक़ी अपने अंक के बराबर। बचे पत्ते 10 या कम हों तो पत्ता फेंकते समय नॉक कर सकते हैं; तब दूसरा खिलाड़ी अपने जितने बचे पत्ते हो सकें आपके सेट में जोड़ता है, और जिसके बचे पत्ते कम हों उसे अंतर के अंक मिलते हैं। अगर बचाव करने वाले के बचे पत्ते बराबर या कम हों, तो यह अंडरकट है और उसे 25 अंक और मिलते हैं। एक भी बचा पत्ता न हो तो जिन है: 25 अंक और दूसरे के बचे पत्ते, बिना जोड़ने के। जो पहले 100 तक पहुँचे वह मुक़ाबला जीतता है। पत्तों का क्रम बदलने के लिए उन्हें खींचें, या «जमाएँ» छुएँ।',
+        tutTitle1: 'सेट बनाएँ', tutText1: 'एक ही दर्जे के तीन या चार पत्ते, या एक रंग के लगातार तीन पत्ते, सेट बनाते हैं।',
+        tutTitle2: 'उठाएँ, फेंकें', tutText2: 'हर बारी में एक पत्ता उठाएँ और एक फेंकें। अपने बचे पत्ते घटाएँ।',
+        tutTitle3: 'नॉक या जिन', tutText3: 'बचे पत्ते 10 या कम हों तो नॉक करें। एक भी न बचे तो जिन है, और बोनस मिलता है।'
       },
       zh: {
         you: '你', bot: '对手', handN: '第 {n} 手', toN: '先到 {n} 分', dailyGr: '每日金拉米', deadwood: '散牌：{n}',

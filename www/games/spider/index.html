@@ -7,6 +7,7 @@
 <title>عنکبوت — چوگان</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* a card face in the dark theme is a step lighter than the surface, as in Klondike,
      so long columns don't read as one dark block */
@@ -24,8 +25,8 @@
   }
   .sp-slot--stock { border-style: solid; }
   .sp-card { position: absolute; left: 0; top: 0; width: var(--cw); aspect-ratio: 5 / 7; transition: transform var(--sp-move, 180ms) var(--ease); }
-  .sp-card > .ch-pcard { --pw: var(--cw); position: absolute; inset: 0; cursor: pointer; }
-  .sp-card > .ch-pback { position: absolute; inset: 0; width: var(--cw); }
+  .sp-card > .ch-pcard { --pw: var(--cw); position: absolute; top: 0; right: 0; bottom: 0; left: 0; cursor: pointer; }
+  .sp-card > .ch-pback { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: var(--cw); }
   .sp-card--down > .ch-pcard, .sp-card:not(.sp-card--down) > .ch-pback { display: none; }
   .sp-card--still, .sp-card--drag { transition: none; }
   .sp-card--drag > * { box-shadow: var(--sh-3, var(--sh-2)); }
@@ -46,7 +47,7 @@
   :root[data-theme="dark"] .sp-ring { border-color: var(--game-text-dark, var(--game)); }
   @keyframes sp-ring { 0% { opacity: 0; } 15% { opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; } }
   .sp-ghost { pointer-events: none; transition: none; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .35)); }
-  .sp-cascade { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5000; }
+  .sp-cascade { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; z-index: 5000; }
   .sp-gear .ch-icon { pointer-events: none; }
   /* a short, wide window (a phone on its side): the badges stand beside the table, so
      the ten columns get the height (#472: the row above left the cards 30 px wide) */
@@ -286,7 +287,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = SpiderEngi
   C.boot({});
   var ctx = C.game({
     id: 'spider',
-    name: { fa: 'عنکبوت', en: 'Spider', zh: '蜘蛛纸牌', de: 'Spider', es: 'Spider' },
+    name: { fa: 'عنکبوت', en: 'Spider', zh: '蜘蛛纸牌', de: 'Spider', es: 'Spider', pl: 'Pająk', fr: 'Araignée', ar: 'العنكبوت', hi: 'स्पाइडर' },
     accent: '#55507A',
     mood: 'sudoku',
     cardSpeed: true,
@@ -312,6 +313,50 @@ if (typeof module !== 'undefined' && module.exports) module.exports = SpiderEngi
         tutTitle1: 'The goal', tutText1: 'Build each suit down in the columns from king to ace. A full run leaves by itself; eight runs win.',
         tutTitle2: 'Columns', tutText2: 'A card goes on one a rank higher, of any suit. Only a run of one suit moves together.',
         tutTitle3: 'The stock', tutText3: 'Stuck? Tap the stock: every column gets a new card. Undo as often as you like.'
+      },
+      pl: {
+        table: 'Stół karciany', moves: 'Ruchy', movesN: '{n} ruchów', dailySp: 'Codzienny pasjans Pająk', newDeal: 'Rozdaj nowe karty', restartDaily: 'Zacznij to rozdanie od nowa',
+        undoMove: 'Cofnij ruch', suitsRule: 'Kolory', suits1: 'Jedna barwa', suits2: 'Dwie barwy', suits4: 'Cztery barwy',
+        suitsNote: 'Obowiązuje od następnego rozdania. Codzienne rozdanie zawsze ma jedną barwę.', suitsMode: 'Kolory', stock: 'Stos główny', runsN: 'Sekwencje: {n} z 8',
+        emptyCol: 'Każda kolumna musi zawierać kartę, zanim będzie można rozdać nowy rząd.', showHint: 'Podpowiedź', noHint: 'Brak użytecznych ruchów. Spróbuj cofnąć ruch.',
+        kbSpot: 'Przemieść między stosem głównym a kolumnami', kbAuto: 'Wyślij w najlepsze miejsce', kbDeal: 'Rozdaj rząd ze stosu głównego', kbHint: 'Podpowiedź', kbNew: 'Rozdaj nowe karty',
+        rules: 'Układaj karty w kolumnach malejąco od króla do asa; pełna sekwencja automatycznie schodzi ze stołu, a wyczyszczenie wszystkich ośmiu oznacza wygraną. Kartę kładzie się na kartę o jeden stopień wyższą w dowolnym kolorze, ale tylko sekwencja w tej samej barwie może być przenoszona razem. Pusta kolumna przyjmuje dowolną kartę. Dotknięcie stosu głównego rozdaje po jednej karcie do każdej kolumny, o ile żadna z nich nie jest pusta (chyba że na stole znajduje się mniej kart niż jest kolumn). Codzienne rozdanie jest takie samo dla wszystkich i zawsze ma jedną barwę.',
+        tutTitle1: 'Cel gry', tutText1: 'Układaj karty w kolumnach malejąco od króla do asa. Pełna sekwencja automatycznie schodzi z planszy; ułożenie ośmiu oznacza wygraną.',
+        tutTitle2: 'Kolumny', tutText2: 'Kartę kładzie się na kartę o jeden stopień wyższą w dowolnym kolorze. Tylko sekwencja w tej samej barwie może być przenoszona razem.',
+        tutTitle3: 'Stos główny', tutText3: 'Utknąłeś? Dotknij stosu głównego: każda kolumna otrzyma nową kartę. Możesz cofać ruchy bez ograniczeń.'
+      },
+      fr: {
+        table: 'Table de jeu', moves: 'Coups', movesN: '{n} coups', dailySp: 'Araignée du jour', newDeal: 'Nouvelle donne', restartDaily: 'Recommencer cette donne',
+        undoMove: 'Annuler le coup', suitsRule: 'Couleurs', suits1: 'Une couleur', suits2: 'Deux couleurs', suits4: 'Quatre couleurs',
+        suitsNote: 'S’applique dès la prochaine donne. La donne du jour est toujours à une couleur.', suitsMode: 'Couleurs', stock: 'Talon', runsN: '{n} suites sur 8',
+        emptyCol: 'Chaque colonne doit avoir une carte avant de distribuer une nouvelle rangée.', showHint: 'Indice', noHint: 'Plus de coup utile. Essaie d’annuler.',
+        kbSpot: 'Passer du talon aux colonnes', kbAuto: 'Envoyer au meilleur endroit', kbDeal: 'Distribuer une rangée du talon', kbHint: 'Indice', kbNew: 'Nouvelle donne',
+        rules: 'Construis chaque couleur dans les colonnes en descendant, du roi à l’as ; une suite complète quitte la table toute seule, et en retirer huit fait gagner. Une carte va sur une carte d’un rang au-dessus, de n’importe quelle couleur, mais seule une suite d’une même couleur se déplace en bloc. Une colonne vide accepte n’importe quelle carte. Toucher le talon distribue une carte sur chaque colonne, si aucune n’est vide, sauf s’il y a moins de cartes sur la table que de colonnes. La donne du jour est la même pour tous et toujours à une couleur.',
+        tutTitle1: 'Le but', tutText1: 'Construis chaque couleur dans les colonnes, du roi à l’as. Une suite complète part toute seule ; huit suites font gagner.',
+        tutTitle2: 'Les colonnes', tutText2: 'Une carte va sur une carte d’un rang au-dessus, de n’importe quelle couleur. Seule une suite d’une même couleur se déplace en bloc.',
+        tutTitle3: 'Le talon', tutText3: 'Bloqué ? Touche le talon : chaque colonne reçoit une nouvelle carte. Annule autant que tu veux.'
+      },
+      ar: {
+        table: 'طاولة الورق', moves: 'الحركات', movesN: '{n} حركة', dailySp: 'العنكبوت اليومية', newDeal: 'توزيع جديد', restartDaily: 'أعد هذا التوزيع',
+        undoMove: 'تراجع', suitsRule: 'الأنواع', suits1: 'نوع واحد', suits2: 'نوعان', suits4: 'أربعة أنواع',
+        suitsNote: 'يسري من التوزيع التالي. التوزيع اليومي دائمًا بنوع واحد.', suitsMode: 'الأنواع', stock: 'الرصيد', runsN: '{n} من 8 سلاسل',
+        emptyCol: 'يجب أن يكون في كل عمود ورقة قبل توزيع صف جديد.', showHint: 'تلميح', noHint: 'لا حركة مفيدة متبقية. جرّب التراجع.',
+        kbSpot: 'تنقل بين الرصيد والأعمدة', kbAuto: 'أرسل إلى أفضل مكان', kbDeal: 'وزّع صفًا من الرصيد', kbHint: 'تلميح', kbNew: 'توزيع جديد',
+        rules: 'رتّب كل نوع تنازليًا في الأعمدة من الملك إلى الآس، والسلسلة الكاملة تغادر الطاولة وحدها، وإزالة السلاسل الثماني كلها تعني الفوز. توضع الورقة على ورقة أعلى منها بدرجة من أي نوع، لكن لا تتحرك معًا إلا سلسلة من نوع واحد. العمود الفارغ يقبل أي ورقة. النقر على الرصيد يوزع ورقة على كل عمود، بشرط ألا يكون أي عمود فارغًا، إلا إذا كانت الأوراق على الطاولة أقل من الأعمدة. التوزيع اليومي واحد للجميع ودائمًا بنوع واحد.',
+        tutTitle1: 'الهدف', tutText1: 'رتّب كل نوع تنازليًا في الأعمدة من الملك إلى الآس. السلسلة الكاملة تغادر وحدها، وثماني سلاسل تعني الفوز.',
+        tutTitle2: 'الأعمدة', tutText2: 'توضع الورقة على ورقة أعلى منها بدرجة، من أي نوع. لا تتحرك معًا إلا سلسلة من نوع واحد.',
+        tutTitle3: 'الرصيد', tutText3: 'علقت؟ انقر الرصيد: يحصل كل عمود على ورقة جديدة. تراجع كلما شئت.'
+      },
+      hi: {
+        table: 'ताश की मेज़', moves: 'चालें', movesN: '{n} चालें', dailySp: 'रोज़ का स्पाइडर', newDeal: 'नई बाज़ी', restartDaily: 'यही बाज़ी फिर से',
+        undoMove: 'चाल वापस', suitsRule: 'रंग', suits1: 'एक रंग', suits2: 'दो रंग', suits4: 'चार रंग',
+        suitsNote: 'अगली बाज़ी से लागू होगा। रोज़ की बाज़ी हमेशा एक रंग की होती है।', suitsMode: 'रंग', stock: 'गड्डी', runsN: '8 में से {n} क्रम',
+        emptyCol: 'नई पंक्ति बाँटने से पहले हर कतार में एक पत्ता होना चाहिए।', showHint: 'संकेत', noHint: 'कोई काम की चाल नहीं बची। वापस लेकर देखें।',
+        kbSpot: 'गड्डी और कतारों के बीच जाएँ', kbAuto: 'सबसे अच्छी जगह भेजें', kbDeal: 'गड्डी से एक पंक्ति बाँटें', kbHint: 'संकेत', kbNew: 'नई बाज़ी',
+        rules: 'कतारों में हर रंग को बादशाह से इक्के तक उतरते क्रम में जमाएँ; पूरा क्रम अपने आप मेज़ से हट जाता है, और आठों हटाने पर आप जीतते हैं। कोई पत्ता किसी भी रंग के एक दर्जा ऊँचे पत्ते पर रखा जा सकता है, पर साथ में सिर्फ़ एक ही रंग का क्रम खिसकता है। ख़ाली कतार में कोई भी पत्ता आ सकता है। गड्डी को छूने पर हर कतार पर एक पत्ता बँटता है, बशर्ते कोई कतार ख़ाली न हो, जब तक मेज़ पर कतारों से कम पत्ते न हों। रोज़ की बाज़ी सबके लिए एक जैसी और हमेशा एक रंग की होती है।',
+        tutTitle1: 'लक्ष्य', tutText1: 'कतारों में हर रंग को बादशाह से इक्के तक जमाएँ। पूरा क्रम अपने आप हट जाता है; आठ क्रम पर जीत।',
+        tutTitle2: 'कतारें', tutText2: 'पत्ता किसी भी रंग के एक दर्जा ऊँचे पत्ते पर जाता है। साथ में सिर्फ़ एक ही रंग का क्रम खिसकता है।',
+        tutTitle3: 'गड्डी', tutText3: 'अटक गए? गड्डी छुएँ: हर कतार को नया पत्ता मिलता है। जितनी बार चाहें वापस लें।'
       },
       zh: {
         table: '牌桌', moves: '步数', movesN: '{n} 步', dailySp: '每日蜘蛛纸牌', newDeal: '新一局', restartDaily: '重开本局',

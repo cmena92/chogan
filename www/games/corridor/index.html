@@ -7,6 +7,7 @@
 <title>راهرو — چوگان</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* The board is the game's own, the same in both themes: dark cells, red grooves,
      wooden walls and pawns */
@@ -90,11 +91,12 @@ function CorridorEngineFactory() {
   function open(blk, a, b) { return !blk[key(a, b)]; }
   function isFlag(S, i) { return S.flags.indexOf(i) >= 0; }
 
-  // A seat wins on the far row, or, in the flag game, on a cell beside a flag (above,
-  // below, left or right, with no wall between them)
+  // A seat wins on the far row; in the flag game only on a cell beside a flag (above,
+  // below, left or right, with no wall between them), and the far row is an ordinary
+  // row there (#579: the owner's game ended when a pawn merely crossed the board)
   function isGoal(S, who, i, blk) {
     var r = Math.floor(i / N);
-    if (who === 0 ? r === 0 : r === N - 1) return true;
+    if (!S.flags.length) return who === 0 ? r === 0 : r === N - 1;
     for (var k = 0; k < S.flags.length; k++) {
       var f = S.flags[k], d = Math.abs(f - i);
       var beside = (d === N) || (d === 1 && Math.floor(f / N) === r);
@@ -286,7 +288,7 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
   C.boot({});
   var ctx = C.game({
     id: 'corridor',
-    name: { fa: 'راهرو', en: 'Corridor', zh: '走廊', de: 'Korridor', es: 'Pasillo' },
+    name: { fa: 'راهرو', en: 'Corridor', zh: '走廊', de: 'Korridor', es: 'Pasillo', pl: 'Korytarz', fr: 'Couloir', ar: 'الممر', hi: 'गलियारा' },
     accent: '#E80450',
     mood: 'sudoku',
     strings: {
@@ -299,8 +301,8 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
         wallHint: 'دوباره همان‌جا را بزن تا دیوار گذاشته شود', wallBad: 'این دیوار جا نمی‌شود یا راه یکی را کامل می‌بندد', noWalls: 'دیواری برایت نمانده',
         place: 'گذاشتن', rotate: 'چرخاندن', drop: 'رها کردن',
         dailyCr: 'راهروی روزانه', vsMedium: 'مقابل ربات متوسط', playerWon: '{n} برد', drawn: 'مساوی',
-        movesL: 'حرکت مهره', wallsL: 'دیوار گذاشته‌شده', flagGoal: 'یا به کنار پرچم برس',
-        rules: 'مهره‌ات را به ردیف آن طرف صفحه برسان. در هر نوبت یا مهره را یک خانه به جلو، عقب، چپ یا راست ببر، یا یک دیوار دوخانه‌ای در شیارها بگذار تا راه حریف طولانی‌تر شود. هر کس ده دیوار دارد. دیوارها روی هم یا ضربدری نمی‌افتند، جابه‌جا نمی‌شوند و هیچ‌وقت نباید راه کسی را کامل ببندند. اگر دو مهره کنار هم باشند، می‌شود از روی مهره‌ی حریف پرید؛ اگر پشت آن دیوار یا لبه‌ی صفحه باشد، به یکی از دو طرفش رفت. در بازی پرچم، رسیدن به خانه‌ی بالا، پایین، چپ یا راست پرچم هم برد است، اگر دیواری وسطشان نباشد.',
+        movesL: 'حرکت مهره', wallsL: 'دیوار گذاشته‌شده', flagGoal: 'هدف: کنار پرچم',
+        rules: 'مهره‌ات را به ردیف آن طرف صفحه برسان. در هر نوبت یا مهره را یک خانه به جلو، عقب، چپ یا راست ببر، یا یک دیوار دوخانه‌ای در شیارها بگذار تا راه حریف طولانی‌تر شود. هر کس ده دیوار دارد. دیوارها روی هم یا ضربدری نمی‌افتند، جابه‌جا نمی‌شوند و هیچ‌وقت نباید راه کسی را کامل ببندند. اگر دو مهره کنار هم باشند، می‌شود از روی مهره‌ی حریف پرید؛ اگر پشت آن دیوار یا لبه‌ی صفحه باشد، به یکی از دو طرفش رفت. در بازی پرچم ردیف آن طرف حساب نیست: برنده کسی است که اول به خانه‌ی بالا، پایین، چپ یا راست یک پرچم برسد، اگر دیواری وسطشان نباشد.',
         kCursor: 'جابه‌جایی نشانگر یا دیوار', kGo: 'رفتن یا گذاشتن دیوار', kWall: 'حالت مهره یا دیوار', kRotate: 'چرخاندن دیوار', kDrop: 'رها کردن دیوار',
         tutTitle1: 'به آن طرف برس', tutText1: 'اولین کسی که مهره‌اش به ردیف آن طرف صفحه برسد برنده است.',
         tutTitle2: 'یا دیوار بگذار', tutText2: 'به جای حرکت، یک دیوار در شیارها بگذار تا راه حریف دورتر شود. یک بار بزن، ببین، دوباره بزن تا گذاشته شود.',
@@ -315,12 +317,76 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
         wallHint: 'Tap the same place again to put the wall down', wallBad: 'This wall does not fit, or shuts someone in', noWalls: 'You have no walls left',
         place: 'Place', rotate: 'Turn', drop: 'Drop',
         dailyCr: 'Daily Corridor', vsMedium: 'against the medium bot', playerWon: '{n} wins', drawn: 'Draw',
-        movesL: 'Pawn moves', wallsL: 'Walls placed', flagGoal: 'or reach a cell beside a flag',
-        rules: 'Get your pawn to the far row. On each turn, either move it one cell forward, back, left or right, or put a two-cell wall in the grooves to make the other way longer. Each player has ten walls. Walls cannot overlap or cross, never move once placed, and may never shut anyone off from their goal. When the pawns stand side by side you may jump over the other one; if a wall or the edge is behind it, step to either side of it instead. In the flag game, reaching the cell above, below, left or right of a flag also wins, as long as no wall stands between.',
+        movesL: 'Pawn moves', wallsL: 'Walls placed', flagGoal: 'goal: a cell beside a flag',
+        rules: 'Get your pawn to the far row. On each turn, either move it one cell forward, back, left or right, or put a two-cell wall in the grooves to make the other way longer. Each player has ten walls. Walls cannot overlap or cross, never move once placed, and may never shut anyone off from their goal. When the pawns stand side by side you may jump over the other one; if a wall or the edge is behind it, step to either side of it instead. In the flag game the far row does not count: the first to reach the cell above, below, left or right of a flag wins, as long as no wall stands between.',
         kCursor: 'Move the cursor or the wall', kGo: 'Move there, or place the wall', kWall: 'Pawn or wall', kRotate: 'Turn the wall', kDrop: 'Drop the wall',
         tutTitle1: 'Reach the other side', tutText1: 'The first pawn to reach the far row wins.',
         tutTitle2: 'Or place a wall', tutText2: 'Instead of moving, put a wall in the grooves to make the other way longer. Tap once to see it, tap again to place it.',
         tutTitle3: 'No way is ever shut', tutText3: 'A wall may never cut anyone off completely. You can also jump over a pawn beside you.'
+      },
+      pl: {
+        board: 'Plansza korytarza', vsBot: 'Przeciwko botowi', people: 'Dwóch graczy', bot: 'Bot', playerN: 'Gracz {n}',
+        modePawn: 'Pionek', modeWall: 'Ścianka · {n}', wallsN: 'Ścianki: {n}', newMatch: 'Nowa gra', begin: 'Start', undoMove: 'Cofnij ruch',
+        resetWarn: 'To zakończy bieżącą grę. Kontynuować?', settingsT: 'Nowa gra', flagT: 'Flaga',
+        flagNone: 'Brak flagi', flagEdge: 'Krawędź', flagCentre: 'Środek', flagBoth: 'Oba',
+        yourMove: 'Dotknij zaznaczonego pola lub umieść ściankę w rowkach', turnOf: 'Ruch gracza {n}', thinking: 'Bot myśli…',
+        wallHint: 'Dotknij tego samego miejsca ponownie, aby postawić ściankę', wallBad: 'Ta ścianka się tu nie mieści lub kogoś blokuje', noWalls: 'Nie masz już ścianek',
+        place: 'Umieść', rotate: 'Obróć', drop: 'Upuść',
+        dailyCr: 'Codzienny korytarz', vsMedium: 'przeciwko botowi na średnim poziomie', playerWon: '{n} wygrywa', drawn: 'Remis',
+        movesL: 'Ruchy pionkiem', wallsL: 'Postawione ścianki', flagGoal: 'cel: pole obok flagi',
+        rules: 'Doprowadź swój pionek do ostatniego rzędu. W każdej turze możesz przesunąć go o jedno pole w przód, w tył, w lewo lub w prawo, albo umieścić dwupolową ściankę w rowkach, aby wydłużyć drogę przeciwnikowi. Każdy gracz ma dziesięć ścianek. Ścianki nie mogą się nakładać ani krzyżować, nie można ich przesuwać po postawieniu i nigdy nie mogą całkowicie odciąć nikomu drogi do celu. Gdy pionki stoją obok siebie, możesz przeskoczyć pionek przeciwnika; jeśli za nim stoi ścianka lub krawędź planszy, wykonaj zamiast tego krok w bok. W wariancie z flagą ostatni rząd się nie liczy: wygrywa ten, kto pierwszy dotrze do pola nad, pod, na lewo lub na prawo od flagi, o ile nie oddziela go od niej ścianka.',
+        kCursor: 'Ruch kursorem lub ścianką', kGo: 'Przejdź tam lub postaw ściankę', kWall: 'Pionek lub ścianka', kRotate: 'Obróć ściankę', kDrop: 'Upuść ściankę',
+        tutTitle1: 'Dotrzyj na drugą stronę', tutText1: 'Wygrywa pionek, który jako pierwszy dotrze do ostatniego rzędu.',
+        tutTitle2: 'Albo postaw ściankę', tutText2: 'Zamiast ruchu pionkiem możesz umieścić ściankę w rowkach, aby wydłużyć drogę rywalowi. Dotknij raz, aby ją zobaczyć, dotknij ponownie, aby ją postawić.',
+        tutTitle3: 'Droga nigdy nie jest zablokowana', tutText3: 'Ścianka nigdy nie może całkowicie odciąć graczowi drogi do celu. Możesz także przeskoczyć pionek stojący obok Ciebie.'
+      },
+      fr: {
+        board: 'Plateau de Couloir', vsBot: 'Contre le robot', people: 'Deux joueurs', bot: 'Robot', playerN: 'Joueur {n}',
+        modePawn: 'Pion', modeWall: 'Mur · {n}', wallsN: '{n} murs', newMatch: 'Nouvelle partie', begin: 'Commencer', undoMove: 'Annuler le coup',
+        resetWarn: 'Cela met fin à la partie en cours. Continuer ?', settingsT: 'Nouvelle partie', flagT: 'Drapeau',
+        flagNone: 'Sans drapeau', flagEdge: 'Bord', flagCentre: 'Centre', flagBoth: 'Les deux',
+        yourMove: 'Touche une case marquée, ou pose un mur dans les rainures', turnOf: 'Au tour de {n}', thinking: 'Le robot réfléchit…',
+        wallHint: 'Touche encore au même endroit pour poser le mur', wallBad: 'Ce mur ne rentre pas, ou enferme quelqu’un', noWalls: 'Tu n’as plus de murs',
+        place: 'Poser', rotate: 'Tourner', drop: 'Retirer',
+        dailyCr: 'Couloir du jour', vsMedium: 'contre le robot moyen', playerWon: '{n} gagne', drawn: 'Égalité',
+        movesL: 'Coups de pion', wallsL: 'Murs posés', flagGoal: 'but : une case à côté d’un drapeau',
+        rules: 'Amène ton pion sur la rangée d’en face. À chaque tour, avance-le d’une case en avant, en arrière, à gauche ou à droite, ou pose un mur de deux cases dans les rainures pour rallonger le chemin de l’autre. Chaque joueur a dix murs. Les murs ne peuvent ni se chevaucher ni se croiser, ne bougent plus une fois posés, et ne doivent jamais couper quelqu’un de son but. Quand les pions sont côte à côte, tu peux sauter par-dessus l’autre ; si un mur ou le bord est derrière, passe plutôt d’un côté ou de l’autre. Dans la partie au drapeau, la rangée d’en face ne compte pas : le premier à atteindre la case au-dessus, en dessous, à gauche ou à droite d’un drapeau gagne, tant qu’aucun mur ne les sépare.',
+        kCursor: 'Déplacer le curseur ou le mur', kGo: 'Aller là, ou poser le mur', kWall: 'Pion ou mur', kRotate: 'Tourner le mur', kDrop: 'Retirer le mur',
+        tutTitle1: 'Atteins l’autre côté', tutText1: 'Le premier pion à atteindre la rangée d’en face gagne.',
+        tutTitle2: 'Ou pose un mur', tutText2: 'Au lieu d’avancer, pose un mur dans les rainures pour rallonger le chemin de l’autre. Touche une fois pour le voir, encore pour le poser.',
+        tutTitle3: 'Aucun chemin n’est fermé', tutText3: 'Un mur ne doit jamais couper complètement quelqu’un. Tu peux aussi sauter par-dessus un pion à côté de toi.'
+      },
+      ar: {
+        board: 'لوحة الممر', vsBot: 'ضد الروبوت', people: 'لاعبان', bot: 'الروبوت', playerN: 'اللاعب {n}',
+        modePawn: 'البيدق', modeWall: 'جدار · {n}', wallsN: '{n} جدران', newMatch: 'لعبة جديدة', begin: 'ابدأ', undoMove: 'تراجع',
+        resetWarn: 'ستنتهي اللعبة الحالية. هل تتابع؟', settingsT: 'لعبة جديدة', flagT: 'العلم',
+        flagNone: 'بلا علم', flagEdge: 'الحافة', flagCentre: 'الوسط', flagBoth: 'كلاهما',
+        yourMove: 'انقر خانة معلّمة، أو ضع جدارًا في الأخاديد', turnOf: 'دور {n}', thinking: 'الروبوت يفكر…',
+        wallHint: 'انقر المكان نفسه مرة أخرى لتثبيت الجدار', wallBad: 'هذا الجدار لا يتسع هنا، أو يحبس أحدًا', noWalls: 'لم يبق لديك جدران',
+        place: 'ضع', rotate: 'أدر', drop: 'ألغِ',
+        dailyCr: 'ممر اليوم', vsMedium: 'ضد الروبوت المتوسط', playerWon: '{n} يفوز', drawn: 'تعادل',
+        movesL: 'حركات البيدق', wallsL: 'الجدران الموضوعة', flagGoal: 'الهدف: خانة بجانب علم',
+        rules: 'أوصل بيدقك إلى الصف المقابل. في كل دور إما أن تحركه خانة واحدة إلى الأمام أو الخلف أو اليسار أو اليمين، أو تضع جدارًا بطول خانتين في الأخاديد لتطيل طريق الآخر. لكل لاعب عشرة جدران. لا يجوز أن تتداخل الجدران أو تتقاطع، ولا تتحرك بعد وضعها، ولا يجوز أبدًا أن تقطع على أحد طريقه إلى هدفه. حين يتجاور البيدقان يمكنك القفز فوق الآخر؛ وإن كان خلفه جدار أو حافة اللوحة فانتقل إلى أحد جانبيه بدلًا من ذلك. في لعبة العلم لا يُحتسب الصف المقابل: يفوز أول من يصل إلى الخانة التي فوق العلم أو تحته أو عن يساره أو يمينه، ما دام لا يفصل بينهما جدار.',
+        kCursor: 'حرّك المؤشر أو الجدار', kGo: 'تحرك إلى هناك، أو ضع الجدار', kWall: 'بيدق أو جدار', kRotate: 'أدر الجدار', kDrop: 'ألغِ الجدار',
+        tutTitle1: 'اعبر إلى الجهة الأخرى', tutText1: 'يفوز أول بيدق يصل إلى الصف المقابل.',
+        tutTitle2: 'أو ضع جدارًا', tutText2: 'بدلًا من التحرك، ضع جدارًا في الأخاديد لتطيل طريق الآخر. انقر مرة لتراه، ومرة أخرى لتضعه.',
+        tutTitle3: 'لا يُغلق أي طريق', tutText3: 'لا يجوز للجدار أن يقطع الطريق على أحد تمامًا. ويمكنك أيضًا القفز فوق بيدق بجانبك.'
+      },
+      hi: {
+        board: 'गलियारा बोर्ड', vsBot: 'बॉट से', people: 'दो खिलाड़ी', bot: 'बॉट', playerN: 'खिलाड़ी {n}',
+        modePawn: 'गोटी', modeWall: 'दीवार · {n}', wallsN: '{n} दीवारें', newMatch: 'नया खेल', begin: 'शुरू', undoMove: 'चाल वापस',
+        resetWarn: 'इससे मौजूदा खेल ख़त्म हो जाएगा। जारी रखें?', settingsT: 'नया खेल', flagT: 'झंडा',
+        flagNone: 'झंडा नहीं', flagEdge: 'किनारा', flagCentre: 'बीच', flagBoth: 'दोनों',
+        yourMove: 'निशान वाला खाना छुएँ, या खाँचों में दीवार लगाएँ', turnOf: '{n} की बारी', thinking: 'बॉट सोच रहा है…',
+        wallHint: 'दीवार लगाने के लिए उसी जगह फिर छुएँ', wallBad: 'यह दीवार फ़िट नहीं होती, या किसी का रास्ता बंद करती है', noWalls: 'आपके पास कोई दीवार नहीं बची',
+        place: 'लगाएँ', rotate: 'घुमाएँ', drop: 'हटाएँ',
+        dailyCr: 'रोज़ का गलियारा', vsMedium: 'मध्यम बॉट से', playerWon: '{n} जीत गए', drawn: 'बराबरी',
+        movesL: 'गोटी की चालें', wallsL: 'लगाई दीवारें', flagGoal: 'लक्ष्य: झंडे के पास का खाना',
+        rules: 'अपनी गोटी को सामने की आख़िरी पंक्ति तक पहुँचाएँ। हर बारी में, या तो उसे एक खाना आगे, पीछे, बाएँ या दाएँ चलाएँ, या दूसरे का रास्ता लंबा करने के लिए खाँचों में दो खानों की दीवार लगाएँ। हर खिलाड़ी के पास दस दीवारें हैं। दीवारें एक-दूसरे पर चढ़ या काट नहीं सकतीं, लगाने के बाद कभी नहीं हिलतीं, और किसी को उसके लक्ष्य से पूरी तरह अलग नहीं कर सकतीं। जब गोटियाँ आमने-सामने हों तो आप दूसरी गोटी के ऊपर से कूद सकते हैं; अगर उसके पीछे दीवार या किनारा हो, तो उसके बगल में चले जाएँ। झंडे वाले खेल में आख़िरी पंक्ति नहीं गिनी जाती: जो पहले किसी झंडे के ऊपर, नीचे, बाएँ या दाएँ वाले खाने तक पहुँचे, वह जीतता है, बशर्ते बीच में दीवार न हो।',
+        kCursor: 'कर्सर या दीवार हिलाएँ', kGo: 'वहाँ चलें, या दीवार लगाएँ', kWall: 'गोटी या दीवार', kRotate: 'दीवार घुमाएँ', kDrop: 'दीवार हटाएँ',
+        tutTitle1: 'दूसरी तरफ़ पहुँचें', tutText1: 'जो गोटी पहले आख़िरी पंक्ति तक पहुँचे, वह जीतती है।',
+        tutTitle2: 'या दीवार लगाएँ', tutText2: 'चलने के बजाय, दूसरे का रास्ता लंबा करने के लिए खाँचों में दीवार लगाएँ। देखने के लिए एक बार छुएँ, लगाने के लिए फिर छुएँ।',
+        tutTitle3: 'रास्ता कभी बंद नहीं', tutText3: 'दीवार किसी का रास्ता पूरी तरह नहीं काट सकती। आप बगल वाली गोटी के ऊपर से कूद भी सकते हैं।'
       },
       zh: {
         board: '走廊棋盘', vsBot: '对战电脑', people: '双人', bot: '电脑', playerN: '玩家 {n}',
@@ -331,8 +397,8 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
         wallHint: '在同一处再点一次放下墙', wallBad: '这堵墙放不下，或会完全堵住某人', noWalls: '你没有墙了',
         place: '放下', rotate: '旋转', drop: '取消',
         dailyCr: '每日走廊', vsMedium: '对战中等电脑', playerWon: '{n}获胜', drawn: '平局',
-        movesL: '棋子移动', wallsL: '放下的墙', flagGoal: '或走到旗子旁边',
-        rules: '把你的棋子走到对面的底行。每回合要么把棋子向前、后、左、右走一格，要么在槽里放一堵两格长的墙，让对手的路变长。每人有十堵墙。墙不能重叠或交叉，放下后不能移动，也绝不能完全堵死任何人的去路。两枚棋子相邻时，可以跳过对方；如果对方身后是墙或棋盘边缘，就改走到它的左右两侧。在旗子玩法中，走到旗子上下左右相邻的格子（中间没有墙）也算获胜。',
+        movesL: '棋子移动', wallsL: '放下的墙', flagGoal: '目标：旗子旁边',
+        rules: '把你的棋子走到对面的底行。每回合要么把棋子向前、后、左、右走一格，要么在槽里放一堵两格长的墙，让对手的路变长。每人有十堵墙。墙不能重叠或交叉，放下后不能移动，也绝不能完全堵死任何人的去路。两枚棋子相邻时，可以跳过对方；如果对方身后是墙或棋盘边缘，就改走到它的左右两侧。在旗子玩法中，到达对面一行不算获胜：先走到旗子上下左右相邻的格子（中间没有墙）的一方获胜。',
         kCursor: '移动光标或墙', kGo: '走过去或放下墙', kWall: '棋子或墙', kRotate: '旋转墙', kDrop: '取消墙',
         tutTitle1: '走到对面', tutText1: '先走到对面底行的棋子获胜。',
         tutTitle2: '或者放墙', tutText2: '不走棋，改在槽里放一堵墙，让对手的路变长。点一次预览，再点一次放下。',
@@ -347,8 +413,8 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
         wallHint: 'Tippe dieselbe Stelle nochmal, um die Wand zu setzen', wallBad: 'Diese Wand passt nicht oder sperrt jemanden ein', noWalls: 'Du hast keine Wände mehr',
         place: 'Setzen', rotate: 'Drehen', drop: 'Verwerfen',
         dailyCr: 'Korridor des Tages', vsMedium: 'gegen den mittleren Bot', playerWon: 'Sieg: {n}', drawn: 'Unentschieden',
-        movesL: 'Figurzüge', wallsL: 'Gesetzte Wände', flagGoal: 'oder ein Feld neben einer Fahne',
-        rules: 'Bring deine Figur in die gegenüberliegende Reihe. In jedem Zug ziehst du sie ein Feld vor, zurück, nach links oder rechts, oder du setzt eine zwei Felder lange Wand in die Rillen, damit der Weg des anderen länger wird. Jeder hat zehn Wände. Wände dürfen sich nicht überlappen oder kreuzen, bleiben, wo sie stehen, und dürfen niemanden ganz von seinem Ziel abschneiden. Stehen die Figuren nebeneinander, darfst du über die andere springen; steht dahinter eine Wand oder der Rand, ziehst du stattdessen auf eine ihrer Seiten. Im Fahnenspiel gewinnt auch, wer das Feld über, unter, links oder rechts einer Fahne erreicht, wenn keine Wand dazwischen steht.',
+        movesL: 'Figurzüge', wallsL: 'Gesetzte Wände', flagGoal: 'Ziel: ein Feld neben einer Fahne',
+        rules: 'Bring deine Figur in die gegenüberliegende Reihe. In jedem Zug ziehst du sie ein Feld vor, zurück, nach links oder rechts, oder du setzt eine zwei Felder lange Wand in die Rillen, damit der Weg des anderen länger wird. Jeder hat zehn Wände. Wände dürfen sich nicht überlappen oder kreuzen, bleiben, wo sie stehen, und dürfen niemanden ganz von seinem Ziel abschneiden. Stehen die Figuren nebeneinander, darfst du über die andere springen; steht dahinter eine Wand oder der Rand, ziehst du stattdessen auf eine ihrer Seiten. Im Fahnenspiel zählt die gegenüberliegende Reihe nicht: Es gewinnt, wer zuerst das Feld über, unter, links oder rechts einer Fahne erreicht, wenn keine Wand dazwischen steht.',
         kCursor: 'Cursor oder Wand bewegen', kGo: 'Dorthin ziehen oder Wand setzen', kWall: 'Figur oder Wand', kRotate: 'Wand drehen', kDrop: 'Wand verwerfen',
         tutTitle1: 'Auf die andere Seite', tutText1: 'Wer zuerst die gegenüberliegende Reihe erreicht, gewinnt.',
         tutTitle2: 'Oder eine Wand setzen', tutText2: 'Statt zu ziehen, setzt du eine Wand in die Rillen und machst den Weg des anderen länger. Einmal tippen zum Ansehen, nochmal zum Setzen.',
@@ -363,8 +429,8 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
         wallHint: 'Toca otra vez el mismo sitio para poner el muro', wallBad: 'Este muro no cabe o encierra a alguien', noWalls: 'No te quedan muros',
         place: 'Poner', rotate: 'Girar', drop: 'Quitar',
         dailyCr: 'Pasillo diario', vsMedium: 'contra el bot medio', playerWon: 'Gana: {n}', drawn: 'Empate',
-        movesL: 'Movimientos de ficha', wallsL: 'Muros puestos', flagGoal: 'o llega junto a una bandera',
-        rules: 'Lleva tu ficha a la fila del otro lado. En cada turno, muévela una casilla adelante, atrás, a la izquierda o a la derecha, o pon un muro de dos casillas en las ranuras para alargar el camino del otro. Cada jugador tiene diez muros. Los muros no se solapan ni se cruzan, no se mueven una vez puestos y nunca pueden dejar a nadie sin camino. Cuando las fichas están juntas puedes saltar la otra; si detrás hay un muro o el borde, pasa a uno de sus lados. En la partida con bandera también gana quien llega a la casilla de arriba, abajo, izquierda o derecha de una bandera, si no hay un muro en medio.',
+        movesL: 'Movimientos de ficha', wallsL: 'Muros puestos', flagGoal: 'meta: junto a una bandera',
+        rules: 'Lleva tu ficha a la fila del otro lado. En cada turno, muévela una casilla adelante, atrás, a la izquierda o a la derecha, o pon un muro de dos casillas en las ranuras para alargar el camino del otro. Cada jugador tiene diez muros. Los muros no se solapan ni se cruzan, no se mueven una vez puestos y nunca pueden dejar a nadie sin camino. Cuando las fichas están juntas puedes saltar la otra; si detrás hay un muro o el borde, pasa a uno de sus lados. En la partida con bandera la fila del fondo no cuenta: gana quien llega primero a la casilla de arriba, abajo, izquierda o derecha de una bandera, si no hay un muro en medio.',
         kCursor: 'Mover el cursor o el muro', kGo: 'Ir ahí o poner el muro', kWall: 'Ficha o muro', kRotate: 'Girar el muro', kDrop: 'Quitar el muro',
         tutTitle1: 'Llega al otro lado', tutText1: 'Gana la primera ficha que llega a la fila del otro lado.',
         tutTitle2: 'O pon un muro', tutText2: 'En vez de mover, pon un muro en las ranuras para alargar el camino del otro. Toca una vez para verlo y otra para ponerlo.',
@@ -522,7 +588,7 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
           { label: C.t('movesL'), value: C.num(G.moves[0]) + (G.mode === 'people' ? ' / ' + C.num(G.moves[1]) : '') },
           { label: C.t('wallsL'), value: C.num(E.WALLS - S.left[0]) + ' / ' + C.num(E.WALLS - S.left[1]) }
         ],
-        shareText: 'چوگان · راهرو' + (G.daily ? ('\nروزانه ' + G.daily) : '') + '\n' + (tie ? C.t('drawn') : pname(seat)),
+        shareText: 'کاپیبارا · راهرو' + (G.daily ? ('\nروزانه ' + G.daily) : '') + '\n' + (tie ? C.t('drawn') : pname(seat)),
         paint: cardPaint(),
         onAgain: G.daily ? null : function () { newGame(current()); }
       });
@@ -597,7 +663,8 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
     var Q = geo(W), S = o.S;
     g.fillStyle = col.groove;
     C.rrect(g, 0, 0, W, W, W * 0.03); g.fill();
-    // the far rows a little lit in the colour of the pawn that makes for them
+    // the far rows a little lit in the colour of the pawn that makes for them; not in
+    // the flag game, where they are no goal
     g.fillStyle = col.board;
     C.rrect(g, Q.pad * 0.35, Q.pad * 0.35, W - Q.pad * 0.7, W - Q.pad * 0.7, W * 0.025); g.fill();
     g.fillStyle = col.groove;
@@ -606,7 +673,7 @@ if (typeof module !== 'undefined') module.exports = CorridorEngineFactory;
       var p = cellXY(Q, i), r = Math.floor(i / E.N);
       g.fillStyle = col.cell;
       C.rrect(g, p.x, p.y, Q.s, Q.s, Q.s * 0.14); g.fill();
-      if (r === 0 || r === E.N - 1) {
+      if (!S.flags.length && (r === 0 || r === E.N - 1)) {
         g.globalAlpha = 0.16; g.fillStyle = r === 0 ? col.p0 : col.p1;
         C.rrect(g, p.x, p.y, Q.s, Q.s, Q.s * 0.14); g.fill(); g.globalAlpha = 1;
       }

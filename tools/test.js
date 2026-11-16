@@ -14,7 +14,7 @@ const { Worker, isMainThread, workerData } = require('worker_threads');
 
 const ROOT = path.join(__dirname, '..');
 // زبان‌های اپ، به همان ترتیب جدول LOCALES در هسته
-const LOCALE_CODES = ['fa', 'en', 'zh', 'de', 'es'];
+const LOCALE_CODES = ['fa', 'en', 'zh', 'de', 'es', 'pl', 'fr', 'ar', 'hi'];
 let failures = 0;
 let checks = 0;
 // A floor for the whole run: if a group lost most of its checks, the total would still
@@ -22,7 +22,7 @@ let checks = 0;
 // is no longer raised in each pull request, where it made every new-game PR conflict
 // with the last (#493); it is raised at release time. Lowering it means checks were
 // removed on purpose and must be said in the PR.
-const MIN_CHECKS = 5574;
+const MIN_CHECKS = 11601;
 
 function ok(cond, msg) {
   checks++;
@@ -129,7 +129,7 @@ function testSudoku() {
   }
   ok(/var hl = hlMarks\(c, selected, selVal, v, prefs\.highlight\);/.test(sdHtml) && /prefs\.highlight = v; ctx\.store\.set\('prefs', prefs\); paint\(\);/.test(sdHtml),
     'the page paints with the saved choice, and switching saves it and repaints without a restart');
-  ok(['fa', 'en', 'zh', 'de', 'es'].every((l) => new RegExp('\\n      ' + l + ": \\{[\\s\\S]*?highlight: '[^']+', hlPeers: '[^']+', hlDigit: '[^']+'").test(sdHtml)), 'the option is labelled in all five languages');
+  ok(LOCALE_CODES.every((l) => new RegExp('\\n      ' + l + ": \\{[\\s\\S]*?highlight: '[^']+', hlPeers: '[^']+', hlDigit: '[^']+'").test(sdHtml)), 'the option is labelled in every language');
 
   // شمارنده‌ی زیر دکمه‌های عدد (#124): هر عدد روی جدول شمرده می‌شود، درست یا غلط،
   // و قفل فقط با نُه جاگذاری درست. تابع واقعی صفحه اجرا می‌شود.
@@ -231,7 +231,7 @@ function testMines() {
   ok(/cursor = to; paint\(\); cells\[cursor\]\.focus\(\)/.test(msHtml), 'an arrow moves focus along with the cursor');
   // F flagged the cell, but the help called it "Flag mode", so the key looked missing (#332)
   ok(/row\(C\.t\('flagCell'\), 'F'\)/.test(msHtml) && !/row\(C\.t\('flagMode'\), 'F'\)/.test(msHtml), 'the help names F as the key that flags a cell');
-  ok((msHtml.match(/\bflagCell: '[^']+'/g) || []).length === 5, 'that label exists in all five languages');
+  ok((msHtml.match(/\bflagCell: '[^']+'/g) || []).length === LOCALE_CODES.length, 'that label exists in every language');
   // Persian called the minefield «تخته» (a board game's board) and the restart dialog «تخته‌ی تازه» (#340)
   const msFa = (msHtml.match(/strings: \{\s*fa: \{([\s\S]*?)\n      \}/) || [])[1] || '';
   ok(msFa.length > 200, 'the Persian strings of Minesweeper were found');
@@ -254,13 +254,13 @@ function testMines() {
     ok(E.fit(1340, 700, 9, 9).cs === 64 && E.fit(1340, 700, 9, 9).maxH === 0, 'a small board on a big screen grows to 64px cells and does not scroll (#359)');
     ok(E.fit(1236, 620, 16, 16).cs === 36, 'medium on a 1280×800 laptop gets 36px cells, not the old 42px-capped 394px board (#359)');
   }
-  ok(/var f = E\.fit\(roomW\(\), roomH\(\), sp\.rows, sp\.cols\);/.test(msHtml) && !/640\)/.test(msHtml) && /scroll\.style\.maxHeight = f\.maxH \? f\.maxH \+ 'px' : '';/.test(msHtml), 'the page sizes the board by the room left under the picker and above the tools, at the game area\'s full width (#359)');
+  ok(/var f = E\.fit\(roomW\(\), roomH\(\), sp\.rows, sp\.cols, zoom\);/.test(msHtml) && !/640\)/.test(msHtml) && /scroll\.style\.maxHeight = f\.maxH \? f\.maxH \+ 'px' : '';/.test(msHtml), 'the page sizes the board by the room left under the picker and above the tools, at the game area\'s full width (#359)');
   // Holding Space or Enter opened the cell at once instead of flagging it like a long press (#346)
   ok(/var LONG_MS = 420/.test(msHtml) && (msHtml.match(/\}, LONG_MS\);/g) || []).length === 2, 'a long press on the screen and a held key share one delay');
   ok(/hold\.timer = setTimeout\(function \(\) \{ hold\.fired = true; if \(S && !S\.done\) toggleFlag\(hold\.at\); \}, LONG_MS\);\s*keyHold = hold;\s*return;/.test(msHtml) &&
     /addEventListener\('keyup', function \(e\) \{[\s\S]{0,260}if \(h\.fired \|\| !S \|\| S\.done[^\n]*return;\s*if \(flagMode && !S\.revealed\[h\.at\]\) toggleFlag\(h\.at\);\s*else tap\(h\.at\);/.test(msHtml),
     'Space and Enter flag when held and open only when let go early');
-  ok((msHtml.match(/\bholdFlag: '[^']+'/g) || []).length === 5 && /row\(C\.t\('holdFlag'\), 'Space \/ Enter'\)/.test(msHtml), 'the help names it, in all five languages');
+  ok((msHtml.match(/\bholdFlag: '[^']+'/g) || []).length === LOCALE_CODES.length && /row\(C\.t\('holdFlag'\), 'Space \/ Enter'\)/.test(msHtml), 'the help names it, in every language');
 }
 
 /* ------------------------------------------------------- نقطه‌بازی */
@@ -876,6 +876,24 @@ function testFreecell() {
     ok(E.canMove(a.S, 0, lim, a.to), 'به ستون خالی، خانه‌ی آزاد ' + f + '، ستون خالی ' + e + ': ' + lim + ' کارت می‌رود');
     ok(!E.canMove(b.S, 0, lim + 1, b.to), 'به ستون خالی، خانه‌ی آزاد ' + f + '، ستون خالی ' + e + ': ' + (lim + 1) + ' کارت رد می‌شود');
   }
+  // #572: a run picked by its top card was refused whole when only its lower
+  // cards fit the target, or when it was longer than the free cells allow.
+  // Expected counts come from the rules, not from the engine.
+  const p1 = make(['9S 8H 7C', 'KC', '8D', 'KD', 'KH', 'QS', 'QD', 'QC'], ['', 'AC', 'AD', 'AH']);
+  ok(E.fitCount(p1, 0, 3, 2) === 1, 'a 9-8-7 run dropped on the 8 of diamonds moves only the 7 of clubs');
+  ok(E.fitCount(p1, 0, 3, 1) === 0, 'nothing of 9-8-7 fits on a king');
+  ok(E.fitCount(p1, 0, 3, 8) === 0 && E.fitCount(p1, 0, 3, 12) === 0, 'a run dropped on a free cell or a foundation is not cut down to one card');
+  const bm1 = E.bestMove(p1, 0, 3);
+  ok(!!bm1 && bm1.to === 2 && bm1.n === 1, 'tapping the 9 of 9-8-7 sends the 7 to the 8 of diamonds');
+  // three cards to an empty column with no free cell and one empty column: (0+1)*2^0 = 1
+  const p2 = make(['9S 8H 7C', '', 'KC', 'KD', 'KH', 'QS', 'QD', 'QC'], ['JS', 'AC', 'AD', 'AH']);
+  ok(E.fitCount(p2, 0, 3, 1) === 1, 'a run too long for an empty column moves as many cards as the rules allow');
+  const bm2 = E.bestMove(p2, 0, 3);
+  ok(!!bm2 && bm2.to === 1 && bm2.n === 1, 'tapping a run that fits nowhere whole sends its allowed tail to the empty column');
+  ok(E.bestMove(p1, 0, 1).n === 1 && E.bestMove(p1, 0, 1).to === 2, 'a single card still goes where bestTarget sends it');
+  const fcPage = fs.readFileSync(path.join(ROOT, 'www/games/freecell/index.html'), 'utf8');
+  ok(/var to = dropAt\(d\.x \+ d\.dx \+ L\.cw \/ 2, d\.y \+ d\.dy \+ L\.ch \/ 2, d\.cards\[0\]\);/.test(fcPage) && /doMove\(d\.src, k, to,/.test(fcPage),
+    'a drop goes to the column under the dragged card first, then the finger, with the run cut to what fits');
   const s4 = make(['8S 7H 6C', '9D', '8C', 'KC', 'KD', 'KH', 'QS', 'QD'], ['', 'AC', 'AD', 'AH']);
   ok(!E.canMove(s4, 0, 2, 1), 'رشته‌ای که اولش روی مقصد نمی‌نشیند رد می‌شود (۷ دل روی ۹ خشت)');
   ok(E.canMove(s4, 0, 2, 2), 'دو کارت با یک خانه‌ی آزاد روی ۸ گشنیز می‌رود');
@@ -1083,7 +1101,7 @@ function testFreecell() {
   ok(/E\.move\(S, src, n, to\)/.test(ui), 'صفحه حرکت را با E.move ثبت می‌کند');
   ok(/E\.undo\(S\)/.test(ui), 'صفحه برگرداندن را با E.undo انجام می‌دهد');
   ok(/E\.autoAll\(S\)/.test(ui), 'صفحه حرکت خودکار را با E.autoAll انجام می‌دهد');
-  ok(/E\.bestTarget\(S, src, n\)/.test(ui), 'لمس مقصد را از E.bestTarget می‌گیرد');
+  ok(/E\.bestMove\(S, src, n\)/.test(ui), 'a tap takes its target from E.bestMove, which tries bestTarget first');
   ok(!/localStorage/.test(ui), 'صفحه مستقیم به localStorage دست نمی‌زند');
 
   // بوم پهن، تخته‌ی همان‌اندازه (#102): تابع واقعی layout صفحه با پهناهای مختلف
@@ -1640,7 +1658,7 @@ function testBackgammon() {
   ok(title('Sara', 1) === '<starts:Sara>', 'با نام پروفایل: «{n} شروع می‌کند»');
   ok(title('', 2) === '<starts:<rival> · <hard>>', 'حریف: سوم‌شخص می‌ماند');
   const str = (lang, key) => { const m = bgHtml.match(new RegExp(key + ": '([^']*)'", 'g')); return m ? m.map((x) => x.split(": '")[1].slice(0, -1)) : []; };
-  ok(JSON.stringify(str('', 'youStart')) === JSON.stringify(['تو شروع می‌کنی', 'You start', '你先走', 'Du fängst an', 'Empiezas tú']), 'youStart reads right in every language');
+  ok(JSON.stringify(str('', 'youStart')) === JSON.stringify(['تو شروع می‌کنی', 'You start', 'Zaczynasz', 'Tu commences', 'أنت تبدأ', 'आप शुरू करेंगे', '你先走', 'Du fängst an', 'Empiezas tú']), 'youStart reads right in every language');
 
   // Rotating the board (#378): the page's own geometry and mapping. Every point's centre, the bar
   // and each tray, carried to the screen and back in each quarter turn, must hit the same target.
@@ -1678,7 +1696,7 @@ function testBackgammon() {
     'the slot takes the turned shape at 90 and 270 degrees, and the turn is kept in prefs');
   ok(/g\.rotate\(upright\);\s*g\.fillText\(txt, 0, 1\);/.test(page) && /function drawDie\(g, x, y, s, v, pc, faded, spin\) \{\s*g\.save\(\); g\.translate\(x, y\); g\.rotate\(upright \+ \(spin \|\| 0\)\);/.test(page),
     'numbers and dice turn back so they stay upright');
-  ok(['fa', 'en', 'zh', 'de', 'es'].every((l) => new RegExp('\\n      ' + l + ": \\{[\\s\\S]*?rotateBoard: '[^']+'").test(bgHtml)), 'the rotate button is labelled in all five languages');
+  ok(LOCALE_CODES.every((l) => new RegExp('\\n      ' + l + ": \\{[\\s\\S]*?rotateBoard: '[^']+'").test(bgHtml)), 'the rotate button is labelled in every language');
 }
 
 /* ------------------------------------------------------------- دوز */
@@ -2921,19 +2939,17 @@ function testFiles() {
   ok(/drawGames\(\)/.test(chipFn) && !/render\(/.test(chipFn), 'a category chip redraws only the games, not the whole page');
   ok(/C\.pins\.toggle\(g\.id\);[\s\S]{0,80}render\(true\)/.test(menu) && /window\.scrollTo\(0, keep \? y : 0\)/.test(menu), 'a pin tap keeps the scroll position');
 
-  // An 18px pin at 1.9 stroke and 45% opacity was a faint smudge on a 173px card (#289)
-  const pinCss = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-  const pinSize = +((menu.match(/C\.icon\('pin', (\d+)\)/) || [])[1] || 0);
-  ok(pinSize >= 22, 'the pin icon on a menu card is at least 22px (' + pinSize + ')');
-  const pinStroke = +((pinCss.match(/\.ch-game__pin svg \{[^}]*stroke-width: ([\d.]+)/) || [])[1] || 0);
-  const pinOp = +((pinCss.match(/\.ch-game__pin \{[^}]*opacity: ([\d.]+)/) || [])[1] || 0);
-  ok(pinStroke >= 2.2 && pinOp >= 0.6, 'the pin icon is drawn bold enough to see (stroke ' + pinStroke + ', opacity ' + pinOp + ')');
-  ok(/\.ch-game__pin--on \{[^}]*background-color:/.test(pinCss), 'a pinned card shows a filled circle behind its pin');
+  // #289's bolder pin button went with the button itself in #687: tiles are pinned by holding them (testMenuPins)
 
   // Five languages wrapped onto two rows at every phone width, Español alone below (#291)
   const langCss = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
   const langPad = +((langCss.match(/\.ch-seg\.ch-langs button \{[^}]*padding-inline: (\d+)px/) || [])[1] || 99);
   ok(/function langPicker[\s\S]{0,250}classList\.add\([^)]*'ch-langs'/.test(menu) && langPad <= 6, 'the language picker uses narrow buttons so five languages fit one phone row (padding ' + langPad + ')');
+  // A sixth language sat alone on a full-width second row (#542): the picker is a grid of
+  // two rows on a phone and one row on a wide screen, whatever the count (seven since #794)
+  const langCols = Math.ceil(LOCALE_CODES.length / 2);
+  ok(new RegExp('\\.ch-seg\\.ch-langs \\{[^}]*display: grid;[^}]*grid-template-columns: repeat\\(' + langCols + ', 1fr\\)').test(langCss), 'the language picker is two rows of ' + langCols + ' on a phone (' + LOCALE_CODES.length + ' languages)');
+  ok(new RegExp('@media \\(min-width: 600px\\) \\{ \\.ch-seg\\.ch-langs \\{ grid-template-columns: repeat\\(' + LOCALE_CODES.length + ', 1fr\\); \\} \\}').test(langCss), 'and one row of ' + LOCALE_CODES.length + ' on a wide screen');
 
   // The show-welcome button was labelled with 'play' and read «بازی» (#295)
   ok(/C\.t\('showWelcome'\) \}\),[\s\S]{0,200}text: C\.t\('showBtn'\)/.test(menu) && (menu.match(/\bshowBtn: '[^']+'/g) || []).length === LOCALE_CODES.length, 'the show-welcome button has its own "Show" label in every language');
@@ -3027,6 +3043,9 @@ function testFiles() {
     for (const f of fs.readdirSync(dir)) {
       const text = fs.readFileSync(path.join(dir, f), 'utf8');
       ok(text.length <= CHANGELOG_LIMIT, loc + '/' + f + ' زیر ' + CHANGELOG_LIMIT + ' کاراکتر است (' + text.length + ')');
+      // F-Droid and Play show the file as plain text, where a bare @login leads nowhere (#644)
+      const at = text.match(/(?<![\w@/])@([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}))(?![\w-])/);
+      ok(!at, loc + '/' + f + ' credits a contributor as github.com/login, not @login' + (at ? ' (' + at[0] + ')' : ''));
     }
     ok(fs.existsSync(path.join(dir, code + '.txt')), loc + ': توضیح انتشار برای کد نسخه‌ی ' + code + ' هست');
   }
@@ -3041,9 +3060,11 @@ function testFiles() {
     ok(man[k] && man[k].fa, 'منیفست ' + k + ' فارسی دارد');
   }
   // An installed app's description follows the device language; Spanish was missing until #256
-  const manLang = { fa: 'fa', zh: 'zh-Hans', de: 'de', es: 'es' };
+  const manLang = { fa: 'fa', zh: 'zh-Hans', de: 'de', es: 'es', pl: 'pl', fr: 'fr', ar: 'ar', hi: 'hi' };
   ok(LOCALE_CODES.filter((c) => c !== 'en').every((c) => man.description_localized[manLang[c]] && man.description_localized[manLang[c]].value), 'the manifest describes the app in every language');
   ok(man.name_localized.fa.value === 'کاپیبارا', 'نام فارسی در منیفست درست است');
+  // Capybara is not the original's Play app: its manifest never sends players to another app
+  ok(!(man.related_applications || []).length && man.prefer_related_applications !== true, 'the manifest sends players to no other app');
   // The installed desktop app showed the browser's own title bar above the app's (#344)
   const dov = man.display_override || [];
   ok(dov[0] === 'window-controls-overlay' && dov.includes('standalone') && man.display === 'standalone', 'the manifest asks for the window controls overlay first and keeps standalone');
@@ -3191,78 +3212,6 @@ function testSw() {
         'فعال‌سازی فقط کش‌های قدیمی را پاک می‌کند');
     });
   });
-}
-
-// مهر نسخه‌ی وب را همان اسکریپتی می‌زند که ورک‌فلو پیجز اجرا می‌کند. مقدارها با
-// ورودی‌های ثابت مقایسه می‌شوند نه با خروجی همان بیلد، وگرنه تست به هر دلیلی سبز می‌شد.
-function testVersionStamp() {
-  head('مهر نسخه‌ی وب');
-  const script = path.join(ROOT, 'tools/stamp-version.sh');
-  const exists = fs.existsSync(script);
-  ok(exists, 'اسکریپت مهر نسخه هست: tools/stamp-version.sh');
-  if (!exists) return;
-
-  const repoSrc = fs.readFileSync(path.join(ROOT, 'www/version.js'), 'utf8');
-  // اف‌دروید از سورس می‌سازد و version.js را از main می‌خواند؛ فیلدهای استقرار نباید در ریپو باشند
-  for (const k of ['APP_ENV', 'APP_COMMIT', 'APP_DEPLOY', 'APP_BUILD']) {
-    ok(repoSrc.indexOf(k) < 0, 'نسخه‌ی ریپو ' + k + ' ندارد');
-  }
-  const intendedVersion = (repoSrc.match(/APP_VERSION\s*=\s*'([^']+)'/) || [])[1];
-  const intendedCode = Number((repoSrc.match(/APP_VERSION_CODE\s*=\s*(\d+)/) || [])[1]);
-
-  const SHA = '0123456789abcdef0123456789abcdef01234567';
-  const good = { GITHUB_SHA: SHA, GITHUB_RUN_ID: '987654321', GITHUB_RUN_ATTEMPT: '2', APP_ENV: 'production' };
-
-  function stamp(env) {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'chogan-stamp-'));
-    const file = path.join(dir, 'version.js');
-    fs.writeFileSync(file, repoSrc);
-    const clean = Object.assign({}, process.env);
-    for (const k of ['GITHUB_SHA', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT', 'APP_ENV']) delete clean[k];
-    const r = spawnSync('bash', [script, file], { env: Object.assign(clean, env), encoding: 'utf8' });
-    const out = fs.readFileSync(file, 'utf8');
-    fs.rmSync(dir, { recursive: true, force: true });
-    return { status: r.status, out: out };
-  }
-
-  const r = stamp(good);
-  ok(r.status === 0, 'مهر با ورودی درست موفق است (خروج ' + r.status + ')');
-  const sb = { self: {} };
-  vm.createContext(sb);
-  try { vm.runInContext(r.out, sb); } catch (e) { ok(false, 'خروجی مهر جاوااسکریپت معتبر است: ' + e.message); }
-  const v = sb.self;
-  ok(v.APP_VERSION === intendedVersion, 'APP_VERSION دست نخورده (' + v.APP_VERSION + ')');
-  ok(v.APP_VERSION_CODE === intendedCode, 'APP_VERSION_CODE دست نخورده (' + v.APP_VERSION_CODE + ')');
-  ok(v.APP_BUILD === SHA.slice(0, 12), 'APP_BUILD دوازده نویسه‌ی اول کامیت است (' + v.APP_BUILD + ')');
-  ok(v.APP_COMMIT === SHA, 'APP_COMMIT کل کامیت است (' + v.APP_COMMIT + ')');
-  ok(v.APP_ENV === 'production', 'APP_ENV نام محیط است (' + v.APP_ENV + ')');
-  ok(v.APP_DEPLOY === '987654321-2', 'APP_DEPLOY شناسه‌ی اجرا و تلاش است (' + v.APP_DEPLOY + ')');
-
-  // ورودی خراب نباید چیز نامعتبری وارد جاوااسکریپت منتشرشده کند
-  const bad = [
-    ['کامیت غیرهگز', Object.assign({}, good, { GITHUB_SHA: 'not-a-sha' })],
-    ['بدون نام محیط', (function () { const e = Object.assign({}, good); delete e.APP_ENV; return e; })()],
-    ['نام محیط با کوتیشن', Object.assign({}, good, { APP_ENV: "prod'uction" })],
-    ['شناسه‌ی اجرای غیرعددی', Object.assign({}, good, { GITHUB_RUN_ID: '12x' })]
-  ];
-  for (const [label, env] of bad) {
-    const b = stamp(env);
-    ok(b.status !== 0, label + ': مهر رد می‌شود (خروج ' + b.status + ')');
-    ok(b.out === repoSrc, label + ': فایل دست نخورده می‌ماند');
-  }
-
-  // ورک‌فلو باید همین اسکریپت تست‌شده را اجرا کند، نه نسخه‌ی دیگری از منطق
-  // انتشار حالا کار pages داخل test.yml است (#52)، پس همان‌جا را می‌خوانیم.
-  const testYml = fs.readFileSync(path.join(ROOT, '.github/workflows/test.yml'), 'utf8');
-  const pagesJob = (testYml.match(/\n  pages:\n([\s\S]*?)(?=\n  [a-z][a-z0-9_-]*:\n|$)/) || [])[1] || '';
-  ok(pagesJob.length > 0, 'کار pages در test.yml برای بررسی مهر پیدا شد');
-  ok(/tools\/stamp-version\.sh\s+www\/version\.js/.test(pagesJob), 'انتشار همان tools/stamp-version.sh را اجرا می‌کند');
-  ok(/APP_ENV:\s*production/.test(pagesJob), 'انتشار نام محیط را production می‌دهد');
-  const wfDirStamp = path.join(ROOT, '.github/workflows');
-  const wfFiles = fs.readdirSync(wfDirStamp).filter((f) => /\.ya?ml$/.test(f));
-  ok(wfFiles.length > 0, 'فهرست ورک‌فلوها برای بررسی مهر خالی نیست');
-  const inline = wfFiles.filter((f) => fs.readFileSync(path.join(wfDirStamp, f), 'utf8').indexOf('self.APP_BUILD') >= 0);
-  ok(inline.length === 0, 'منطق مهر درون هیچ ورک‌فلویی تکرار نشده (' + inline.join(', ') + ')');
 }
 
 // انتشار وب باید پشت تست‌ها باشد و بعد از انتشار بررسی شود. این بررسی ساختار
@@ -3465,6 +3414,20 @@ function testBrowserCheckExits() {
     ok(r.status === 2 && /games\.json/.test(r.stderr || ''),
       label + ': خروج ۲ با دلیل games.json (آمد ' + r.status + '، «' + (r.stderr || '').trim().split('\n').pop() + '»)');
   }
+
+  // 4. A Chrome that never exits held a CI run for 18 minutes (#581): each load now
+  // has a limit and one retry, and a page that hangs twice fails the run by name.
+  fs.writeFileSync(path.join(mirror, 'www/games.json'), JSON.stringify({ games: [{ id: 'sudoku', path: 'games/sudoku/index.html' }] }));
+  const hang = path.join(tmp, 'hang-chrome');
+  fs.writeFileSync(hang, '#!/bin/sh\nexec sleep 30\n', { mode: 0o755 });
+  const t0 = Date.now();
+  r = spawnSync('bash', [path.join(mirror, 'tools/browser-check.sh'), hang], {
+    encoding: 'utf8', timeout: 25000, env: Object.assign({}, process.env, { PORT: port, CHROME_TIMEOUT: '1' })
+  });
+  const took = Date.now() - t0;
+  ok(r.status === 1 && /Page index\.html did not finish loading within 1s, twice/.test(r.stdout || '') && /games\/sudoku\/index\.html did not finish/.test(r.stdout || ''),
+    'a Chrome that never exits: exit 1 naming each page (got ' + r.status + ', ' + Math.round(took / 1000) + ' s)');
+  ok(took < 20000, 'a hanging Chrome is cut off in seconds, not held (' + Math.round(took / 1000) + ' s)');
   fs.rmSync(tmp, { recursive: true, force: true });
 }
 
@@ -3496,7 +3459,7 @@ function testLocales() {
   const codes = (table.match(/code:\s*'([a-z-]+)'/g) || []).map((m) => m.split("'")[1]);
   ok(codes.join(',') === LOCALE_CODES.join(','), 'کدهای زبان: ' + codes.join(','));
   ok(/code: 'fa'[^}]*dir: 'rtl'/.test(table), 'فارسی راست‌به‌چپ است');
-  ok((table.match(/dir: 'rtl'/g) || []).length === 1, 'فقط فارسی راست‌به‌چپ است');
+  ok(/code: 'ar'[^}]*dir: 'rtl'/.test(table) && (table.match(/dir: 'rtl'/g) || []).length === 2, 'فقط فارسی و عربی راست‌به‌چپ‌اند');
   for (const c of codes) ok(new RegExp("code: '" + c + "'[^}]*date: '").test(table), c + ': قالب تاریخ دارد');
 
   const iEn = core.indexOf('localStrings.en[key]');
@@ -3513,6 +3476,10 @@ function testLocales() {
     ['zh-TW', 'en'], ['zh-HK', 'en'], ['zh-Hant', 'en'],
     ['de-DE', 'de'], ['de', 'de'], ['de-AT', 'de'], ['de-CH', 'de'],
     ['es-ES', 'es'], ['es', 'es'], ['es-MX', 'es'], ['es-419', 'es'],
+    ['pl-PL', 'pl'], ['pl', 'pl'],
+    ['fr-FR', 'fr'], ['fr', 'fr'], ['fr-CA', 'fr'], ['fr-BE', 'fr'],
+    ['ar', 'ar'], ['ar-SA', 'ar'], ['ar-EG', 'ar'],
+    ['hi-IN', 'hi'], ['hi', 'hi'],
     ['en-GB', 'en'], ['da-DK', 'en'], ['', 'en']
   ];
   ok(cases.length > 0, 'فهرست حالت‌های زبان دستگاه خالی نیست');
@@ -3573,7 +3540,7 @@ function testLocales() {
   for (const f of files) {
     const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
     const en = dictOf(src, 'en') || {};
-    for (const code of ['de', 'es']) {
+    for (const code of ['de', 'es', 'pl']) {
       const de = dictOf(src, code);
       ok(!!de, f + ': ' + code + ' dictionary exists');
       if (!de) continue;
@@ -3702,7 +3669,7 @@ function testCardArt() {
 
   ok(/cardBack: 'carpet'/.test(coreJs.match(/var DEFAULT_SETTINGS = \{[\s\S]*?\};/)[0]), 'the carpet is the default back');
   ok((coreJs.match(/cardBack: '[^']+', backCarpet: '[^']+', backTermeh: '[^']+',/g) || []).length === LOCALE_CODES.length, 'the picker is named in every language');
-  ok(/Chogan\.applyTheme\(\);\s*Chogan\.cards\.applyBack\(\);/.test(coreJs), 'the saved back is applied when a page boots');
+  ok(/Chogan\.applyTheme\(\);\s*(?:Chogan\.applyMotion\(\);\s*)?Chogan\.cards\.applyBack\(\);/.test(coreJs), 'the saved back is applied when a page boots');
   ok(/\.ch-pback \{[^}]*100% 100% no-repeat/.test(coreCss) && !/\.ch-pback \{[^}]*data:image/.test(coreCss), 'the CSS stretches one picture over the back instead of tiling a pattern');
   for (const g of ['pasur', 'hokm']) {
     const page = fs.readFileSync(path.join(ROOT, 'www/games', g, 'index.html'), 'utf8');
@@ -3903,7 +3870,7 @@ function testWayOut() {
   ok(['make', 'tap', 'restart', 'carryOn', 'useHint', 'levelDone', 'chain', 'pick', 'generate', 'restore'].every((f) => typeof E[f] === 'function'), 'the engine has its API');
   // People who know the genre as "arrow puzzle" did not recognise Way Out (#326); the name stays, the summary says it
   const woMeta = JSON.parse(fs.readFileSync(path.join(ROOT, 'www/games.json'), 'utf8')).games.find((g) => g.id === 'wayout');
-  const woWord = { fa: 'پازل پیکانی', en: 'arrow puzzle', zh: '箭头谜题', de: 'Pfeil-Puzzle', es: 'puzle de flechas' };
+  const woWord = { fa: 'پازل پیکانی', en: 'arrow puzzle', zh: '箭头谜题', de: 'Pfeil-Puzzle', es: 'puzle de flechas', pl: 'łamigłówka ze strzałkami', fr: 'puzzle de flèches', ar: 'لغز أسهم', hi: 'तीर पहेली' };
   ok(woMeta && LOCALE_CODES.every((c) => woWord[c]), 'Way Out is listed and every language has a genre word');
   ok(woMeta && LOCALE_CODES.every((c) => woMeta.summary[c].toLowerCase().includes(woWord[c].toLowerCase())), 'its summary names the genre in every language');
   ok(woMeta && woMeta.name.fa === 'راه دررو' && woMeta.name.en === 'Way Out', 'the name stays Way Out / راه دررو');
@@ -4266,7 +4233,7 @@ function testMahjongClack() {
   ok(/if \(C\.ui\.reduceMotion\(\) [^\n]*\) \{ C\.feedback\('flint'\); return; \}/.test(clBody), 'with reduced motion only the sound plays');
   ok(/\.mj-fly \{ position: fixed; z-index: 100000;/.test(page) && /fly\.remove\(\)/.test(clBody) && /fx\.style\.position = 'fixed';/.test(page) && /fx\.remove\(\)/.test(page), 'the flying tiles and sparks sit above the zoomed board and remove themselves');
   // The first try kept the tiles' inline board position on the copies, so they flew off-screen unseen
-  ok(/copy\.removeAttribute\('style'\);/.test(clBody) && /\.mj-fly \.mj-tile \{ position: absolute; inset: 0;/.test(page), 'the flying copy fills its own box, not its old board position');
+  ok(/copy\.removeAttribute\('style'\);/.test(clBody) && /\.mj-fly \.mj-tile \{ position: absolute; top: 0; right: 0; bottom: 0; left: 0;/.test(page), 'the flying copy fills its own box, not its old board position');
   const fAt = core.indexOf('    flint: function () {'), fBody = fAt > 0 ? core.slice(fAt, core.indexOf('\n    }', fAt)) : '';
   ok(fAt > 0 && /noise\(\{ freq: 3400/.test(fBody) && /for \(var i = 0; i < 6; i\+\+\)/.test(fBody) && /flint: \['flint', 'tap'\]/.test(core), 'the core has a flint strike sound, with a light vibration');
 }
@@ -5284,7 +5251,7 @@ function testPasur() {
   // a game never carries its own copy of the deck (#178)
   ok(psPage.indexOf('function faceSvg') < 0 && psPage.indexOf('data:image/svg+xml') < 0 && /return C\.cards\.el\(c, 'ps-card'/.test(psPage) && /C\.cards\.back\(\)/.test(psPage),
     'Pasur draws its cards with the shared core, not a copy');
-  ok(/prefers-reduced-motion: reduce\)'\)\.matches;\s*if \(reduce\) \{ done\(\); return; \}/.test(psPage), 'the shuffle is skipped with reduced motion');
+  ok(/var reduce = C\.ui\.reduceMotion\(\);\s*if \(reduce\) \{ done\(\); return; \}/.test(psPage), 'the shuffle is skipped with reduced motion');
   ok(/function canHumanMove\(\) \{ return S && !S\.done && S\.turn === 0 && !dealing(?: && !sweeping)?; \}/.test(psPage) && /shuffleAnim\(function \(\) \{ paint\(\); maybeAi\(\); \}\);/.test(psPage), 'nobody moves until the shuffle has finished');
   const N = (arr) => arr.map(E.name).sort().join(' ');
   const optsOf = (table, card) => E.options(P(table), E.parse(card)).map((o) => N(o)).sort();
@@ -5522,8 +5489,8 @@ function testChessFaceToFace() {
   const xq = fs.readFileSync(path.join(ROOT, 'www/games/xiangqi/index.html'), 'utf8');
   ok(/\.xq-face \.xq-piece--b \.xq-glyph \{ display: inline-block; transform: rotate\(180deg\); \}/.test(xq) && /board\.classList\.toggle\('xq-face', S\.mode === 'two' && prefs\.face\);/.test(xq), 'Chinese chess turns Black\'s characters face to face, with two players only');
   ok((xq.match(/face: prefs\.face \}/g) || []).length >= 3 && /face: !!prefs\.face \}/.test(xq), 'Chinese chess remembers the choice wherever it saves its settings');
-  const keys = ['faceToFace'].every((k) => (cs.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === 5 && (xq.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === 5);
-  ok(keys, 'the option is named in all five languages in both games');
+  const keys = ['faceToFace'].every((k) => (cs.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === LOCALE_CODES.length && (xq.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === LOCALE_CODES.length);
+  ok(keys, 'the option is named in every language in both games');
 }
 
 function testChess() {
@@ -5915,7 +5882,7 @@ function testNonogramPictures() {
     const res = E.solve(cl.rows, cl.cols);
     if (!res.solved || res.grid.some((v, i) => v !== grid[i])) bad.push(p.id + ' not unique (' + res.grid.filter((v) => v === -1).length + ' cells open)');
   }
-  ok(bad.length === 0, 'every picture has one solution the line solver reaches, a name in 4 languages and a colour per letter' + (bad.length ? ': ' + bad.join(', ') : ''));
+  ok(bad.length === 0, 'every picture has one solution the line solver reaches, a name in every language and a colour per letter' + (bad.length ? ': ' + bad.join(', ') : ''));
   // the check itself must be able to fail: two separated cells in a 10×10 are ambiguous
   const amb = new Array(100).fill(E.BLANK); amb[0] = E.FILL; amb[11] = E.FILL;
   const ac = E.cluesOf(amb, 10);
@@ -5988,7 +5955,7 @@ function testStoreMetadata() {
   const icon = pngSize(path.join(root, 'en-US/images/icon.png'));
   ok(!!icon && icon[0] === 512 && icon[1] === 512, 'en-US icon is 512×512');
   const y = fs.readFileSync(path.join(ROOT, '.github/workflows/play.yml'), 'utf8');
-  ok(/options: \[check, upload, listing\]/.test(y) && /play-api\.sh listing fastlane\/metadata\/android/.test(y), 'play.yml can send the listing from the repo metadata');
+  ok(/options: \[check, upload, listing, promote\]/.test(y) && /play-api\.sh listing fastlane\/metadata\/android/.test(y), 'play.yml can send the listing from the repo metadata');
 }
 
 /* ------------------------------------------------ Tower defence: six maps (#221) */
@@ -6057,76 +6024,43 @@ function testTdMaps() {
   ok(/\.td-mapitem \{[^}]*padding-inline: var\(--s-3\)/.test(src), 'the map row has its own inline padding, so the label clears the selected border');
 }
 
-/* ------------------------------------------------ Store text lists every game (0.5.0) */
-// Like the README in #188, the store descriptions stopped at chess: Hokm and
-// Block Drop shipped in 0.4.0 without a line, and the text still said eighteen.
-function testStoreGames() {
-  head('Store text lists every game');
-  const games = JSON.parse(fs.readFileSync(path.join(ROOT, 'www/games.json'), 'utf8')).games;
-  ok(games.length > 0, 'games.json lists games');
-  for (const [lang, key] of [['en-US', 'en'], ['fa', 'fa'], ['zh-CN', 'zh'], ['de-DE', 'de'], ['es-ES', 'es']]) {
-    const text = fs.readFileSync(path.join(ROOT, 'fastlane/metadata/android', lang, 'full_description.txt'), 'utf8');
-    const miss = games.filter((g) => text.indexOf('* ' + g.name[key].replace(/\u00ad/g, '') + ' ') < 0).map((g) => g.id);
-    ok(!miss.length, lang + ': every game has a line in the store description' + (miss.length ? ' (missing: ' + miss.join(', ') + ')' : ''));
-  }
-}
 
-/* ------------------------------------------------ README game tables */
+/* ------------------------------------------------ Game tables (GAMES.md) */
 // #188: the README stopped at Breakout while five more games shipped, and nothing noticed.
 // Every game in games.json must have a row in both the English and the Persian table.
+// #665: with ~60 rows a language the README was mostly the game list, so the tables moved
+// to GAMES.md and each half of the README links there instead.
 function testReadme() {
-  head('README game tables');
+  head('Game tables in GAMES.md');
   const md = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
+  const gp = path.join(ROOT, 'GAMES.md');
+  const list = fs.existsSync(gp) ? fs.readFileSync(gp, 'utf8') : '';
   const raw = JSON.parse(fs.readFileSync(path.join(ROOT, 'www/games.json'), 'utf8'));
   const games = Array.isArray(raw) ? raw : raw.games;
   ok(Array.isArray(games) && games.length > 0, 'games.json lists games');
-  const section = (start) => {
-    const at = md.indexOf(start);
+  const section = (text, start) => {
+    const at = text.indexOf(start + '\n');
     if (at < 0) return '';
-    const end = md.indexOf('\n### ', at + start.length);
-    return md.slice(at, end < 0 ? md.length : end);
+    const end = text.indexOf('\n## ', at + start.length);
+    return text.slice(at, end < 0 ? text.length : end);
   };
   const rows = (sec) => sec.split('\n').filter((l) => /^\| /.test(l)).map((l) => l.split('|')[1].trim());
-  const en = rows(section('### The games')), fa = rows(section('### بازی‌ها'));
-  ok(en.length > 0 && fa.length > 0, 'README has an English and a Persian game table');
+  const en = rows(section(list, '## English')), fa = rows(section(list, '## فارسی'));
+  ok(en.length > 0 && fa.length > 0, 'GAMES.md has an English and a Persian game table');
   const missEn = games.filter((g) => en.indexOf(g.name.en) < 0).map((g) => g.id);
   const missFa = games.filter((g) => fa.indexOf(g.name.fa) < 0).map((g) => g.id);
   ok(!missEn.length, 'every game has a row in the English table' + (missEn.length ? ' (missing: ' + missEn.join(', ') + ')' : ''));
   ok(!missFa.length, 'every game has a row in the Persian table' + (missFa.length ? ' (missing: ' + missFa.join(', ') + ')' : ''));
-}
-
-/* ------------------------------------------------ Menu: pinned and recent (#193) */
-// The home page gained a pinned section and a recently played row. Recent is written
-// when a game page opens (stats only change when a round ends), pins in the settings.
-function testMenuPins() {
-  head('Menu pins and recent');
-  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
-  const home = fs.readFileSync(path.join(ROOT, 'www/index.html'), 'utf8');
-  ok(/Chogan\.recent = \{/.test(core) && /Chogan\.pins = \{/.test(core), 'the core has Chogan.recent and Chogan.pins');
-  const gameAt = core.indexOf('Chogan.game = function (cfg)');
-  ok(gameAt > 0 && /Chogan\.recent\.touch\(cfg\.id\)/.test(core.slice(gameAt, gameAt + 400)), 'opening a game page records it as recent');
-  ok(/pinned: \[\]/.test(core), 'pinned is a default setting');
-  ok(/C\.pins\.toggle\(g\.id\)/.test(home) && /e\.stopPropagation\(\)/.test(home), 'every menu card has a pin toggle that does not open the game');
-  ok(/ch-section--pinned/.test(home) && /C\.recent\.list\(\)/.test(home), 'the home page shows pinned games and recent games');
-  const keys = ['pinned', 'recent', 'pin', 'unpin'];
-  const missing = [];
-  for (const k of keys) { const n = (home.match(new RegExp('[ ,{]' + k + ": '", 'g')) || []).length; if (n < LOCALE_CODES.length) missing.push(k + ' ' + n); }
-  ok(!missing.length, 'pin and recent strings exist in every language' + (missing.length ? ' (' + missing.join(', ') + ')' : ''));
-  // #481: new games went to the end of their section and the owner couldn't find Hop.
-  // The menu's own isNew and row code, run on invented games: new and unplayed only,
-  // newest first, pinned ones left out, six at most.
-  const isNewSrc = (home.match(/  function isNew\(g\) \{[\s\S]*?\n  \}\n/) || [''])[0];
-  const rowSrc = (home.match(/    var freshGames = [\s\S]*?\.slice\(0, 6\)\.map\(function \(x\) \{ return x\.g; \}\);/) || [''])[0];
-  ok(isNewSrc.length > 0 && rowSrc.length > 0, 'the menu has a row of new games');
-  if (isNewSrc && rowSrc) {
-    const day = (k) => new Date(Date.UTC(2026, 9, 25 - k)).toISOString().slice(0, 10);
-    const G = [['old', 40], ['a', 9], ['b', 2], ['c', 2], ['played', 1], ['pinned', 1], ['d', 5], ['e', 6], ['f', 7], ['g', 8], ['h', 20]].map((x) => ({ id: x[0], added: day(x[1]) }));
-    const sb = { GAMES: G, Date: { now: () => Date.UTC(2026, 9, 25, 12) },
-      C: { stats: { get: () => ({ byGame: { played: { plays: 1 } } }) }, keyToDate: (k) => new Date(k + 'T00:00:00Z'), pins: { has: (id) => id === 'pinned' } } };
-    vm.runInNewContext(isNewSrc + rowSrc + ';this.out = freshGames.map(function (g) { return g.id; });', sb);
-    ok(sb.out.join() === 'c,b,d,e,f,g', 'the row shows unplayed games added in the last three weeks, newest first, no pinned ones, six at most (' + sb.out.join() + ')');
-  }
-  ok((home.match(/[ ,{]freshRow: '/g) || []).length === LOCALE_CODES.length, 'the row is named in every language');
+  const faAt = md.indexOf('## فارسی');
+  ok(faAt > 0 && /\]\(GAMES\.md#english\)/.test(md.slice(0, faAt)) && /\]\(GAMES\.md#فارسی\)/.test(md.slice(faAt)),
+    'each half of the README links its own table in GAMES.md');
+  ok(!md.split('\n').some((l) => /^\| /.test(l)), 'the README itself no longer carries a game table');
+  // #615: playchogan.com is only a redirect; the web line must still name the real
+  // origin, because that is where a player's progress lives (localStorage is per origin).
+  const webEn = (md.match(/^- \*\*Web:\*\*.*$/m) || [''])[0], webFa = (md.match(/^- \*\*وب:\*\*.*$/m) || [''])[0];
+  // Capybara's web build lives on webcomcr.com, its one origin (decision A)
+  ok([webEn, webFa].every((l) => l.includes('(https://webcomcr.com/proyectos-sociales/capybara/jugar/)')),
+    'both README web lines link Capybara\'s web origin');
 }
 
 /* ------------------------------------------------ Ways to play (#203) */
@@ -6146,22 +6080,24 @@ function testWaysToPlay() {
   ok(shopFn.length > 0 && (shopFn.match(/'grid-template-columns': 'repeat\(4, minmax\(0, 1fr\)\)'/g) || []).length === 2 && !/width: '84px'/.test(shopFn),
     'characters and palettes sit four to a row instead of fixed tiles that wrap three and one');
   const md = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
-  const urls = ['https://choganhq.github.io/chogan/', 'https://f-droid.org/packages/io.github.choganhq.chogan/', 'https://t.me/chogangamebot'];
+  // Capybara plays on webcomcr.com and installs from its page there (owner decision A, 2026-11-14)
+  const urls = ['https://webcomcr.com/proyectos-sociales/capybara/jugar/', 'https://webcomcr.com/proyectos-sociales/capybara'];
   const at = home.indexOf("C.t('waysToPlay')");
   ok(at > 0, 'the About card has a ways-to-play row');
   const row = home.slice(at, at + 600);
   const miss = urls.filter((u) => row.indexOf("'" + u + "'") < 0);
-  ok(!miss.length, 'the row links the web, F-Droid and Telegram' + (miss.length ? ' (missing: ' + miss.join(', ') + ')' : ''));
-  const keys = ['waysToPlay', 'playWeb', 'playAndroid', 'playTelegram'];
+  ok(!miss.length, 'the row links Capybara on the web and its Android page' + (miss.length ? ' (missing: ' + miss.join(', ') + ')' : ''));
+  const keys = ['waysToPlay', 'playWeb', 'playAndroid'];
   const short = keys.filter((k) => (home.match(new RegExp('[ ,{]' + k + ": '", 'g')) || []).length < LOCALE_CODES.length);
   ok(!short.length, 'ways-to-play strings exist in every language' + (short.length ? ' (' + short.join(', ') + ')' : ''));
   ok(!/telegram-web-app\.js/.test(home), 'no Telegram script is loaded (owner decision 2026-10-15)');
   // Release posts go to @chogan_games (#258); the app and README point there (#261)
-  ok(/el\('a', \{ href: 'https:\/\/t\.me\/chogan_games'/.test(home) && (home.match(/[ ,{]news: '/g) || []).length === LOCALE_CODES.length, 'the About card links the news channel, labelled in every language');
-  // Without dir=ltr the Persian card showed «chogan_games@»
-  ok(/href: 'https:\/\/t\.me\/chogan_games'[^}]*dir: 'ltr'/.test(home), 'the channel name keeps its @ in front in Persian');
+  // Capybara has no news channel of its own and never sends players to the original's (decision A)
+  ok(!/t\.me\/chogan/.test(home) && !/playchogan\.com/.test(home), 'the About card links none of the original\'s channels or servers');
+  ok(/https:\/\/github\.com\/cmena92\/chogan\/issues/.test(home), 'reports go to Capybara\'s own issues');
   const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
-  ok((readme.match(/https:\/\/t\.me\/chogan_games/g) || []).length >= 2, 'both halves of the README link the news channel');
+  // Capybara has no news channel; both halves of its README link its own reports (decision A)
+  ok((readme.match(/https:\/\/github\.com\/cmena92\/chogan\/issues/g) || []).length >= 2, 'both halves of the README link Capybara\'s reports');
   const fa = md.indexOf('## فارسی');
   ok(fa > 0, 'README has a Persian section');
   for (const [name, sec] of [['English', md.slice(0, fa)], ['Persian', md.slice(fa)]]) {
@@ -6410,6 +6346,39 @@ function testLudo() {
 }
 
 /* ------------------------------------------- Snakes and Ladders (#314) */
+// #595: a token seemed to skip a square on every move: move() drew the first square walked
+// and at once, in the same tick, the second. Runs the page's own move() and pathOf() with a
+// fake clock and records how long each square stays on screen.
+function testSnakesWalk() {
+  head('Snakes and Ladders: the token shows every square it walks (#595)');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/snakes/index.html'), 'utf8');
+  const grab = (name) => { const a = html.indexOf('  function ' + name + '('), b = html.indexOf('\n  }\n', a); return a > 0 && b > a ? html.slice(a, b + 4) : ''; };
+  const src = grab('pathOf') + grab('move');
+  ok(src.includes('function pathOf(') && src.includes('function move('), 'move() and pathOf() found in the page');
+  if (!src.includes('function move(')) return;
+  for (const [roll, steps, jump] of [[4, [11, 12, 13, 14], null], [1, [5], null], [3, [20, 21, 22], { from: 22, to: 40, kind: 'ladder' }]]) {
+    const frames = [];  // [square shown, at ms]
+    let clock = 0, queued = null;
+    const sb = {
+      anim: null, G: { s: { turn: 0 }, roll, done: false }, E: { play: () => ({ state: { turn: 1 }, steps, jump, bounced: false, again: false }) },
+      C: { ui: { reduceMotion: () => false }, feedback() {}, t: (k) => k },
+      centre: (n) => [n, 0], ladderLine: () => ({ len: 2, at: (t) => [1000 + t, 0] }), snakeLine: () => ({ len: 2, at: (t) => [1000 + t, 0] }),
+      later: (fn, ms) => { queued = { fn, at: clock + ms }; },
+      save() {}, startTurn() {}, finish() {}, LONGEST_LADDER: 0, LONGEST_SNAKE: 0,
+    };
+    const shot = () => { if (sb.anim) frames.push([sb.anim.pts[sb.anim.i].x, clock]); };
+    sb.render = shot; sb.draw = shot;
+    vm.createContext(sb);
+    vm.runInContext(src + '\nmove();', sb);
+    // run the fake clock until the walk and its slide are over
+    for (let k = 0; k < 200 && queued && sb.anim; k++) { const q = queued; queued = null; clock = q.at; q.fn(); }
+    const seen = [];
+    frames.forEach(([x, at], i) => { const until = i + 1 < frames.length ? frames[i + 1][1] : clock; if (x < 1000) seen.push([x, until - at]); });
+    const order = seen.map((s) => s[0]).join(), shortest = Math.min(...seen.map((s) => s[1]));
+    ok(seen.length > 0 && order === steps.join() && shortest >= 100, 'a roll of ' + roll + (jump ? ' onto a ladder' : '') + ': every square walked is shown in order for at least 100 ms (' + order + ', shortest ' + shortest + ' ms)');
+  }
+}
+
 function testSnakes() {
   head('Snakes and Ladders');
   const t0 = Date.now();
@@ -6786,7 +6755,7 @@ function testCheckers() {
   ok(tFree < 1500, 'a hard move from the start with optional capture takes under 1.5 s here (' + tFree + ' ms)');
   // (#391 Huevo: every move list also gets the state, for the Queen's edge clock, and Huevo is always optional)
   ok(/prefs\.free = v === 'free';/.test(html) && /free = !daily && \(prefs\.free === true \|\| rules === 'huevo'\);/.test(html) && /E\.aiMove\(S\.board, 2, S\.level, rnd, S\.rules, S\.free, S\)/.test(html) &&
-    (html.match(/E\.moves\(S\.board, S\.turn, S\.rules, S\.free, S\)/g) || []).length === 3 && !/E\.moves\(S\.board, S\.turn, S\.rules\)/.test(html) && !/E\.moves\(S\.board, S\.turn, S\.rules, S\.free\)/.test(html) &&
+    (html.match(/E\.moves\(S\.board, S\.turn, S\.rules, S\.free, S\)/g) || []).length === 4 && !/E\.moves\(S\.board, S\.turn, S\.rules\)/.test(html) && !/E\.moves\(S\.board, S\.turn, S\.rules, S\.free\)/.test(html) &&
     /var jump = !S\.done && !busy\(\) && !S\.free && /.test(html) && /free: !v\.daily && \(v\.free === true \|\| v\.rules === 'huevo'\),/.test(html),
     'the page offers the choice, keeps the daily game forced, saves it, gives it to the AI and every move list, and drops the "must jump" note');
   ok(/prefs\.rules = v;/.test(html) && /var rules = daily \? 'classic' : prefRules\(\),/.test(html) && /E\.aiMove\(S\.board, 2, S\.level, rnd, S\.rules[,)]/.test(html), 'the page offers both rule sets, keeps the daily game classic and gives the AI the rules in play');
@@ -7029,10 +6998,10 @@ function testJigsaw() {
   }
   ok(JSON.stringify(P.ids.slice().sort()) === JSON.stringify(E.PICS.slice().sort()), 'the engine and the drawings list the same ' + E.PICS.length + ' pictures');
   ok(shapes.size === E.PICS.length && !broke.length && !weak.length, 'every picture draws at least 15 shapes in 4 colours or more, and no two share their shapes (' + shapes.size + ' drawn' + (broke.length ? '; broke: ' + broke.slice(0, 3).join(', ') : '') + (weak.length ? '; ' + weak.slice(0, 3).join(', ') : '') + ')');
-  const langs = ['fa', 'en', 'zh', 'de', 'es'], blocks = langs.map((l) => (html.match(new RegExp('\\n      ' + l + ': \\{([\\s\\S]*?)\\n      \\}')) || [])[1] || '');
+  const langs = LOCALE_CODES, blocks = langs.map((l) => (html.match(new RegExp('\\n      ' + l + ': \\{([\\s\\S]*?)\\n      \\}')) || [])[1] || '');
   const unnamed = [];
   E.PICS.forEach((id) => blocks.forEach((b, i) => { if (!new RegExp('\\bpic_' + id + ": '[^']+'").test(b)) unnamed.push(langs[i] + ':' + id); }));
-  ok(blocks.every((b) => b.length > 500) && !unnamed.length, 'every picture has a name in all five languages (' + E.PICS.length * 5 + ' names' + (unnamed.length ? '; missing ' + unnamed.slice(0, 5).join(', ') : '') + ')');
+  ok(blocks.every((b) => b.length > 500) && !unnamed.length, 'every picture has a name in every language (' + E.PICS.length * LOCALE_CODES.length + ' names' + (unnamed.length ? '; missing ' + unnamed.slice(0, 5).join(', ') : '') + ')');
   ok(!/<img\b|data:image|url\(|new Image\(|\.png|\.jpe?g|\.webp/i.test(html), 'the page loads no image of any kind: no photo, no file, no data URL');
 
   // Page wiring and identity
@@ -7133,6 +7102,58 @@ function testFitScreen() {
     ok(/cqw/.test(cw) && /cqh/.test(cw) && top >= 100, id + ': cards size by the game area\'s width and height, up to ' + top + 'px (' + cw + ')');
     ok(new RegExp('\\.' + cls + ' \\{[^}]*max-width: max\\(560px, calc\\(var\\(--cw\\) \\* [\\d.]+\\)\\)').test(h), id + ': the table widens with the cards');
   }
+}
+
+// #598: the how-to-play cards only went forward; a player who tapped Next too soon
+// could not read a card again. Runs the core's own ui.tutorial with fake DOM parts.
+function testTutorialBack() {
+  head('Core: the how-to-play cards go back as well as forward (#598)');
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  const a = core.indexOf('  ui.tutorial = function (pages, onDone) {'), b = core.indexOf('\n  };\n', a);
+  ok(a > 0 && b > a, 'ui.tutorial found in the core');
+  if (!(a > 0 && b > a)) return;
+  const make = () => { const n = { textContent: '', innerHTML: '', kids: [], on: {}, appendChild(k) { n.kids.push(k); }, addEventListener(t, f) { n.on[t] = f; } }; return n; };
+  for (const rtl of [false, true]) {
+    let actions = null, closed = 0, doneN = 0, card = null;
+    const btns = [make(), make()];
+    const sb = {
+      ui: { modal: (o) => { actions = o.actions; card = o.body[0]; return { close: () => { closed++; }, box: { querySelectorAll: () => btns } }; } },
+      el: (tag, attrs, kids) => { const n = make(); n.cls = attrs && attrs.class; (kids || []).forEach((k) => n.kids.push(k)); return n; },
+      Chogan: { t: (k) => k, isRtl: () => rtl },
+    };
+    vm.createContext(sb);
+    vm.runInContext(core.slice(a, b + 5), sb);
+    const pages = [{ title: 'one', text: '1' }, { title: 'two', text: '2' }, { title: 'three', text: '3' }];
+    sb.ui.tutorial(pages, () => { doneN++; });
+    const title = () => card.kids[1].textContent;
+    const left = actions[0], next = actions[1];
+    const where = rtl ? 'right-to-left' : 'left-to-right';
+    ok(title() === 'one' && btns[0].textContent === 'skip' && btns[1].textContent === 'next', where + ': the first card offers Skip and Next');
+    next.onClick(); next.onClick();
+    ok(title() === 'three' && btns[0].textContent === 'back' && btns[1].textContent === 'gotIt', where + ': on the last card the left button reads Back (' + btns[0].textContent + ')');
+    left.onClick();
+    ok(title() === 'two' && closed === 0 && doneN === 0, where + ': Back shows the card before and keeps the cards open');
+    left.onClick();
+    ok(title() === 'one' && btns[0].textContent === 'skip', where + ': back on the first card the left button is Skip again');
+    const swipe = (dx, dy) => { card.on.pointerdown({ clientX: 200, clientY: 300 }); card.on.pointerup({ clientX: 200 + dx, clientY: 300 + (dy || 0) }); };
+    const onward = rtl ? 120 : -120;
+    ok(typeof card.on.pointerdown === 'function' && typeof card.on.pointerup === 'function', where + ': the card listens for swipes');
+    if (typeof card.on.pointerup !== 'function') continue;
+    swipe(onward);
+    ok(title() === 'two', where + ': a swipe ' + (rtl ? 'to the right' : 'to the left') + ' goes on');
+    swipe(-onward);
+    ok(title() === 'one', where + ': the opposite swipe goes back');
+    swipe(-onward);
+    ok(title() === 'one' && closed === 0, where + ': swiping back on the first card does nothing');
+    swipe(onward * 0.2); swipe(onward, 300);
+    ok(title() === 'one', where + ': a short or mostly vertical move is not a swipe');
+    swipe(onward); swipe(onward); swipe(onward);
+    ok(title() === 'three' && closed === 0, where + ': swiping on past the last card does not close it');
+    next.onClick();
+    ok(closed === 1 && doneN === 1, where + ': Got it on the last card closes the cards and marks them seen');
+  }
+  const css = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.css'), 'utf8');
+  ok(/\.ch-tut \{[^}]*touch-action: pan-y/.test(css), 'the card leaves sideways moves to the page (touch-action: pan-y), so a phone does not cancel the swipe');
 }
 
 function testCoreLabels() {
@@ -7663,7 +7684,8 @@ function testPrivacyPage() {
   if (!fs.existsSync(f)) return;
   const html = fs.readFileSync(f, 'utf8');
   ok(/<section lang="fa" dir="rtl">/.test(html) && /<section lang="en" dir="ltr">/.test(html), 'Persian and English sections');
-  ok(/choganhq@gmail\.com/.test(html), 'contact email present');
+  // Capybara's contact is its public issues (decision A)
+  ok(/github\.com\/cmena92\/chogan\/issues/.test(html) && !/playchogan\.com/.test(html), 'contact present, and no report server of the original');
   // An undefined variable silently drops the whole declaration: var(--s-8) once
   // removed all the page's padding and the text touched the screen edge
   const css = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.css'), 'utf8') + html;
@@ -7677,7 +7699,7 @@ function testPrivacyPage() {
   ok(perms.length > 0 && perms.every((p) => p === 'android.permission.VIBRATE'), 'Android declares only VIBRATE, as the page says (' + perms.join(', ') + ')');
   ok(/android:allowBackup="false"/.test(manifest), 'Android backup is off, as the page says');
   const menu = fs.readFileSync(path.join(ROOT, 'www/index.html'), 'utf8');
-  ok(/href: 'privacy\.html'/.test(menu), 'the profile links to the privacy page');
+  ok(/href: (Chogan\.plus \? 'privacy-plus\.html' : )?'privacy\.html'/.test(menu), 'the profile links to the privacy page');
 }
 
 /* ------------------------------------------------ Google Play API */
@@ -7696,7 +7718,11 @@ function testPlayApi() {
   const y = fs.readFileSync(wf, 'utf8');
   const on = (y.match(/\non:\n([\s\S]*?)\n[a-z]/) || [])[1] || '';
   ok(/^\s+workflow_dispatch:/m.test(on) && !/\b(push|pull_request|schedule|release):/.test(on), 'play.yml: manual dispatch only');
-  ok(/options: \[internal, alpha\]/.test(y) && !/production/.test(y.replace(/^#.*$/mg, '')), 'play.yml: only testing tracks, never production');
+  // Production is reached only by promoting a tested version code, never by an upload (#613)
+  const code = y.replace(/^\s*#.*$/mg, '');
+  ok(/options: \[internal, alpha\]/.test(y) && !/production/.test(code.replace(/description: '[^']*'/g, '')), 'play.yml: uploads only reach testing tracks; production is never named as a track');
+  ok(/run: bash tools\/play-api\.sh promote alpha "\$VERSION_CODE" fastlane\/metadata\/android$/m.test(y) && /VERSION_CODE: \$\{\{ inputs\.version_code \}\}/.test(y),
+    'play.yml: promote goes from alpha only, its version code through env');
   ok(y.split('\n').filter((l) => /secrets\.PLAY_SERVICE_ACCOUNT_JSON/.test(l)).every((l) => /^\s+PLAY_SERVICE_ACCOUNT_JSON: \$\{\{ secrets\.PLAY_SERVICE_ACCOUNT_JSON \}\}$/.test(l)), 'play.yml: the service account key only reaches steps through env');
   ok(!/\$\{\{ inputs\.[a-z]+ \}\}/.test(y.split('\n').filter((l) => /^\s+run:/.test(l)).join('\n')), 'play.yml: inputs never interpolated into run lines');
   ok(/if: always\(\)\n\s+run: rm -f "\$RUNNER_TEMP\/release\.jks"/.test(y), 'play.yml: the keystore is always removed');
@@ -7724,7 +7750,7 @@ function testPlayApi() {
           claims.exp - claims.iat === 600;
         return tokenOk ? send(200, { access_token: 'tok-123' }) : send(400, { error: 'invalid_grant' });
       }
-      calls.push({ m: req.method, u: req.url, auth: req.headers.authorization, body: body.toString().slice(0, 200), len: body.length });
+      calls.push({ m: req.method, u: req.url, auth: req.headers.authorization, body: body.toString().slice(0, 2000), len: body.length });
       if (failOn && req.url.indexOf(failOn) >= 0) return send(403, { error: { message: 'The caller does not have permission' } });
       const base = '/androidpublisher/v3/applications/' + PKG + '/edits';
       if (req.method === 'POST' && req.url === base) return send(200, { id: 'E1' });
@@ -7732,6 +7758,8 @@ function testPlayApi() {
       if (req.method === 'DELETE' && req.url === base + '/E1') return send(204, {});
       if (req.method === 'POST' && req.url === '/upload' + base + '/E1/bundles?uploadType=media') return send(200, { versionCode: Number(bundleVc) });
       if (req.method === 'PUT' && req.url === base + '/E1/tracks/internal') return send(200, {});
+      if (req.method === 'GET' && req.url === base + '/E1/tracks/alpha') return send(200, { track: 'alpha', releases: [{ status: 'completed', versionCodes: ['17'] }, { status: 'draft', versionCodes: ['18'] }] });
+      if (req.method === 'PUT' && req.url === base + '/E1/tracks/production') return send(200, {});
       if (req.method === 'POST' && req.url === base + '/E1:commit') return send(200, {});
       if (req.method === 'PUT' && /\/E1\/listings\/[a-zA-Z-]+$/.test(req.url)) return send(200, JSON.parse(body.toString()));
       if (req.method === 'DELETE' && /\/E1\/listings\/[a-zA-Z-]+(\/[a-zA-Z]+)?$/.test(req.url)) return send(200, {});
@@ -7772,6 +7800,28 @@ function testPlayApi() {
     r = await run(['upload', aab, 'internal', '17'], env);
     ok(r.code === 1 && !calls.some((c) => c.m === 'PUT'), 'upload: a bundle Play reads as another versionCode stops before the track changes');
     bundleVc = '17';
+
+    // promote (#613): the tested bundle goes to production with its changelogs as notes
+    const pmeta = path.join(tmp, 'pmeta');
+    for (const [lang, text] of [['en-US', 'New games:\n- Link Up'], ['fa', 'بازی تازه'], ['de-DE', 'Neu']]) {
+      fs.mkdirSync(path.join(pmeta, lang, 'changelogs'), { recursive: true });
+      fs.writeFileSync(path.join(pmeta, lang, 'changelogs', '17.txt'), text + '\n');
+    }
+    fs.writeFileSync(path.join(pmeta, 'en-US', 'changelogs', '16.txt'), 'old\n');
+    r = await run(['promote', 'alpha', '17', pmeta], env);
+    const prod = calls.find((c) => c.m === 'PUT' && /\/tracks\/production$/.test(c.u));
+    let rel = null;
+    try { rel = JSON.parse(prod.body).releases[0]; } catch (e) { /* checked below */ }
+    ok(r.code === 0 && !!rel && rel.status === 'completed' && rel.versionCodes.join() === '17', 'promote: production gets versionCode 17, completed (' + r.code + ')');
+    ok(!!rel && (rel.releaseNotes || []).map((n) => n.language).join() === 'de-DE,en-US,fa' && rel.releaseNotes.some((n) => n.text === 'New games:\n- Link Up'),
+      'promote: every language\'s changelog for that version code is a release note');
+    ok(calls.length > 0 && !calls.some((c) => c.u.indexOf('/upload/') === 0) && calls[calls.length - 1].u.endsWith('/E1:commit'), 'promote: no bundle is uploaded, the edit is committed last');
+    for (const [vc, why] of [['18', 'a draft on alpha'], ['19', 'not on alpha at all']]) {
+      r = await run(['promote', 'alpha', vc, pmeta], env);
+      ok(r.code === 1 && !calls.some((c) => /\/tracks\/production$/.test(c.u) || c.u.endsWith(':commit')), 'promote: ' + why + ' stops before production changes (' + r.code + ')');
+    }
+    r = await run(['promote', 'production', '17', pmeta], env);
+    ok(r.code === 2 && !calls.some((c) => c.u.endsWith(':commit')), 'promote: only from a testing track');
 
     failOn = '/edits';
     r = await run(['check'], env);
@@ -7843,6 +7893,52 @@ function testPepkExport() {
   ok(/retention-days: 1/.test(y), 'the artifact lives one day');
 }
 
+/* ------------------------------------------------ Stray files */
+// Two 4 MB Chrome traces and a screenshot from the Spider lag proofs were
+// committed to the repository root (#472, #532) and sat there unnoticed (#575).
+function testNoStrayFiles() {
+  head('No stray files in the repository');
+  const r = spawnSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8' });
+  const tracked = (r.stdout || '').split('\0').filter(Boolean);
+  ok(r.status === 0 && tracked.length > 100, 'tracked files listed (' + tracked.length + ')');
+  const big = tracked.filter((f) => { try { return fs.statSync(path.join(ROOT, f)).size > 1000000; } catch (e) { return false; } });
+  ok(big.length === 0, 'no tracked file over 1 MB' + (big.length ? ': ' + big.join(', ') : ''));
+  const ROOT_OK = /^(?:[A-Z_]+\.md|LICENSE|\.gitignore|capacitor\.config\.json)$/;
+  const loose = tracked.filter((f) => !f.includes('/') && !ROOT_OK.test(f));
+  ok(loose.length === 0, 'only docs and config at the root' + (loose.length ? ': ' + loose.join(', ') : ''));
+}
+
+/* ------------------------------------------------ Community health files */
+// GitHub's community profile listed no code of conduct, security policy,
+// issue or pull request template (#574); CONTRIBUTING still said five
+// languages after Polish made six.
+function testCommunityFiles() {
+  head('Community health files');
+  const read = (rel) => { try { return fs.readFileSync(path.join(ROOT, rel), 'utf8'); } catch (e) { return ''; } };
+  const files = ['CODE_OF_CONDUCT.md', 'SECURITY.md', 'ACCESSIBILITY.md', 'CONTRIBUTING.md', '.github/pull_request_template.md'];
+  for (const rel of files) ok(read(rel).length > 200, rel + ' exists and is not a stub');
+  const coc = read('CODE_OF_CONDUCT.md');
+  ok(/Contributor Covenant/.test(coc) && /version 2\.1/.test(coc) && /choganhq@gmail\.com/.test(coc), 'code of conduct is Contributor Covenant 2.1 with our contact');
+  const sec = read('SECURITY.md');
+  ok(sec.includes('https://github.com/choganhq/chogan/security/advisories/new') && sec.includes('choganhq@gmail.com'), 'security policy names the private report form and the email');
+  const tplDir = path.join(ROOT, '.github/ISSUE_TEMPLATE');
+  const forms = fs.existsSync(tplDir) ? fs.readdirSync(tplDir).filter((f) => /\.ya?ml$/.test(f) && !/^config\./.test(f)) : [];
+  ok(forms.length >= 2, 'issue templates found (' + forms.length + ')');
+  for (const f of forms) {
+    const y = read('.github/ISSUE_TEMPLATE/' + f);
+    ok(/^name: \S/m.test(y) && /^description: \S/m.test(y) && /^body:/m.test(y) && /required: true/.test(y), f + ': a form with a name, a description and a required field');
+  }
+  // Reporters write in Persian, Chinese and more; a template that forbids it
+  // or a closed blank issue would turn them away.
+  ok(/^blank_issues_enabled: true$/m.test(read('.github/ISSUE_TEMPLATE/config.yml')), 'blank issues stay allowed');
+  for (const rel of files.concat(forms.map((f) => '.github/ISSUE_TEMPLATE/' + f), ['.github/ISSUE_TEMPLATE/config.yml'])) {
+    if (rel === 'CONTRIBUTING.md') continue;
+    ok(!/[؀-ۿ]/.test(read(rel).replace(/«\?»/g, '')), rel + ': English only');
+  }
+  const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+  ok(read('CONTRIBUTING.md').includes('all ' + words[LOCALE_CODES.length] + ' languages'), 'CONTRIBUTING names ' + LOCALE_CODES.length + ' languages');
+}
+
 /* ------------------------------------------------ CI and tools in English */
 // The owner wants the working system in English: every name and message GitHub
 // shows, and the scripts CI runs (#154). Only real UI values stay, such as the
@@ -7881,7 +7977,15 @@ function testHomeGrid() {
   ok(/C\.store\.set\('settings', C\.state\.settings\)/.test(menu.slice(menu.indexOf('var asList'))), 'انتخاب نما در تنظیمات ذخیره می‌شود');
   // قاعده‌ی دو ستون باید بیرون از media query باشد تا روی گوشی هم اعمال شود
   const topLevel = css.replace(/@media[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, '');
-  ok(/\.ch-games--grid \{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); \}/.test(topLevel), 'دو ستون روی پهنای گوشی (بیرون از media query)');
+  // #666 put three tiles a row on a phone; since #687 the icon fills the tile at every
+  // width (a friend could not find games among 42px icons in framed cards)
+  ok(/\.ch-games--grid \{ grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/.test(topLevel), 'three tiles a row at phone width (outside any media query)');
+  ok(/\.ch-games--grid \.ch-game__icon \{ width: 100%; height: auto; aspect-ratio: 1;/.test(topLevel) && /\.ch-games--grid \.ch-game__name \{ font-size: 14px;/.test(topLevel),
+    'the icon fills its tile and the name is 14px, at every width');
+  ok(/\.ch-games--grid \.ch-game \{[^}]*background: transparent; border: 0; box-shadow: none;/.test(topLevel) && /\.ch-games--grid \.ch-game\.ch-tap:hover, \.ch-games--grid \.ch-game\.ch-tap:active \{ box-shadow: none; \}/.test(topLevel),
+    'a tile has no card frame, and hover or press does not draw one');
+  ok(/\.ch-games--grid \.ch-game__meta \{\n  position: absolute; top: 4px; inset-inline-start: 4px;/.test(topLevel), 'the Continue badge sits in the icon\'s corner');
+  ok(/@media \(min-width: 620px\) \{ \.ch-games--grid \{ grid-template-columns: repeat\(auto-fill, minmax\(112px, 1fr\)\);/.test(css), 'a wide screen still fits as many tiles as it can');
   ok(/^\s+list: '/m.test(core), 'نماد list در هسته هست');
   for (const k of ['viewGrid', 'viewList']) {
     const n = (menu.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length;
@@ -8086,7 +8190,7 @@ function testMenu() {
   ok(bestLine({ id: 'dots' }) === '<winsN>(3)', 'نقطه‌بازی همان خط قبلی را نشان می‌دهد');
   // «برد ۱۳» read backwards in Persian: the count now comes first where the language puts it (#352)
   ok(/winsN: '\{n\} برد', solvedN: '\{n\} حل‌شده', clearedN: '\{n\} پاک‌شده'/.test(menu) && /winsN: '\{n\} wins'/.test(menu), 'Persian says «۱۳ برد», «۱۳ حل‌شده», «۱۳ پاک‌شده», and English "13 wins"');
-  ok((menu.match(/\bwinsN: '[^']*\{n\}[^']*'/g) || []).length === 5 && (menu.match(/\bsolvedN: '[^']*\{n\}/g) || []).length === 5 && (menu.match(/\bclearedN: '[^']*\{n\}/g) || []).length === 5, 'every language has the three counts as templates');
+  ok((menu.match(/\bwinsN: '[^']*\{n\}[^']*'/g) || []).length === LOCALE_CODES.length && (menu.match(/\bsolvedN: '[^']*\{n\}/g) || []).length === LOCALE_CODES.length && (menu.match(/\bclearedN: '[^']*\{n\}/g) || []).length === LOCALE_CODES.length, 'every language has the three counts as templates');
   ok(!/C\.t\('(wins|solved|cleared)'\) \+ ' ' \+ C\.num/.test(menu), 'no label is glued to a number in front of it any more');
   ok(bestLine({ id: 'never-played' }) === null, 'بازی بازی‌نشده خطی ندارد');
 
@@ -8295,19 +8399,20 @@ function testDarkAccentText() {
   }
   ok(!low.length, 'every accent\'s dark-theme text reads at 4.5:1 or more on the lightest dark surface' + (low.length ? ': ' + low.join(', ') : ''));
   // the range only proves txt() ran on the list; it grows with the games (31 at Crazy Eights, #416;
-  // 41 at Air Hockey, #524)
-  ok(!far.length && changed.length >= 20 && changed.length <= 50, 'accents that already read keep their colour; ' + changed.length + ' are lightened' + (far.length ? ' (changed needlessly: ' + far.join(', ') + ')' : ''));
+  // 41 at Air Hockey, #524; 51 at Wrigglers, #621), so it is bounded by the list itself
+  ok(!far.length && changed.length >= 20 && changed.length < games.length, 'accents that already read keep their colour; ' + changed.length + ' are lightened' + (far.length ? ' (changed needlessly: ' + far.join(', ') + ')' : ''));
   const bw = txt('#3C4F9A');
   ok(cr(bw, '#342C22') < 5.5 && lum(bw) > lum('#3C4F9A') && txt('nonsense') === '', 'Bowling\'s blue is lightened only as far as needed (' + bw + ', ' + cr(bw, '#342C22').toFixed(2) + ':1), and a bad colour gives nothing');
-  const rules = ['.ch-game__pin--on', '.ch-badge--accent', '.ch-btn--soft', '.ch-iconbtn[aria-pressed="true"]', '.ch-seg button[aria-selected="true"]'];
+  const rules = ['.ch-badge--accent', '.ch-btn--soft', '.ch-iconbtn[aria-pressed="true"]', '.ch-seg button[aria-selected="true"]'];
   ok(rules.every((r) => css.indexOf(':root:not([data-theme="light"]) ' + r) > 0 && css.indexOf(':root[data-theme="dark"] ' + r) > 0) &&
     (css.match(/\{ color: var\(--game-text-dark, var\(--game, var\(--c-accent\)\)\); \}/g) || []).length === 2,
-    'the dark theme gives the lightened text to the selected option, soft buttons, accent badges, pressed icon buttons and menu pins');
+    'the dark theme gives the lightened text to the selected option, soft buttons, accent badges and pressed icon buttons');
   ok(/r\.style\.setProperty\('--game-text-dark', Chogan\.textOnDark\(color\)\);/.test(core) && /r\.style\.removeProperty\('--game-text-dark'\);/.test(core), 'a game sets and clears it with its accent');
   // every place that gives an element a game's colour also gives it the dark-theme text
-  // (counting a fixed four broke when #481 added the new-games row)
+  // (counting a fixed four broke when #481 added the new-games row; #687 removed that row and
+  // the recent row, leaving the tile, the daily list and the game sheet)
   const withColour = (menu.match(/'--game': g\.color/g) || []).length;
-  ok(withColour >= 4 && (menu.match(/'--game': g\.color, '--game-soft': g\.soft, '--game-text-dark': C\.textOnDark\(g\.color\)/g) || []).length === withColour,
+  ok(withColour >= 2 && (menu.match(/'--game': g\.color, '--game-soft': g\.soft, '--game-text-dark': C\.textOnDark\(g\.color\)/g) || []).length === withColour,
     'every menu element that carries a game colour carries its dark text too');
 }
 
@@ -8375,7 +8480,7 @@ function coreMotion(core, css, fly, burstAt, burstEnd) {
   const still = cardAt(e, 0, 0, 50, 70);
   ok(e.ui.fly(still, shoe, { flip: true }) === null && e.anims.length === 0 && !still.kids.length && e.ui.burst({ x: 5, y: 5 }) === false && !e.appended.length,
     'with reduced motion nothing flies, turns or bursts');
-  ok(/\.ch-fx \{ position: fixed; inset: 0; z-index: 50; pointer-events: none; \}/.test(css) && /\.ch-scrim \{[^}]*z-index: 60;/.test(css),
+  ok(/\.ch-fx \{ position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 50; pointer-events: none; \}/.test(css) && /\.ch-scrim \{[^}]*z-index: 60;/.test(css),
     'the spark layer never takes a tap and stays under dialogs');
 }
 
@@ -8821,7 +8926,7 @@ function testCheckersHuevo() {
   ok(hWin >= 3 && hWin > hLoss && slow < 1500, 'hard beats medium (' + hWin + ' wins, ' + hLoss + ' losses in 4), and no move takes 1.5 s (slowest ' + slow + ' ms)');
   // The page: a third choice, always optional, the daily stays classic, and the rules are explained
   ok(/\{ value: 'huevo', label: C\.t\('huevo'\) \}/.test(html) && /if \(S\.rules !== 'huevo'\) top\.appendChild/.test(html) && /var rules = daily \? 'classic' : prefRules\(\)/.test(html), 'the page offers Huevo, hides the capture choice for it, and keeps the daily game classic');
-  ok(['huevo', 'huevoNote', 'qEdge', 'qMust', 'endQueen', 'endCount', 'endTimer', 'endLone'].every((k) => (html.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === 5), 'its texts are in all five languages');
+  ok(['huevo', 'huevoNote', 'qEdge', 'qMust', 'endQueen', 'endCount', 'endTimer', 'endLone'].every((k) => (html.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === LOCALE_CODES.length), 'its texts are in every language');
   ok(/HuevosKicker/.test(html), 'the rules text names its designer');
   const ms0 = Date.now() - t0;
   ok(ms0 < 15000, 'the group runs in ' + (ms0 / 1000).toFixed(1) + ' s (limit 15 s)');
@@ -9493,7 +9598,7 @@ function testCrazyEightsIran() {
   // page: the default, the switch, and the daily
   ok(/if \(prefs\.rules !== 'intl'\) prefs\.rules = 'iran';/.test(html) && /rules: daily \? 'iran' : prefs\.rules/.test(html), 'the Iranian rules are the default, and the daily always plays them');
   ok(/C\.t\('rulesSet'\) \}\), seg3\]/.test(html) && /C\.t\(iranNow\(\) \? 'rulesIranText' : 'rules'\)/.test(html), 'the rules are chosen behind the gear, and the help describes the set in play');
-  ok(['rulesSet', 'rulesIran', 'rulesIntl', 'rulesIranText', 'takeN', 'tookN', 'youTook', 'eightAgain', 'skippedN', 'reversed', 'tutTitle2i', 'tutText2i'].every((k) => (html.match(new RegExp('\\b' + k + ": '", 'g')) || []).length === 5), 'every new string is in all five languages');
+  ok(['rulesSet', 'rulesIran', 'rulesIntl', 'rulesIranText', 'takeN', 'tookN', 'youTook', 'eightAgain', 'skippedN', 'reversed', 'tutTitle2i', 'tutText2i'].every((k) => (html.match(new RegExp('\\b' + k + ": '", 'g')) || []).length === LOCALE_CODES.length), 'every new string is in every language');
   ok(Date.now() - t0 < 10000, 'the Haft Khabis tests finish in under 10 s (' + (Date.now() - t0) + ' ms)');
 }
 
@@ -9764,7 +9869,7 @@ function testMenuSearch() {
     ['شطرنج', ['chess', 'xiangqi']], ['chess', ['chess', 'xiangqi']], ['CHESS', ['chess', 'xiangqi']],
     ['مین‌روب', ['minesweeper']], ['مین روب', ['minesweeper']], ['مينروب', ['minesweeper']],   // space, Arabic ي
     ['turmverteidigung', ['tower-defence']],                                                  // German soft hyphen
-    ['数独', ['sudoku']], ['象棋', ['chess', 'xiangqi']], ['ajedrez', ['chess', 'xiangqi']], ['sudoku', ['sudoku']], ['qqqzz', []]
+    ['数独', ['sudoku']], ['象棋', ['chess', 'xiangqi']], ['ajedrez', ['chess', 'xiangqi']], ['sudoku', ['sudoku']], ['फुटबॉल', ['football']], ['qqqzz', []]
   ];
   const bad = cases.filter(([q, want]) => {
     const got = find(q);
@@ -9839,9 +9944,101 @@ function testCueTurnControl() {
     ok(/else if \(prefs\.aim === 'turn'\) drag = \{ id: e\.pointerId, mode: 'turn'/.test(html) && /drag\.mode = prefs\.aim !== 'turn' && Cue\.pullsBack\(/.test(html),
       g + ': in turn mode a drag never becomes a pull-back shot, even from the white ball');
     // #505: the turn followed a fixed axis, so it ran backwards for some cue directions
-    ok(/aimA \+= Cue\.turnStep\(c\.x, c\.y, drag\.last\.x, drag\.last\.y, p\.x, p\.y, TURN_NEAR \/ G\.s\);\n      drag\.last = p;/.test(html) && /mode: 'turn', a0: aimA, last: p \}/.test(html) && !/TURN_RATE/.test(html),
+    ok(/aimA \+= Cue\.turnStep\(c\.x, c\.y, drag\.last\.x, drag\.last\.y, p\.x, p\.y, TURN_NEAR \/ G\.s\)( \* Cue\.TURN_SPEEDS\[prefs\.turn\])?;\n      drag\.last = p;/.test(html) && /mode: 'turn', a0: aimA, last: p \}/.test(html) && !/TURN_RATE/.test(html),
       g + ': each move of a turn drag turns the cue round the white ball, from where the last move left it');
     ok(LOCALE_CODES.every((l) => { const sec = html.slice(html.indexOf('      ' + l + ': {')); return /aimCtl: '[^']+', ctlPoint: '[^']+', ctlTurn: '[^']+', ctlNote: '[^']+'/.test(sec.slice(0, sec.indexOf('\n      }'))); }), g + ': the control is named in every language');
+  }
+}
+
+// #586: holding a fine-aim button sped up fourfold after a second, which defeats a
+// control meant to be slow, and the two buttons sat at the far ends of the power bar,
+// out of one thumb's reach. Runs each page's own holdTurn with a fake button and timer.
+function testCueFineAim() {
+  head('Pool and Snooker: the fine-aim buttons keep one slow step and sit together (#586)');
+  const Cue = require(path.join(ROOT, 'www/lib/cue.js'));
+  ok(typeof Cue.FINE_STEP === 'number' && Cue.FINE_STEP > 0 && Cue.FINE_STEP <= 0.003, 'cue.js names one small fine step (' + Cue.FINE_STEP + ' rad)');
+  for (const g of ['eightball', 'snooker']) {
+    const html = fs.readFileSync(path.join(ROOT, 'www/games', g, 'index.html'), 'utf8');
+    const a = html.indexOf('  function holdTurn(btn, sign) {'), b = html.indexOf('\n  }\n', a);
+    ok(a > 0 && b > a, g + ': holdTurn found in the page');
+    if (!(a > 0 && b > a)) continue;
+    let tickFn = null;
+    const handlers = {};
+    const btn = { addEventListener: (t, f) => { handlers[t] = f; } };
+    const sb = { Cue, aimA: 0, draws: 0, draw() { sb.draws++; }, humanTurn: () => true,
+      setInterval: (f) => { tickFn = f; return 1; }, clearInterval: () => { tickFn = null; } };
+    vm.createContext(sb);
+    vm.runInContext(html.slice(a, b + 4) + '\nholdTurn(btn, 1);', Object.assign(sb, { btn }));
+    ok(typeof handlers.pointerdown === 'function', g + ': the button listens for a press');
+    if (typeof handlers.pointerdown !== 'function') continue;
+    handlers.pointerdown({ preventDefault() {} });
+    const steps = [sb.aimA];
+    for (let i = 0; i < 60 && tickFn; i++) { const before = sb.aimA; tickFn(); steps.push(sb.aimA - before); }
+    const ticks = steps.length - 1;
+    const worst = Math.max(...steps.map((s) => Math.abs(s - Cue.FINE_STEP)));
+    ok(ticks === 60 && worst < 1e-12, g + ': a press and 60 repeats (3.6 s held) each turn the cue by exactly the fine step (' + ticks + ' repeats, worst off by ' + worst.toExponential(1) + ')');
+    handlers.pointerup();
+    ok(tickFn === null, g + ': letting go stops the repeat');
+    ok(/\[gear, powerBar, fineL, fineR\]\)/.test(html), g + ': the two fine-aim buttons sit side by side at the end of the row, the gear away from them');
+  }
+}
+
+// #587: a player found the Turn control too quick and asked for a sensitivity setting.
+// Runs each page's own showSettings with fake UI parts and reads the saved prefs back.
+/* A new player's default aim (#590) */
+function testCueAimDefault() {
+  head('Pool and Snooker: a new player starts on the turn aim (#590)');
+  for (const g of ['eightball', 'snooker']) {
+    const html = fs.readFileSync(path.join(ROOT, 'www/games', g, 'index.html'), 'utf8');
+    const get = html.match(/var prefs = ctx\.store\.get\('prefs', (\{[^\n]*\})\);/);
+    const norm = html.match(/\n(\s*if \(prefs\.aim !== 'turn'\) prefs\.aim = 'point';)/);
+    ok(!!get && !!norm, g + ': the prefs default and its check are found');
+    if (!get || !norm) continue;
+    // the store returns the saved object as it is, or the default when nothing is saved
+    const aimFor = (saved) => new Function('saved', 'var prefs = saved === undefined ? ' + get[1] + ' : saved;' + norm[1] + ' return prefs.aim;')(saved);
+    ok(aimFor(undefined) === 'turn', g + ': with nothing saved the aim is turn (' + aimFor(undefined) + ')');
+    ok(aimFor({ mode: 'ai', aim: 'point' }) === 'point', g + ': a saved point choice stays point');
+    ok(aimFor({ mode: 'ai' }) === 'point', g + ': a save from before the setting existed stays point');
+  }
+}
+
+function testCueTurnSpeed() {
+  head('Pool and Snooker: a turn speed setting behind the gear (#587)');
+  const Cue = require(path.join(ROOT, 'www/lib/cue.js')), TS = Cue.TURN_SPEEDS;
+  ok(!!TS && TS.normal === 1 && TS.medium === 0.5 && TS.slow === 0.25, 'cue.js offers slow (×0.25), medium (×0.5) and normal (×1, the old speed)');
+  for (const g of ['eightball', 'snooker']) {
+    const html = fs.readFileSync(path.join(ROOT, 'www/games', g, 'index.html'), 'utf8');
+    ok(/\(prefs\.aim !== 'turn'\) prefs\.aim = 'point';\n  if \(!Cue\.TURN_SPEEDS\[prefs\.turn\]\) prefs\.turn = 'normal';/.test(html), g + ': a missing or unknown saved speed reads as normal');
+    ok(/TURN_NEAR \/ G\.s\) \* Cue\.TURN_SPEEDS\[prefs\.turn\];/.test(html), g + ': a turn drag is multiplied by the chosen speed');
+    const a = html.indexOf('  function showSettings() {'), b = html.indexOf('\n  }\n', a);
+    ok(a > 0 && b > a, g + ': showSettings found in the page');
+    if (!(a > 0 && b > a)) continue;
+    const segs = [], saved = [];
+    let modal = null;
+    const sb = {
+      Cue, prefs: { aim: 'point', turn: 'normal' },
+      el: (tag, attrs, kids) => ({ tag, attrs, kids }),
+      C: { t: (k) => k, ui: { segmented: (items, value, cb) => { const s = { items, value, cb }; segs.push(s); return s; }, modal: (o) => { modal = o; } } },
+      ctx: { store: { set: (k, v) => saved.push([k, JSON.parse(JSON.stringify(v))]) } },
+    };
+    vm.createContext(sb);
+    vm.runInContext(html.slice(a, b + 4) + '\nshowSettings();', sb);
+    const speed = segs.find((s) => s.items.some((i) => i.value === 'slow')), aim = segs.find((s) => s.items.some((i) => i.value === 'turn'));
+    ok(!!speed && !!aim && !!modal, g + ': the gear shows the aiming choice and a speed choice');
+    if (!(speed && aim && modal)) continue;
+    ok(speed.items.map((i) => i.value).join() === 'slow,medium,normal' && speed.value === 'normal', g + ': the speed choice offers slow, medium, normal with the saved one selected');
+    const row = modal.body[0].kids.find((k) => k.kids && k.kids.includes(speed));
+    ok(!!row && row.hidden === true, g + ': with Point chosen the speed row is hidden, as it only changes Turn');
+    aim.cb('turn');
+    ok(!!row && row.hidden === false && sb.prefs.aim === 'turn', g + ': choosing Turn shows the speed row');
+    speed.cb('slow');
+    const last = saved[saved.length - 1];
+    ok(!!last && last[0] === 'prefs' && last[1].turn === 'slow' && last[1].aim === 'turn', g + ': choosing slow is saved with the game prefs');
+    speed.cb('bogus');
+    ok(sb.prefs.turn === 'normal', g + ': an unknown value saves as normal');
+    aim.cb('point');
+    ok(row.hidden === true, g + ': going back to Point hides it again');
+    ok(LOCALE_CODES.every((l) => { const sec = html.slice(html.indexOf('      ' + l + ': {')); return /turnSpd: '[^']+', turnSlow: '[^']+', turnMed: '[^']+', turnNormal: '[^']+'/.test(sec.slice(0, sec.indexOf('\n      }'))); }), g + ': the setting is named in every language');
   }
 }
 
@@ -9858,7 +10055,7 @@ function testPersianCardIndex() {
   vm.runInNewContext(core.slice(a0, b0) + ';this.rankText = rankText;', sb);
   const fa = [...Array(13).keys()].map(sb.rankText);
   ok(fa.join(' ') === 'تـ ۲ ۳ ۴ ۵ ۶ ۷ ۸ ۹ ۱۰ سـ بـ شـ', 'Persian: تـ, Persian digits, سـ بـ شـ (' + fa.join(' ') + ')');
-  for (const l of ['en', 'zh', 'de', 'es']) {
+  for (const l of ['en', 'zh', 'de', 'es', 'pl']) {
     state.settings.lang = l;
     ok([...Array(13).keys()].map(sb.rankText).join('') === 'A2345678910JQK', l + ': A, 2–10, J, Q, K as before');
   }
@@ -10176,8 +10373,8 @@ function testGorillasStick() {
   ok(!bad.length, 'a push sets angle and power the way the banana goes (' + cases.length + ' pushes)' + (bad.length ? ': ' + bad.join('; ') : ''));
   ok(/prefs\.control !== 'nums' && prefs\.control !== 'stick'/.test(html) && /\{ value: 'stick', label: C\.t\('ctlStick'\) \}/.test(html), 'the gear offers it and a saved choice of it is kept');
   ok(/if \(cancel \|\| !a \|\| a\.power < 6 \|\| !canAim\(\)\) \{ draw\(\); return; \}/.test(html), 'a push let go near the middle is taken back, not thrown');
-  const langs = ['ctlStick', 'aimStick', 'stick'].every((k) => (html.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === 5);
-  ok(langs, 'its strings are in all five languages');
+  const langs = ['ctlStick', 'aimStick', 'stick'].every((k) => (html.match(new RegExp('\\b' + k + ': \'', 'g')) || []).length === LOCALE_CODES.length);
+  ok(langs, 'its strings are in every language');
 }
 
 function testPeopleFilter() {
@@ -10197,6 +10394,12 @@ function testPeopleFilter() {
   const n = (p) => games.filter((g) => sb.f(g, p)).length;
   ok(n('all') === games.length && n('1') + n('2') === games.length && n('3') > 0 && n('3') < n('2'), 'one player lists the solo games, two the rest, three and four a few of those (' + ['all', '1', '2', '3'].map(n).join(', ') + ')');
   ok(/g\.cat === c && peopleFit\(g, people\)/.test(html) && /C\.state\.settings\.gamePeople = v;/.test(html) && /if \(!any\) box\.appendChild/.test(html), 'the filter works with the category chips, is remembered, and says so when nothing fits');
+  // Measured in Playwright (#674): with Nunito's Latin, 7–10px of chip padding put the English
+  // players row and the Polish categories on two lines at 360 and 390px; 6px fits them again.
+  const css = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.css'), 'utf8');
+  const pads = [...css.matchAll(/\.ch-seg\.ch-cats button \{ padding-inline: (\d+)px; \}/g)].map((m) => +m[1]);
+  ok(/pchips\.classList\.add\('ch-seg--wrap', 'ch-cats', 'ch-people'\)/.test(html) && pads.length === 1 && pads[0] <= 6,
+    'the category and players chips share one padding of at most 6px, at every width (' + pads.join(', ') + ')');
 }
 
 function testInstallBar() {
@@ -10402,12 +10605,16 @@ function testHop() {
   SP.vy = -1; let topS = 0;
   for (let i = 0; i < 300; i++) { E.step(SP, 0); topS = Math.max(topS, SP.y); }
   ok(Math.abs(topS / top - 2.56) < 0.12, 'a spring sends it about 2.6 times as high (' + (topS / top).toFixed(2) + ')');
-  // A crumbling platform breaks under you and does not bounce
+  // A brown platform carries one jump, then breaks; the next fall goes through it (#597)
   const CR = bare([{ x: 180, y: 0, w: 64, kind: 'crumble', vx: 0 }]);
   CR.y = 30; CR.vy = 0;
   let ev = [];
   for (let i = 0; i < 40; i++) ev = ev.concat(E.step(CR, 0));
-  ok(ev.includes('crumble') && !ev.includes('jump') && CR.plats[0].broken && CR.y < 0, 'a crumbling platform breaks under the player, who falls on through');
+  ok(ev.filter((e) => e === 'jump').length === 1 && ev.includes('crumble') && CR.plats[0].broken && CR.vy > 0, 'a brown platform gives one jump and breaks (' + ev.join(',') + ')');
+  ok(CR.floorPlat === null, 'a broken brown platform is not kept as the floor to aim back at');
+  ev = [];
+  for (let i = 0; i < 400 && !CR.over; i++) ev = ev.concat(E.step(CR, 0));
+  ok(!ev.includes('jump') && CR.y < 0, 'falling back onto the broken platform goes straight through (' + Math.round(CR.y) + ')');
   // Jumps go up through platforms; only a fall lands
   const UP = bare([{ x: 180, y: 0, w: 360, kind: 'normal', vx: 0 }, { x: 180, y: 60, w: 64, kind: 'normal', vx: 0 }]);
   UP.vy = 820; ev = [];
@@ -10525,7 +10732,13 @@ function testCorridor() {
   ok(E.play(Wn, { t: 'm', to: E.at(0, 0) }) && Wn.winner === 0 && !E.play(Wn, { t: 'm', to: E.at(6, 5) }), 'reaching the far row wins and ends the game');
   // the flag game
   const F = E.newGame('centre'); F.pos = [E.at(6, 4), E.at(0, 0)];
-  ok(E.dist(F, 0) === 1 && !E.pawnMoves(F, 0).includes(E.at(4, 4)) || true, 'flag cell setup');
+  ok(E.dist(F, 0) === 1 && !E.pawnMoves(F, 0).includes(E.at(4, 4)), 'flag cell setup: one step from a cell beside the flag, never onto it');
+  // #579: in the flag game the far row is an ordinary row; only the flags win
+  const Ff = E.newGame('both'); Ff.pos = [E.at(1, 8), E.at(7, 8)];
+  ok(!E.isGoal(Ff, 0, E.at(0, 8), E.blockedSet(Ff.walls)) && !E.isGoal(Ff, 1, E.at(8, 8), E.blockedSet(Ff.walls)), 'in the flag game neither far row is a goal');
+  ok(E.play(Ff, { t: 'm', to: E.at(0, 8) }) && Ff.winner === -1 && Ff.turn === 1, 'stepping onto the far row in the flag game does not end it');
+  const ffEnd = (E.path(Ff, 1) || []).slice(-1)[0];
+  ok([E.at(3, 4), E.at(5, 4), E.at(4, 3), E.at(4, 5), E.at(3, 0), E.at(5, 0), E.at(4, 1)].includes(ffEnd), 'the path in the flag game leads beside a flag, not to the far row (' + ffEnd + ')');
   ok(E.isGoal(F, 0, E.at(5, 4), E.blockedSet(F.walls)) && E.isGoal(F, 1, E.at(4, 3), E.blockedSet(F.walls)) && !E.isGoal(F, 0, E.at(5, 5), E.blockedSet(F.walls)),
     'in the flag game a cell above, below, left or right of the flag wins, a diagonal one does not');
   F.walls.push({ o: 'h', r: 4, c: 4 });
@@ -10552,6 +10765,1117 @@ function testCorridor() {
   ok(/C\.daily\('corridor', G\.daily \+ '\|' \+ G\.S\.plies\)\.rng/.test(html) && ['cor-win', 'cor-hard', 'cor-flag'].every((id) => html.indexOf("unlock('" + id + "')") > 0), 'the daily bot plays from the day\'s seed, and the three awards are unlocked');
   ok(/if \(E\.wallOk\(G\.S, w\)\) \{ act\(/.test(html) && /tools\.classList\.toggle\('cr-tools--off', !preview/.test(html) && /\.cr-tools--off \{ visibility: hidden; \}/.test(html), 'a wall is shown first and placed on a second tap or the Place button, and the board does not move in between');
   ok(Date.now() - t0 < 12000, 'the Corridor tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #610: on Android WebViews before Chrome 105 there are no container queries, and the
+// chess board, sized only in cq units, did not appear at all
+function testNoContainerQueries() {
+  head('Boards without container queries (#610)');
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  const css = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.css'), 'utf8');
+  const chess = fs.readFileSync(path.join(ROOT, 'www/games/chess/index.html'), 'utf8');
+  ok(/ui\.hasContainerQueries = function \(\) \{\s*return !!\(window\.CSS && CSS\.supports && CSS\.supports\('width', '1cqw'\)\);/.test(core),
+    'the core asks the engine whether it has container queries');
+  ok(/ui\.fitFallback = function \(main\) \{\s*if \(ui\.hasContainerQueries\(\) \|\| !main\) return null;/.test(core) && /Chogan\.setAccent\(cfg\.accent, cfg\.accentSoft\);\s*ui\.fitFallback\(main\);/.test(core),
+    'every game page runs the fallback when it mounts, and it does nothing where container queries work');
+  ok(/kid\.style\.width = px\(Math\.min\(fit\.clientWidth, fit\.clientHeight \* ar\)\)/.test(core) && /var wide = W >= H \* 1\.25;/.test(core),
+    'the fallback gives the board the same size as .ch-fit > * (min of width and height × aspect) and the same 5:4 switch to the wide layout');
+  ok(/\.ch-nocq \.ch-gamemain\.ch-wide \.ch-split \{ flex-direction: row; \}/.test(css) && /\.ch-nocq \.ch-gamemain\.ch-wide \.ch-split > \.ch-side \{/.test(css),
+    'the wide layout has a copy for pages without container queries');
+  // every cq-unit size in the core layout must have its pixel counterpart in the fallback
+  const bare = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const cqRules = (bare.match(/[^{}]*\{[^{}]*\dcq[wh]\b[^{}]*\}/g) || []).map((r) => r.trim().split('{')[0].trim());
+  ok(cqRules.length >= 3 && cqRules.every((sel) => ['.ch-fit', '.ch-fit > *', '.ch-split', '.ch-split > .ch-fit'].includes(sel)),
+    'only the board slot, the board and the split layout use cq units in chogan.css, which the fallback covers (' + cqRules.join(' | ') + ')');
+  ok(/\.cs-top \.ch-seg \{ max-width: 100%; \}/.test(chess) && /\.cs-top \.ch-seg button \{ min-width: 0; padding-inline: 10px; white-space: normal;/.test(chess),
+    'the chess mode switch fits the side column of a phone turned sideways');
+}
+
+// #605: Cqoicebordel asked for Gymkhana (Bridg-It); built as Link Up with our own name and look
+function testLinkUp() {
+  head('Link Up (#605)');
+  const t0 = Date.now();
+  const E = loadEngine('linkup', 'LinkUpEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/linkup/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  // the board: every inner point with r + c even is one crossing, shared by both teams
+  const sizes = Object.keys(E.SIZES);
+  ok(sizes.length === 3, 'three board sizes (' + sizes.join(',') + ')');
+  for (const sz of sizes) {
+    const n = E.SIZES[sz], S = E.newGame(sz, 2), Q = E.geom(n);
+    const inner = (2 * n - 1) * (2 * n - 1), want = (inner + 1) / 2;
+    ok(S.own.length === want && Q.cells.every(([r, c]) => (r + c) % 2 === 0 && r > 0 && c > 0 && r < 2 * n && c < 2 * n),
+      sz + ': ' + want + ' crossings, all inside the edges with r + c even');
+    const crossOk = Q.cells.every((_, k) => {
+      const [a0, a1] = Q.ends[0][k], [b0, b1] = Q.ends[1][k];
+      const v0 = Math.abs(a1 - a0) === 2 * Q.M, v1 = Math.abs(b1 - b0) === 2 * Q.M;
+      return v0 !== v1 && (a0 + a1) === (b0 + b1);
+    });
+    ok(crossOk, sz + ': at every crossing the orange and the blue link cross at right angles through the same point');
+    ok(E.need(S, 0) === n && E.need(S, 1) === n, sz + ': on an empty board each side needs ' + n + ' links');
+  }
+  // a straight orange column wins; the crossing it took is closed to blue
+  const S = E.newGame('s', 2), Q = E.geom(4);
+  const col = Q.cells.map((p, k) => [p, k]).filter(([p]) => p[1] === 3 && p[0] % 2 === 1).map(([, k]) => k);
+  ok(col.length === 4, 'orange can go straight down one column in four links');
+  const blue = Q.cells.map((p, k) => [p, k]).filter(([p]) => p[0] === 1 && p[1] % 2 === 1 && p[1] !== 3).map(([, k]) => k);
+  for (let i = 0; i < 4; i++) { E.play(S, col[i]); if (S.winner < 0) E.play(S, blue[i]); }
+  ok(S.winner === 0 && E.chain(S, 0).length === 4 && !E.play(S, blue[3]), 'the column wins for orange, its chain is the four links, and the game is over');
+  const T = E.newGame('s', 2); E.play(T, col[0]);
+  ok(T.own[col[0]] === 0 && !E.legal(T, col[0]) && !E.play(T, col[0]) && T.turn === 1, 'a taken crossing is closed to both teams, and nothing changes');
+  ok(E.need(T, 1) === 4 && E.need(T, 0) === 3, 'one link brings orange a step nearer and leaves blue as it was');
+  // the four-player game: seats 0..3 in turn, partners 0 and 2 orange, 1 and 3 blue
+  const F = E.newGame('m', 4), seen = [];
+  for (let i = 0; i < 6; i++) { seen.push(F.turn + ':' + E.team(F.turn)); E.play(F, E.free(F)[0]); }
+  ok(seen.join(' ') === '0:0 1:1 2:0 3:1 0:0 1:1', 'four players take turns 1, 2, 3, 4, with partners on one colour (' + seen.join(' ') + ')');
+  // there is never a draw: a full board always has exactly one winner
+  let noWin = 0, games = 0;
+  for (let k = 0; k < 150; k++) {
+    const R = E.newGame(sizes[k % 3], k % 2 ? 4 : 2), r = rng(500 + k);
+    while (R.winner < 0) { const f = E.free(R); if (!f.length) { noWin++; break; } E.play(R, f[Math.floor(r() * f.length)]); }
+    games++;
+  }
+  ok(games === 150 && noWin === 0, 'random games always end with a winner before the board runs out (' + games + ' games)');
+  // the bot plays legal links and its levels are ordered
+  const match = (a, b, seed, sz) => { const M = E.newGame(sz, 2), r = rng(seed); let worst = 0; while (M.winner < 0) { const t = Date.now(), m = E.think(M, M.turn === 0 ? a : b, r); worst = Math.max(worst, Date.now() - t); if (m < 0 || !E.play(M, m)) return { w: -1, worst }; } return { w: M.winner, worst }; };
+  let illegal = 0, mWins = 0, hWins = 0, n = 0, slow = 0;
+  for (let k = 0; k < 4; k++) {
+    // small and medium boards only: the CI runner is several times slower than a laptop,
+    // and these games took the group past 12 s there (the large board's speed is checked below)
+    const a = match('medium', 'easy', 900 + k, k % 2 ? 'm' : 's'), b = match('easy', 'medium', 950 + k, k % 2 ? 'm' : 's');
+    const c = match('hard', 'medium', 980 + k, 's'), d = match('medium', 'hard', 990 + k, 's');
+    [a, b, c, d].forEach((g) => { if (g.w < 0) illegal++; slow = Math.max(slow, g.worst); });
+    mWins += (a.w === 0) + (b.w === 1); hWins += (c.w === 0) + (d.w === 1); n += 2;
+  }
+  ok(illegal === 0, 'the bot only lays legal links, at every level (' + (2 * n) + ' games)');
+  ok(mWins >= 7, 'the medium bot beats the easy one most of the time (' + mWins + ' of ' + n + ')');
+  ok(hWins >= 6, 'the hard bot beats the medium one most of the time (' + hWins + ' of ' + n + ')');
+  const L = E.newGame('l', 2), th = Date.now(); E.think(L, 'hard', rng(3));
+  ok(slow < 400 && Date.now() - th < 400, 'the hard bot answers in well under a second, even on the large board (' + slow + ' ms, ' + (Date.now() - th) + ' ms)');
+  // it takes a winning link, and blocks one
+  const W = E.newGame('s', 2); [0, 1, 2].forEach((i) => { W.own[col[i]] = 0; }); W.plies = 6; W.turn = 1;
+  [blue[0], blue[1], blue[2]].forEach((b) => { W.own[b] = 1; });
+  ok(E.think(W, 'medium', rng(1)) === col[3] && E.think(W, 'hard', rng(1)) === col[3], 'blue takes the one crossing orange would win on');
+  W.turn = 0;
+  ok(E.think(W, 'easy', rng(1)) === col[3], 'even the easy bot lays the link that wins');
+  // saves
+  const V = E.newGame('m', 4); E.play(V, 3); E.play(V, 7);
+  ok(E.valid(V) && !E.valid(Object.assign(E.clone(V), { turn: 1 })) && !E.valid(Object.assign(E.clone(V), { own: V.own.slice(1) })) && !E.valid(Object.assign(E.clone(V), { size: 'x' })),
+    'a save is checked before it is restored');
+  ok(/C\.daily\('linkup', G\.daily \+ '\|' \+ G\.S\.plies\)\.rng/.test(html) && ['lnk-win', 'lnk-hard', 'lnk-four'].every((id) => html.indexOf("unlock('" + id + "')") > 0),
+    'the daily bot plays from the day\'s seed, and the three awards are unlocked');
+  ok(Date.now() - t0 < 12000, 'the Link Up tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #618: the owner asked for a number-removal puzzle; built as Sums ("Cross Sums" is a product name)
+function testSums() {
+  head('Sums (#618)');
+  const t0 = Date.now();
+  const E = loadEngine('sums', 'SumsEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/sums/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  ok(E.SIZES.join() === '5,6,7', 'three sizes, 5×5 to 7×7 (' + E.SIZES.join(',') + ')');
+  // a hand-made 3×3: the row and column targets come from the answer, and the lines read right
+  const P = { n: 3, d: [3, 5, 2, 4, 1, 6, 7, 2, 8], keep: [1, 0, 0, 1, 0, 1, 0, 1, 1] };
+  Object.assign(P, E.targets(3, P.d, P.keep));
+  ok(P.rows.join() === '3,10,10' && P.cols.join() === '7,2,14', 'targets are the sums of the kept digits (' + P.rows + ' / ' + P.cols + ')');
+  ok(E.line(3, 1).join() === '3,4,5' && E.line(3, 4).join() === '1,4,7', 'a row and a column list their own cells');
+  ok(E.ways(P, new Array(9).fill(0), 0).length === 1, 'the first row adds up to 3 in exactly one way (keep the 3)');
+  // a game is won when every digit is decided: the extras erased and the rest ringed (#699)
+  const st = new Array(9).fill(0);
+  ok(!E.solved(P, st), 'an untouched board is not solved');
+  P.keep.forEach((k, i) => { if (!k) st[i] = 2; });
+  ok(!E.solved(P, st) && [0, 1, 2, 3, 4, 5].every((k) => !E.lineDone(P, st, k)),
+    'with every extra digit erased but nothing ringed the board is not solved and no sum greys out (#699)');
+  st[0] = 1;
+  ok(E.lineDone(P, st, 0) && !E.lineDone(P, st, 3) && !E.solved(P, st), 'ringing the 3 finishes the first row, and only that row');
+  P.keep.forEach((k, i) => { if (k) st[i] = 1; });
+  ok(E.solved(P, st) && [0, 1, 2, 3, 4, 5].every((k) => E.lineDone(P, st, k)), 'with the extras erased and the rest ringed the board is solved and every line is done');
+  // generated puzzles: deduction solves them, the search proves exactly one answer, and each
+  // size is as hard as it should be
+  let made = 0, unique = 0, logical = 0, hardEnough = 0, mixed = 0, slow = 0;
+  for (const n of E.SIZES) {
+    for (let k = 0; k < 25; k++) {
+      const t = Date.now(), Q = E.generate(n, rng(1000 * n + k));
+      slow = Math.max(slow, Date.now() - t);
+      made++;
+      const r = E.deduce(Q);
+      if (r.solved && r.st.every((v, i) => (v === 1) === !!Q.keep[i])) logical++;
+      if (r.worst >= E.NEED[n]) hardEnough++;
+      if (E.count(Q, 2) === 1) unique++;
+      let ok2 = true;
+      for (let L = 0; L < 2 * n; L++) { const c = E.line(n, L).filter((i) => Q.keep[i]).length; if (!c || c === n) ok2 = false; }
+      if (ok2) mixed++;
+    }
+  }
+  ok(made === 75, 'seventy-five puzzles were made (' + made + ')');
+  ok(logical === made, 'deduction alone reaches the answer in every one (' + logical + ' of ' + made + ')');
+  ok(unique === made, 'the search finds exactly one answer in every one (' + unique + ' of ' + made + ')');
+  ok(hardEnough === made, 'every puzzle is at least as hard as its size asks (' + hardEnough + ' of ' + made + ')');
+  ok(mixed === made, 'every line keeps at least one digit and loses at least one (' + mixed + ' of ' + made + ')');
+  ok(slow < 300, 'a puzzle is made in well under a second (' + slow + ' ms at worst)');
+  // two puzzles with the same seed are the same: the daily one is the same for everyone
+  const a = E.generate(6, rng(42)), b = E.generate(6, rng(42));
+  ok(a.d.join() === b.d.join() && a.keep.join() === b.keep.join(), 'the same seed gives the same puzzle');
+  // a hint is always a true move, all the way to the end
+  const H = E.generate(6, rng(7)), hs = new Array(36).fill(0);
+  let steps = 0, wrong = 0;
+  for (let h = E.hint(H, hs); h; h = E.hint(H, hs)) { if ((h[1] === 1) !== !!H.keep[h[0]]) wrong++; hs[h[0]] = h[1]; steps++; }
+  ok(steps > 0 && wrong === 0 && hs.every((v) => v), 'hints alone solve a 6×6 and never point the wrong way (' + steps + ' hints)');
+  ok(E.stars(0) === 3 && E.stars(1) === 2 && E.stars(2) === 2 && E.stars(3) === 1 && E.stars(40) === 1, 'stars: three clean, two for one or two mistakes, one for more');
+  // saves: only a state play can reach is restored
+  const V = { n: 6, d: H.d, rows: H.rows, cols: H.cols, keep: H.keep, st: new Array(36).fill(0), mistakes: 1, hints: 0 };
+  const lie = H.keep.indexOf(0);
+  ok(E.valid(V) && !E.valid(Object.assign({}, V, { st: V.st.map((v, i) => (i === lie ? 1 : v)) })) &&
+    !E.valid(Object.assign({}, V, { rows: V.rows.map((v, i) => (i ? v : v + 1)) })) && !E.valid(Object.assign({}, V, { n: 8 })),
+  'a save is checked before it is restored');
+  ok(/C\.daily\('sums', dailyDate\)\.rng/.test(html) && ['sum-clean', 'sum-big', 'sum-daily'].every((id) => html.indexOf("unlock('" + id + "')") > 0),
+    'the daily puzzle is seeded by the day, and the three awards are unlocked');
+  ok(Date.now() - t0 < 12000, 'the Sums tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #620: a block-stacking game, named Tower Up ("Stack" is a trademark); the cut, the
+// perfect window per mode and the regrow are tested on the engine, and a test player
+// with human timing noise shows each mode reaches its own band of heights
+function testTowerUp() {
+  head('Tower Up (#620)');
+  const t0 = Date.now();
+  const E = loadEngine('towerup', 'TowerUpEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/towerup/index.html'), 'utf8');
+  const games = JSON.parse(fs.readFileSync(path.join(ROOT, 'www/games.json'), 'utf8')).games;
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  // puts the sliding block `off` units from the tower top's centre along its axis
+  const setOff = (S, off) => { const c = S.cur; c.t = (off / c.side + E.RANGE) / c.v; };
+  const fresh = (mode) => E.newGame(rng(5), mode || 'normal');
+
+  // The first block slides along x, starts clear of the tower, and moves
+  const A = fresh();
+  const p0 = E.curPos(A);
+  E.advance(A, 0.3);
+  const p1 = E.curPos(A);
+  ok(A.cur.axis === 'x' && Math.abs(p0.x) === E.RANGE && E.RANGE > E.BASE && p1.x !== p0.x && p1.z === 0, 'the first block slides along x, starting clear of the tower (' + p0.x + ' → ' + p1.x.toFixed(1) + ')');
+
+  // Cut maths: 30 units over the right edge keeps 70, and the 30 that hung over falls
+  const K = fresh(); setOff(K, 30);
+  const k = E.drop(K);
+  ok(k.kind === 'cut' && Math.abs(k.placed.w - 70) < 1e-9 && Math.abs(k.placed.x - 15) < 1e-9 && k.placed.d === 100 && Math.abs(k.cut.w - 30) < 1e-9 && Math.abs(k.cut.x - 65) < 1e-9,
+    'a drop 30 over keeps 70 centred at 15, and the piece from 50 to 80 falls (' + [k.placed.x, k.placed.w, k.cut.x, k.cut.w].map((v) => +v.toFixed(2)).join(', ') + ')');
+  ok(E.height(K) === 1 && K.cur.axis === 'z' && Math.abs(K.cur.w - 70) < 1e-9 && K.cur.d === 100 && K.streak === 0, 'the next block slides along z and is only as big as what was kept');
+  setOff(K, -20);
+  const k2 = E.drop(K);
+  ok(k2.kind === 'cut' && Math.abs(k2.placed.d - 80) < 1e-9 && Math.abs(k2.placed.z + 10) < 1e-9 && Math.abs(k2.cut.z + 60) < 1e-9 && Math.abs(k2.placed.x - 15) < 1e-9, 'an overhang on the near side is cut there too (z ' + k2.placed.z.toFixed(1) + ', cut at ' + k2.cut.z.toFixed(1) + ')');
+
+  // The perfect window per mode: inside it the block snaps exactly on, just outside it is cut
+  let win = 0;
+  for (const m of ['normal', 'hard']) {
+    const tol = E.MODES[m].tol;
+    const P = fresh(m); setOff(P, tol - 0.05); const a = E.drop(P);
+    const Q = fresh(m); setOff(Q, -(tol + 0.3)); const b = E.drop(Q);
+    if (a.kind === 'perfect' && a.placed.x === 0 && a.placed.w === 100 && P.streak === 1 && b.kind === 'cut' && b.placed.w < 100) win++;
+  }
+  ok(win === 2 && E.MODES.hard.tol < E.MODES.normal.tol && E.MODES.hard.v0 > E.MODES.normal.v0, 'a drop within ' + E.MODES.normal.tol + ' (Normal) or ' + E.MODES.hard.tol + ' (Hard) snaps on, just outside it is cut; Hard is faster and tighter');
+  ok(E.speed('normal', 0) < E.speed('normal', 30) && E.speed('normal', 1000) === E.MODES.normal.vmax && E.speed('hard', 1000) === E.MODES.hard.vmax, 'the block speeds up with height, up to a cap');
+
+  // Regrow: from the third perfect in a row each one gives back a little, never past the first size
+  const G = fresh(); setOff(G, 40); E.drop(G);
+  const grew = [];
+  for (let i = 0; i < 12; i++) { setOff(G, 0); grew.push(E.drop(G).grew); }
+  const T = E.top(G);
+  ok(grew[0] === 0 && grew[1] === 0 && grew[2] === E.GROW && G.streak === 12 && G.bestStreak === 12 && G.perfects === 12, 'the first two perfects in a row keep the size, the third grows it by ' + E.GROW + ' (' + grew.slice(0, 4).join(', ') + ')');
+  ok(Math.abs(T.w - E.BASE) < 1e-9 && T.d <= E.BASE && grew.slice(-2).every((g) => g === 0), 'a streak grows the block back to the first size and no further (' + T.w.toFixed(1) + ' × ' + T.d.toFixed(1) + ')');
+  setOff(G, 30); E.drop(G);
+  ok(G.streak === 0 && G.bestStreak === 12, 'a drop that is cut ends the streak and keeps the longest');
+
+  // Missing the tower ends the run; nothing more drops
+  const M = fresh(); setOff(M, 100);
+  const mr = E.drop(M);
+  ok(mr.kind === 'miss' && M.over && E.height(M) === 0 && mr.cut.w === 100 && E.drop(M) === null, 'a drop that misses the tower falls whole and ends the run');
+  const M2 = fresh(); setOff(M2, 60); E.drop(M2); setOff(M2, 0); E.drop(M2); setOff(M2, 40);
+  ok(M2.cur.axis === 'x' && M2.cur.w === 40 && E.drop(M2).kind === 'miss' && M2.over && E.height(M2) === 2, 'a smaller block is missed by its own size (40 off a 40-wide block)');
+
+  // A test player with human timing noise: Normal reaches a band, Hard a lower one
+  const gauss = (r) => Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+  const play = (mode, seed, sd) => {
+    const S = E.newGame(rng(seed), mode), r = rng(seed * 7 + 1);
+    while (!S.over && E.height(S) < 400) { let dt = E.aimIn(S) + gauss(r) * sd; if (dt < 0.02) dt += 2 * E.RANGE / S.cur.v; E.advance(S, dt); E.drop(S); }
+    return E.height(S);
+  };
+  const median = (a) => { const s = a.slice().sort((x, y) => x - y); return s[s.length >> 1]; };
+  const hN = [], hH = [], sharp = [];
+  for (let i = 1; i <= 40; i++) { hN.push(play('normal', i, 0.04)); hH.push(play('hard', i, 0.04)); }
+  for (let i = 1; i <= 10; i++) sharp.push(play('normal', i, 0.015));
+  ok(hN.length === 40 && median(hN) >= 40 && median(hN) <= 100, 'with 40 ms of timing noise Normal towers reach a median of 40–100 floors (' + median(hN) + ')');
+  ok(hH.length === 40 && median(hH) >= 15 && median(hH) <= 45 && median(hH) < median(hN) * 0.7, 'Hard towers with the same hand stay lower, a median of 15–45 (' + median(hH) + ')');
+  ok(median(sharp) >= 300, 'a sharper hand keeps the block whole by its perfect streaks (median ' + median(sharp) + ')');
+
+  // The daily tower is the same for everyone: the same colours, speeds and sides
+  const D1 = E.newGame(rng(42), 'normal'), D2 = E.newGame(rng(42), 'normal');
+  let same = D1.hue0 === D2.hue0;
+  for (let i = 0; i < 20; i++) { same = same && D1.cur.v === D2.cur.v && D1.cur.side === D2.cur.side; setOff(D1, 0); setOff(D2, 0); E.drop(D1); E.drop(D2); }
+  const D3 = E.newGame(rng(43), 'normal');
+  ok(same && (D3.hue0 !== D1.hue0 || D3.cur.v !== E.newGame(rng(42), 'normal').cur.v), 'the same seed gives the same colours, speeds and sides, so the daily tower is the same for everyone');
+
+  // A saved tower comes back the same and goes on the same way
+  const V = E.newGame(rng(9), 'hard');
+  for (let i = 0; i < 6; i++) { setOff(V, i % 2 ? 2 : 9); E.drop(V); }
+  E.advance(V, 0.37);
+  const snap = JSON.parse(JSON.stringify(E.snapshot(V))), R = E.restore(snap, rng(9));
+  ok(!!R && R.cur.t === V.cur.t && JSON.stringify(E.curPos(R)) === JSON.stringify(E.curPos(V)), 'a restored tower has its sliding block where it was');
+  setOff(V, 1); setOff(R, 1); E.drop(V); E.drop(R);
+  ok(!!R && R.mode === 'hard' && E.height(R) === E.height(V) && R.cur.v === V.cur.v && R.cur.side === V.cur.side && JSON.stringify(E.top(R)) === JSON.stringify(E.top(V)), 'a restored tower carries on exactly as the saved one would');
+  ok(E.restore(Object.assign({}, snap, { mode: 'x' }), rng(9)) === null && E.restore(Object.assign({}, snap, { blocks: [] }), rng(9)) === null && E.restore(Object.assign({}, snap, { cur: Object.assign({}, snap.cur, { axis: 'y' }) }), rng(9)) === null && E.restore(Object.assign({}, snap, { draws: NaN }), rng(9)) === null,
+    'a broken save is refused');
+
+  // Page wiring
+  const gm = games.find((g) => g.id === 'towerup');
+  ok(!!gm && gm.cat === 'skill' && gm.people === 1 && /accent: '([^']+)'/.test(html) && html.match(/accent: '([^']+)'/)[1] === gm.color, 'games.json lists it as a one-player skill game and shares the page accent');
+  ok(/C\.daily\('towerup', dailyDate\)\.rng/.test(html) && /C\.stats\.best\('towerup', m, h\)/.test(html) && ['tw-30', 'tw-perfect', 'tw-daily'].every((id) => html.indexOf("unlock('" + id + "')") > 0),
+    'the daily tower is seeded by the day, the best is kept per mode, and the three awards are unlocked');
+  ok(!/\bStack\b/.test(html) && !/\bStack\b/.test(JSON.stringify(gm)), 'the game is never called Stack (a trademark)');
+  ok(Date.now() - t0 < 10000, 'the Tower Up tests finish in under 10 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #619: the owner asked for dominoes; All Fives by default, Plain behind the gear, against a bot
+function testDominoes() {
+  head('Dominoes (#619)');
+  const t0 = Date.now();
+  const E = loadEngine('dominoes', 'DominoesEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/dominoes/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  const S = E.set();
+  ok(S.length === 28 && new Set(S.map((t) => t.join('-'))).size === 28, 'a double-six set has 28 different tiles');
+  const H = E.deal(rng(1), null);
+  ok(H.hands[0].length === 7 && H.hands[1].length === 7 && H.yard.length === 14 && E.valid(H), 'a deal gives seven each and leaves fourteen in the boneyard');
+  // the first hand is led by the highest double
+  const top = (h) => Math.max(...h.filter((t) => t[0] === t[1]).map((t) => t[0]), -1);
+  ok(top(H.hands[H.turn]) >= top(H.hands[1 - H.turn]), 'the first hand is led by whoever holds the highest double');
+  // a hand built by hand: 5-5 spinner, then the count and the four ways
+  const B = { hands: [[[5, 5], [0, 5], [5, 6], [3, 5], [6, 6]], [[2, 3], [3, 3], [4, 4], [1, 2], [6, 6]]], yard: [], root: null, arms: { l: [], r: [], u: [], d: [] }, turn: 0, passes: 0, over: false, result: null, log: [] };
+  ok(E.play(B, 0, 'root', true) === 10 && E.count(B) === 10, 'the 5-5 spinner alone counts 10 and scores it');
+  B.turn = 0;
+  ok(E.play(B, 0, 'l', true) === 10 && E.count(B) === 10, '0-5 on its left: the open 0 and the spinner\'s unplayed side (both fives) count 10');
+  ok(E.sides(B).join() === 'l,r', 'until both sides are played, the spinner offers only left and right');
+  B.turn = 0;
+  ok(E.play(B, 0, 'r', true) === 0 && E.count(B) === 6 && E.sides(B).join() === 'l,r,u,d', '5-6 on the right: 0 + 6 = 6 scores nothing, and up and down open');
+  B.turn = 0;
+  ok(E.play(B, 0, 'u', true) === 0 && E.count(B) === 9, '3-5 upwards adds its open 3 (count 9)');
+  B.turn = 0;
+  ok(E.play(B, 0, 'd', true) === -1 && B.hands[0].length === 1, 'a tile that fits no end is refused and stays in the hand');
+  ok(E.play(B, 0, 'r', true) === 15 && E.count(B) === 15, 'a double at an end counts both halves: 6-6 on the 6 makes 0 + 12 + 3 = 15 and scores it');
+  // going out: the other hand's pips, rounded to five
+  ok(B.over && B.result.winner === 0 && B.result.bonus === 34 && E.bonusPts(B, true) === 35, 'playing the last tile ends the hand and scores the other hand, rounded to five');
+  // a blocked hand goes to the lighter hand, for the difference
+  const K = { hands: [[[6, 6]], [[5, 5], [4, 4]]], yard: [], root: [0, 1], arms: { l: [], r: [], u: [], d: [] }, turn: 0, passes: 0, over: false, result: null, log: [] };
+  ok(E.pass(K) && !K.over && E.pass(K) && K.over && K.result.how === 'blocked' && K.result.winner === 0 && K.result.bonus === 6, 'two passes block the hand: the lighter hand wins the difference (18 − 12)');
+  ok(!E.draw(K) && !E.pass(K), 'nothing moves once a hand is over');
+  // drawing: only when nothing fits, until something does
+  const Dr = E.deal(rng(9), 0);
+  Dr.root = [6, 6]; Dr.hands[0] = [[0, 1]]; Dr.yard = [[0, 2], [2, 6]];
+  ok(E.draw(Dr) && Dr.hands[0].length === 2 && !E.draw(Dr), 'a player with no fitting tile draws, and stops once one fits');
+  // the table: no two tiles ever overlap, in any shape of table, nor do the lit targets
+  let states = 0, overlaps = 0, ghosts = 0, badGhosts = 0;
+  for (let k = 0; k < 60; k++) {
+    const r = rng(100 + k), G = E.deal(r, null);
+    while (!G.over) {
+      const L = E.legal(G, G.turn);
+      if (!L.length) { if (!E.draw(G)) E.pass(G); continue; }
+      for (const m of L) for (const mx of [3, 5, 9]) { ghosts++; const Q = E.layout(G, mx, { t: G.hands[G.turn][m.i], side: m.side }); if (!Q.ghost || E.overlaps(Q.tiles.concat([Q.ghost]))) badGhosts++; }
+      const m = E.think(G, 'easy', true, r); E.play(G, m.i, m.side, true);
+      for (const mx of [3, 5, 9]) { states++; if (E.overlaps(E.layout(G, mx).tiles)) overlaps++; }
+    }
+  }
+  ok(states > 1000 && overlaps === 0, 'no two tiles on the table overlap (' + states + ' tables)');
+  ok(ghosts > 1000 && badGhosts === 0, 'every lit target has room on the table (' + ghosts + ' targets)');
+  // whole matches between bots: they always finish, scores add up, and the levels are ordered
+  const match = (a, b, seed, fives, goal) => {
+    const r = rng(seed), sc = [0, 0]; let leader = null, hands = 0, legalAll = true, sum = 0;
+    while (sc[0] < goal && sc[1] < goal && hands < 80) {
+      const G = E.deal(r, leader); let guard = 0;
+      while (!G.over && guard++ < 400) {
+        if (E.legal(G, G.turn).length) { const p = G.turn, m = E.think(G, p === 0 ? a : b, fives, r), got = E.play(G, m.i, m.side, fives); if (got < 0) legalAll = false; else { sc[p] += got; sum += got; if (got % 5) legalAll = false; } }
+        else if (!E.draw(G)) E.pass(G);
+      }
+      if (!G.over) return null;
+      if (G.result.winner >= 0) { const bp = E.bonusPts(G, fives); sc[G.result.winner] += bp; sum += bp; }
+      leader = G.result.winner >= 0 ? G.result.winner : leader; hands++;
+    }
+    return { w: sc[0] >= goal ? 0 : 1, ok: legalAll && sc[0] + sc[1] === sum, hands };
+  };
+  let done = 0, sound = 0, mWins = 0, hWins = 0, n = 0;
+  for (let k = 0; k < 30; k++) {
+    const a = match(k % 2 ? 'medium' : 'easy', k % 2 ? 'easy' : 'medium', 300 + k, true, 100);
+    const b = match(k % 2 ? 'hard' : 'medium', k % 2 ? 'medium' : 'hard', 400 + k, true, 100);
+    [a, b].forEach((x) => { if (x) { done++; if (x.ok) sound++; } });
+    if (a && (a.w === 1) === (k % 2 === 0)) mWins++;
+    if (b && (b.w === 1) === (k % 2 === 0)) hWins++;
+    n++;
+  }
+  ok(done === 60 && sound === 60, 'bot matches always finish, every score is a multiple of five and the totals add up (' + done + ' of 60)');
+  ok(mWins >= 22, 'the medium bot beats the easy one most of the time (' + mWins + ' of ' + n + ')');
+  ok(hWins >= 17, 'the hard bot beats the medium one more often than not (' + hWins + ' of ' + n + ')');
+  const P = match('medium', 'medium', 77, false, 100);
+  ok(P && P.ok, 'a Plain match finishes too, with points only at the end of a hand');
+  // saves
+  const V = E.deal(rng(5), 0); E.play(V, E.legal(V, 0)[0].i, 'root', true);
+  ok(E.valid(V) && !E.valid(Object.assign(E.clone(V), { yard: V.yard.slice(1) })) && !E.valid(Object.assign(E.clone(V), { yard: V.yard.concat([[0, 0]]) })), 'a save is checked before it is restored');
+  ok(/C\.daily\('dominoes', M\.daily \+ '\|' \+ tag\)\.rng/.test(html) && ['dom-win', 'dom-hard', 'dom-big'].every((id) => html.indexOf("unlock('" + id + "')") > 0),
+    'the daily deals come from the day\'s seed, and the three awards are unlocked');
+  // a finished hand is saved with its summary open; a reload must not count it twice
+  ok(/if \(!H\.counted\) \{\s*H\.counted = true;\s*if \(w >= 0\) M\.score\[w\] \+= bonus;/.test(html), 'a hand\'s points are added once, even if the page reloads on its summary');
+  ok(Date.now() - t0 < 12000, 'the Dominoes tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #622: Water Sort, pour coloured layers until every tube holds one colour
+function testWaterSort() {
+  head('Water Sort (#622)');
+  const t0 = Date.now();
+  const E = loadEngine('watersort', 'WaterSortEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/watersort/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  // pour rules: the top run moves, as much as fits, onto the same colour or into an empty tube
+  let T = [[0, 1, 1], [2, 1], [], [0, 2, 2, 2]];
+  ok(E.canPour(T, 0, 1) && E.pour(T, 0, 1) === 2 && T[0].join() === '0' && T[1].join() === '2,1,1,1', 'the top run pours onto the same colour, only as many layers as fit (2 of 2 here)');
+  T = [[0, 1, 1], [2, 1, 1], [], [3, 3, 3, 3]];
+  ok(E.pour(T, 0, 1) === 1 && T[0].join() === '0,1' && T[1].join() === '2,1,1,1', 'a run bigger than the room left pours what fits and leaves the rest');
+  T = [[0, 1], [2], [], [1, 1, 1, 1]];
+  ok(!E.canPour(T, 0, 1) && E.pour(T, 0, 1) === 0 && T[0].join() === '0,1', 'a colour never pours onto a different colour');
+  ok(!E.canPour(T, 0, 3) && !E.canPour(T, 2, 0) && !E.canPour(T, 0, 0), 'nothing pours into a full tube, out of an empty one, or into itself');
+  ok(E.pour(T, 0, 2) === 1 && T[2].join() === '1', 'any colour pours into an empty tube');
+  // win check
+  ok(E.solved([[1, 1, 1, 1], [], [0, 0, 0, 0]]) && !E.solved([[1, 1, 1], [1], [0, 0, 0, 0]]) && !E.solved([[1, 1, 0, 0], [0, 0, 1, 1], []]),
+    'solved means every tube is empty or full of one colour');
+  // the solver: its pours, replayed by the rules, finish the deal
+  const replay = (S, ms) => { const U = E.clone(S); for (const [a, b] of ms) { if (!E.pour(U, a, b)) return false; } return E.solved(U); };
+  const small = [[0, 1, 0, 1], [1, 0, 1, 0], [], []];
+  const sm = E.solve(small);
+  ok(sm && sm.count > 0 && replay(small, sm.moves), 'the solver\'s pours, replayed by the rules, sort a small deal (' + (sm && sm.count) + ' pours)');
+  ok(E.solve([[0, 1, 0, 1], [1, 0, 1, 0]]) === null, 'a deal with no room to pour is known to be unsolvable');
+  // A* is optimal at weight 1: no breadth-first search finds fewer pours on small deals
+  const bfs = (S) => { const seen = new Set([E.key(S)]); let q = [S], d = 0; while (q.length) { const nx = []; for (const U of q) { if (E.solved(U)) return d; for (let a = 0; a < U.length; a++) for (let b = 0; b < U.length; b++) if (E.canPour(U, a, b)) { const V = E.clone(U); E.pour(V, a, b); const k = E.key(V); if (!seen.has(k)) { seen.add(k); nx.push(V); } } } q = nx; d++; } return -1; };
+  const r0 = rng(3);
+  let opt = 0, optN = 0;
+  for (let i = 0; i < 12; i++) {
+    const bag = []; for (let c = 0; c < 3; c++) for (let j = 0; j < 4; j++) bag.push(c);
+    for (let q = bag.length - 1; q > 0; q--) { const z = Math.floor(r0() * (q + 1)); [bag[q], bag[z]] = [bag[z], bag[q]]; }
+    const D = [bag.slice(0, 4), bag.slice(4, 8), bag.slice(8, 12), [], []];
+    const s = E.solve(D), b = bfs(D);
+    optN++;
+    if (s && b >= 0 && s.count === b) opt++;
+  }
+  ok(optN === 12 && opt === optN, 'at weight 1 the solver\'s count is the fewest pours, the same as a full breadth-first search (' + opt + '/' + optN + ')');
+  // generated deals: the right colours and tubes, two empty ones, solvable without the extra tube
+  const r = rng(29);
+  let good = 0, gen = 0;
+  const per = { easy: 30, medium: 30, hard: 20 };
+  for (const lv of E.LEVELS) for (let i = 0; i < per[lv]; i++) {
+    const G = E.generate(lv, r), k = E.COLORS[lv];
+    gen++;
+    if (!G || G.start.length !== k + 2 || G.start.filter((t) => !t.length).length !== 2) continue;
+    const s = E.solve(G.start, { w: E.WEIGHT[lv] });
+    const counts = new Array(k).fill(0); G.start.forEach((t) => t.forEach((c) => counts[c]++));
+    if (s && !s.unknown && s.count === G.min && replay(G.start, s.moves) && counts.every((c) => c === 4) && !G.start.some((t) => E.full(t))) good++;
+  }
+  ok(gen === 80 && good === gen, 'every generated deal has 4 of each colour and two empty tubes, and the solver sorts it without an extra tube in its target count (' + good + '/' + gen + ')');
+  ok(E.COLORS.easy === 5 && E.COLORS.medium === 8 && E.COLORS.hard === 11, 'the levels have 5, 8 and 11 colours');
+  const a = E.generate('medium', rng(4)), b = E.generate('medium', rng(4));
+  ok(JSON.stringify(a.start) === JSON.stringify(b.start) && a.min === b.min, 'the same seed gives the same deal and target, so the daily is the same for everyone');
+  // hints: following them from any reachable state finishes the deal; a dead end is called one
+  const H = E.generate('medium', rng(8)), P = E.clone(H.start);
+  let steps = 0, okHint = true;
+  while (!E.solved(P) && steps < 200) { const h = E.hint(P); if (!h.move || !E.pour(P, h.move[0], h.move[1])) { okHint = false; break; } steps++; }
+  ok(okHint && E.solved(P) && steps <= H.min + 20, 'following the hint from the start sorts the deal (' + steps + ' pours, target ' + H.min + ')');
+  const M = E.clone(H.start), rm = rng(12);
+  for (let i = 0; i < 6; i++) { const ms = E.moves(M).filter(([x, y]) => E.canPour(M, x, y)); if (!ms.length) break; const [x, y] = ms[Math.floor(rm() * ms.length)]; E.pour(M, x, y); }
+  const hm = E.hint(M);
+  ok(hm.stuck || (hm.move && E.canPour(M, hm.move[0], hm.move[1]) && (() => { const V = E.clone(M); E.pour(V, hm.move[0], hm.move[1]); const s = E.solve(V, { w: 4, limit: 120000 }); return s && !s.unknown; })()),
+    'after random pours the hint is a legal pour that still leads to a finish');
+  ok(E.hint([[0, 1, 0, 1], [1, 0, 1, 0]]).stuck === true, 'a hint from a dead end says so instead of pointing anywhere');
+  ok(E.stars(24, 24) === 3 && E.stars(36, 24) === 2 && E.stars(37, 24) === 1 && E.stars(99, 24) === 1, 'three stars within the target, two within half again, and extra pours never lose');
+  // saves
+  const G = E.generate('easy', rng(2));
+  const sv = { level: 'easy', start: G.start, tubes: E.clone(G.start), moves: 0, min: G.min, extra: false };
+  ok(E.valid(sv) && E.valid(Object.assign({}, sv, { extra: true, tubes: E.clone(G.start).concat([[]]) })), 'a save is accepted, with or without the extra tube');
+  ok(!E.valid(Object.assign({}, sv, { level: 'x' })) && !E.valid(Object.assign({}, sv, { tubes: E.clone(G.start).concat([[]]) })) &&
+    !E.valid(Object.assign({}, sv, { tubes: [[0, 0, 0, 0, 0]].concat(E.clone(G.start).slice(1)) })) && !E.valid(Object.assign({}, sv, { tubes: E.clone(G.start).map((t, i) => i ? t : t.map(() => 9)) })) &&
+    !E.valid(Object.assign({}, sv, { min: 0 })) && !E.valid(null), 'a save with a wrong level, tube count, overfull tube, foreign colour or target is refused');
+  // the page
+  ok(/C\.daily\('watersort', dailyDate\)\.rng/.test(html) && /var DAILY_LEVEL = 'medium';/.test(html), 'the daily puzzle is a medium deal seeded by the day');
+  ok(['ws-perfect', 'ws-hard', 'ws-daily'].every((id) => html.indexOf("unlock('" + id + "')") > 0), 'the three awards are unlocked');
+  ok(/var HINT_COST = 10, EXTRA_COST = 20;/.test(html) && /C\.coins\.can\(HINT_COST\)/.test(html) && /C\.coins\.spend\(HINT_COST\)/.test(html) && /C\.coins\.can\(EXTRA_COST\)/.test(html) && /if \(!S \|\| ended \|\| S\.extra\) return;/.test(html),
+    'a hint costs 10 coins and the one extra tube 20');
+  ok(/if \(h\.stuck \|\| h\.unknown\) \{[\s\S]{0,200}?return;\n    \}\n    if \(!h\.move\) return;\n    if \(!C\.coins\.can\(HINT_COST\)\)/.test(html), 'a hint from a dead end costs nothing and suggests undo');
+  ok(/\.ws-board \{[^}]*direction: ltr;/.test(html) && /(?:Digit|Numpad)/.test(html) && /C\.keyIs\(e, 'h'\)/.test(html), 'the tubes are numbered left to right, picked by digit keys on any layout, with H for a hint');
+  ok(/C\.ui\.reduceMotion\(\) \|\| !A\.animate/.test(html) && /prefers-reduced-motion: reduce/.test(html), 'the pour animation gives way to reduced motion');
+  const liquids = (html.match(/\{ c: '#[0-9A-F]{6}', ink: '[ld]', m: '/g) || []).length;
+  const marks = new Set([...html.matchAll(/ink: '[ld]', m: '([^']+)'/g)].map((m) => m[1]));
+  ok(liquids === E.COLORS.hard && marks.size === liquids, 'every colour of the hard level has its own mark for colour-blind players (' + marks.size + '/' + liquids + ')');
+  ok(Date.now() - t0 < 12000, 'the Water Sort tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #623: Button Football, turn-based flicks on the shared table physics in www/lib/cue.js
+function testFootball() {
+  head('Button Football (#623)');
+  const t0 = Date.now();
+  const sandbox = { self: {}, module: { exports: {} }, console };
+  vm.createContext(sandbox);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'www/lib/cue.js'), 'utf8'), sandbox, { filename: 'cue.js' });
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/football/index.html'), 'utf8');
+  const m = html.match(/\/\* ==== ENGINE START ==== \*\/([\s\S]*?)\/\* ==== ENGINE END ==== \*\//);
+  ok(!!m, 'the football page has an engine block');
+  if (!m) return;
+  vm.runInContext(m[1], sandbox, { filename: 'football-engine.js' });
+  const Cue = sandbox.self.ChoganCue, E = sandbox.FootballEngineFactory(Cue);
+  const games = JSON.parse(fs.readFileSync(path.join(ROOT, 'www/games.json'), 'utf8')).games;
+  const lcg = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  const disc = (id, x, y) => ({ id, x, y, vx: 0, vy: 0, inPlay: true, r: E.RD, m: E.MD });
+  const ballAt = (x, y) => ({ id: 0, x, y, vx: 0, vy: 0, inPlay: true, r: E.RB, m: E.MB });
+  // a match with only these bodies on the pitch
+  const setup = (bodies, turn) => { const M = E.match(); M.b = bodies; M.turn = turn || 0; M.kick = false; return M; };
+  // the ball rolled on its own, as if struck, for the goal-line checks
+  const roll = (x, y, angle, power) => { const s = Cue.start(E.T, [ballAt(x, y)], { angle, power }, 0); s.by = 0; s.goal = -1; s.goalAt = 0; return E.run(s); };
+
+  ok(typeof Cue.walls === 'function' && E.T.segs.length === 12 && E.T.pockets.length === 0, 'cue.js builds a board of straight segments with no pockets for the pitch');
+
+  // A flick: the disc leaves along its angle at the speed of its power and slides as far as cue.js's friction says
+  const F = E.flick(setup([ballAt(10, 10), disc(3, 50, 120)]), 3, -Math.PI / 2, 0.6);
+  E.step(F);
+  const fd = F.balls[1], v0 = Cue.speedOf(E.T, 0.6);
+  ok(Math.abs(fd.vx) < 1e-9 && fd.vy < 0 && Math.abs(-fd.vy - v0) < v0 * 0.02 && fd.x === 50, 'a flick sends the disc along its angle at the speed of its power (' + (-fd.vy).toFixed(1) + ' of ' + v0.toFixed(1) + ')');
+  E.run(F);
+  const slid = 120 - F.balls[1].y;
+  ok(Math.abs(slid - E.travel(0.6)) < 3 && F.balls.every((b) => b.vx === 0 && b.vy === 0) && F.goal === -1, 'it slides ' + slid.toFixed(1) + ' units and stops, as the friction law says (' + E.travel(0.6).toFixed(1) + ')');
+  ok(E.flick(setup([ballAt(10, 10), disc(3, 50, 120)], 1), 3, 0, 1) === null && E.flick(setup([ballAt(10, 10), disc(3, 50, 120)]), 0, 0, 1) === null, 'only a disc of the team on turn can be flicked, never the ball');
+
+  // Collisions: a heavy disc into the light ball keeps the momentum and sends the ball off faster
+  const H = E.flick(setup([ballAt(50, 80), disc(2, 50, 110)]), 2, -Math.PI / 2, 0.5);
+  let pre = null, post = null, g = 0;
+  while (E.step(H) && g++ < 5000) {
+    const [b, d] = H.balls;
+    if (!post && H.ev.contacts === 0) pre = { p: d.vy * E.MD + b.vy * E.MB, v: d.vy };
+    if (!post && H.ev.contacts === 1) post = { p: d.vy * E.MD + b.vy * E.MB, b: b.vy, d: d.vy };
+  }
+  ok(!!pre && !!post && Math.abs(post.p - pre.p) < Math.abs(pre.p) * 0.03, 'the hit keeps the momentum, weighted by the masses (' + (pre && pre.p.toFixed(1)) + ' → ' + (post && post.p.toFixed(1)) + ')');
+  ok(!!post && post.b < pre.v * 1.15 && post.d < 0 && post.d > pre.v * 0.5 && H.ev.first === 0, 'the lighter ball leaves faster than the disc came and the disc follows on slower (' + (post && post.b.toFixed(0)) + ', ' + (post && post.d.toFixed(0)) + ' from ' + (pre && pre.v.toFixed(0)) + ')');
+  const two = E.run(E.flick(setup([ballAt(10, 140), disc(1, 30, 75), disc(7, 60, 75)]), 1, 0, 0.6));
+  ok(two.ev.first === 7 && two.balls[2].x > 65 && two.balls[1].x < 55, 'a disc hits another disc and passes its motion on (' + two.balls[1].x.toFixed(1) + ', ' + two.balls[2].x.toFixed(1) + ')');
+
+  // Boards: a disc flicked into the side board comes back slower and never leaves the pitch
+  const SB = E.flick(setup([ballAt(10, 10), disc(4, 70, 80)]), 4, 0, 1);
+  let back = false, out = false;
+  while (E.step(SB)) { const d = SB.balls[1]; if (d.vx < 0) back = true; if (d.x > E.W - E.RD + 1e-6 || d.x < E.RD - 1e-6) out = true; }
+  ok(back && !out && SB.ev.cushions >= 1 && SB.balls[1].x < 70, 'a disc flicked at the side board bounces back off it and stays on the pitch (rests at x ' + SB.balls[1].x.toFixed(1) + ')');
+  // the end line beside the mouth is a board too, and so is a post
+  const EB = roll(20, 30, -Math.PI / 2, 0.9);
+  ok(EB.goal === -1 && EB.ev.cushions >= 1 && EB.balls[0].y > 0, 'the ball rolled at the end line beside the goal bounces off it');
+  const PO = roll(E.G0, 30, -Math.PI / 2, 0.9);
+  ok(PO.goal === -1 && PO.ev.cushions >= 1 && PO.balls[0].y > 0, 'a ball straight onto a post bounces off it');
+  // every body stays inside the pitch and its goal boxes through a thousand random flicks
+  let inside = true, runs = 0;
+  const rr = lcg(11);
+  for (let k = 0; k < 80; k++) {
+    const M = E.match({ kicker: k % 2 });
+    for (let j = 0; j < 6 && M.winner < 0; j++) {
+      const mine = E.discs(M, M.turn), d = mine[Math.floor(rr() * mine.length)];
+      const s = E.flick(M, d.id, rr() * 6.283, 0.3 + rr() * 0.7);
+      while (E.step(s)) for (const b of s.balls) if (b.x < b.r - 1e-6 || b.x > E.W - b.r + 1e-6 || b.y < -E.D || b.y > E.L + E.D) inside = false;
+      E.resolve(M, s); runs++;
+    }
+  }
+  ok(runs > 400 && inside, 'no body ever leaves the pitch or its goal boxes (' + runs + ' random flicks)');
+
+  // A goal counts once the ball's centre is over the line between the posts: a ball resting
+  // half inside the net was no goal, and the owner saw it as one (2026-11-08)
+  let half = null, short = null;
+  for (let p = 18; p <= 26 && !(half && short); p += 0.02) {
+    const s = roll(E.W / 2, 20, -Math.PI / 2, E.powerFor(p)), y = s.balls[0].y;
+    if (!half && y < 0 && y > -E.RB) half = s;
+    if (!short && y > 0 && y < E.RB) short = s;
+  }
+  ok(half && short, 'the scan finds a ball stopping half over the line and one stopping just short of halfway');
+  ok(half && half.goal === 0, 'a ball that stops with its centre over the line is a goal (centre at y ' + (half ? half.balls[0].y.toFixed(2) : '?') + ')');
+  ok(short && short.goal === -1, 'a ball that stops with less than half over the line is no goal (centre at y ' + (short ? short.balls[0].y.toFixed(2) : '?') + ')');
+  const full = roll(E.W / 2, 20, -Math.PI / 2, E.powerFor(25));
+  ok(full.goal === 0 && full.balls[0].y < -E.RB, 'a ball that crosses the line whole is a goal for the team attacking that end');
+  const low = roll(E.W / 2, E.L - 20, Math.PI / 2, E.powerFor(30));
+  ok(low.goal === 1, 'and at the other end, a goal for the top team');
+
+  // After a goal: the score, both teams back in line-up, and the team that let it in kicks off
+  const GM = setup([ballAt(50, 8), disc(1, 50, 22)].concat(E.lineup(0).slice(2, 6)));
+  const gs = E.flick(GM, 1, -Math.PI / 2, 0.5);
+  E.run(gs);
+  const ge = E.resolve(GM, gs);
+  const lineup1 = E.lineup(1).map((b) => b.id + ':' + b.x + ',' + b.y).join(' ');
+  ok(ge.goal === 0 && !ge.own && GM.score.join() === '1,0' && GM.turn === 1 && GM.turns === 1, 'a goal is counted and the team that let it in has the kick-off');
+  ok(GM.b.map((b) => b.id + ':' + b.x + ',' + b.y).join(' ') === lineup1 && GM.b.every((b) => b.vx === 0 && b.vy === 0), 'after a goal both teams stand in the kick-off line-up again, the ball on the spot');
+  const kf = E.byId(GM.b, 9), nf = E.byId(GM.b, 4);
+  ok(Math.abs(kf.x - E.W / 2) < 1e-9 && kf.y < E.L / 2 && Math.hypot(kf.x - GM.b[0].x, kf.y - GM.b[0].y) < 15 && Math.hypot(nf.x - GM.b[0].x, nf.y - GM.b[0].y) > 20, 'the kicking team has its centre forward behind the ball; the other team stands off');
+  // Formations behind the gear (#713): each stands in its own half, apart and on the
+  // pitch; at kick-off one disc stands behind the ball and the other team stands off
+  ok(Array.isArray(E.FORM_IDS) && E.FORM_IDS.length >= 3 && E.FORM_IDS[0] === '2-2', 'Football offers several formations, the classic 2-2 first');
+  for (const f of (E.FORM_IDS || [])) {
+    for (const kicker of [0, 1]) {
+      const B = E.lineup(kicker, [f, f]), ball = B[0];
+      const discsOk = B.slice(1).every((d) => d.x >= d.r && d.x <= E.W - d.r && (E.teamOf(d.id) === 0 ? d.y > E.L / 2 : d.y < E.L / 2));
+      let apart = true;
+      for (let i = 1; i < 11; i++) for (let j = i + 1; j < 11; j++) if (Math.hypot(B[i].x - B[j].x, B[i].y - B[j].y) < 2 * E.RD + 2) apart = false;
+      const near = (t) => B.filter((d) => E.teamOf(d.id) === t && Math.hypot(d.x - ball.x, d.y - ball.y) < 20).length;
+      ok(discsOk && apart && near(kicker) === 1 && near(1 - kicker) === 0, 'formation ' + f + ', kick-off by team ' + kicker + ': every disc in its own half and apart, one kicker by the ball, the others stand off');
+    }
+  }
+  if (E.FORM_IDS) {
+    const FM = E.match({ kicker: 0, form: ['1-3', '3-1'] });
+    const fp = (t) => E.discs(FM, t).map((d) => t === 0 ? [d.x, d.y] : [E.W - d.x, E.L - d.y]);
+    ok(JSON.stringify(fp(0)) === JSON.stringify(E.FORMS['1-3'].kick) && JSON.stringify(fp(1)) === JSON.stringify(E.FORMS['3-1'].base), 'a match lines each team up in its own formation');
+    const FG = setup([ballAt(50, 8), disc(1, 50, 22)].concat(E.lineup(0).slice(2, 6)));
+    FG.form = ['1-3', '3-1'];
+    E.resolve(FG, E.run(E.flick(FG, 1, -Math.PI / 2, 0.5)));
+    ok(JSON.stringify(E.discs(FG, 1).map((d) => [E.W - d.x, E.L - d.y])) === JSON.stringify(E.FORMS['3-1'].kick), 'after a goal the teams line up again in their formations');
+    const back = E.restore(JSON.parse(JSON.stringify(E.snapshot(FM))));
+    ok(back && back.form.join() === '1-3,3-1', 'a saved match keeps its formations');
+    const old = E.snapshot(FM); delete old.form;
+    const oldBack = E.restore(old);
+    ok(oldBack && oldBack.form.join() === '2-2,2-2', 'a save from before formations restores with the classic one');
+    ok(E.match({ form: ['x', null] }).form.join() === '2-2,2-2', 'an unknown formation falls back to the classic one');
+  }
+  // an own goal counts for the other team
+  const OG = setup([ballAt(50, 140), disc(2, 50, 125)].concat(E.lineup(0).slice(3, 8)));
+  const os = E.run(E.flick(OG, 2, Math.PI / 2, 0.6)), oe = E.resolve(OG, os);
+  ok(oe.goal === 1 && oe.own && OG.score.join() === '0,1' && OG.turn === 0, 'a ball knocked into your own goal is a goal for the other team, and you kick off');
+
+  // The turn passes only when everything has stopped; tiny speeds die away
+  const TM = E.match();
+  const ts = E.flick(TM, 4, -Math.PI / 2, 0.8);
+  let steps = 0, movingSeen = 0;
+  while (E.step(ts)) { steps++; if (ts.balls.some((b) => b.vx || b.vy)) movingSeen++; }
+  ok(TM.turn === 0 && movingSeen === steps && steps > 30 && ts.balls.every((b) => b.vx === 0 && b.vy === 0), 'while anything moves the turn stays (' + steps + ' steps), and the flick ends with everything at rest');
+  E.resolve(TM, ts);
+  ok(TM.turn === 1 && TM.turns === 1 && TM.b.every((b) => b.vx === 0 && b.vy === 0), 'then the turn passes to the other team');
+  const tiny = Cue.start(E.T, [ballAt(50, 75)], { angle: 0, power: 0 }, 0);
+  tiny.balls[0].vx = 0.01; tiny.balls[0].vy = 0.003; tiny.goal = -1; tiny.by = 0;
+  ok(!E.step(tiny) && tiny.balls[0].vx === 0, 'a body creeping below the rest speed is stopped at once');
+
+  // The turn limit: the side ahead wins, a level match goes to a golden goal, and the next goal ends it
+  const LM = E.match(); LM.turns = E.MAX_TURNS - 1; LM.score = [1, 0];
+  E.resolve(LM, E.run(E.flick(LM, 4, -Math.PI / 2, 0.2)));
+  ok(LM.winner === 0 && !LM.golden, 'when the turns run out, the team ahead wins');
+  const GG = E.match(); GG.turns = E.MAX_TURNS - 1; GG.score = [1, 1];
+  const ge1 = E.resolve(GG, E.run(E.flick(GG, 4, -Math.PI / 2, 0.2)));
+  ok(ge1.golden && GG.golden && GG.winner === -1 && GG.turn === 1, 'level when the turns run out: golden goal, the match goes on');
+  GG.b = [ballAt(50, 142), disc(6, 50, 128)];
+  const ge2 = E.resolve(GG, E.run(E.flick(GG, 6, Math.PI / 2, 0.6)));
+  ok(ge2.goal === 1 && GG.winner === 1 && GG.score.join() === '1,2', 'in golden goal time the next goal wins the match (' + GG.score.join('–') + ')');
+
+  // The bot: a legal flick of its own disc, and a shot on goal when one is open
+  const BM = E.match({ kicker: 1 });
+  for (const lv of ['easy', 'medium', 'hard']) {
+    const c = E.choose(BM, lv, lcg(3));
+    ok(E.teamOf(c.id) === 1 && isFinite(c.angle) && c.power >= 0.15 && c.power <= 1, lv + ' bot flicks one of its own discs with a sane power (' + c.id + ', ' + c.power.toFixed(2) + ')');
+  }
+  let open = 0;
+  for (let k = 0; k < 6; k++) {
+    const OM = setup([ballAt(44 + k * 2, 30), disc(1, 46 + k * 2, 48), disc(2, 10, 140), disc(3, 90, 140), disc(4, 15, 100), disc(5, 85, 100), disc(6, 10, 10), disc(7, 90, 12), disc(8, 6, 60), disc(9, 94, 60), disc(10, 90, 40)]);
+    const c = E.choose(OM, 'hard', lcg(k + 1));
+    const s = E.run(E.flick(OM, c.id, c.angle, c.power));
+    if (s.goal === 0) open++;
+  }
+  ok(open >= 5, 'the hard bot scores an open goal in front of it (' + open + ' of 6)');
+
+  // Bot against bot: every match ends, and the levels are ordered
+  const play = (l0, l1, seed) => {
+    const M = E.match({ kicker: seed % 2 }), r = lcg(seed);
+    let ticks = 0;
+    while (M.winner < 0 && M.turns < 300) {
+      const c = E.choose(M, M.turn === 0 ? l0 : l1, r);
+      const s = E.run(E.flick(M, c.id, c.angle, c.power));
+      ticks += s.ticks;
+      E.resolve(M, s);
+    }
+    return { w: M.winner, turns: M.turns, secs: ticks * Cue.DT };
+  };
+  const medEasy = [], hardMed = [];
+  for (let s = 1; s <= 8; s++) medEasy.push(s % 2 ? play('medium', 'easy', s) : Object.assign(play('easy', 'medium', s), { flip: true }));
+  for (let s = 1; s <= 6; s++) hardMed.push(s % 2 ? play('hard', 'medium', s + 20) : Object.assign(play('medium', 'hard', s + 20), { flip: true }));
+  const all = medEasy.concat(hardMed);
+  const winsOf = (list) => list.filter((x) => x.w === (x.flip ? 1 : 0)).length;
+  ok(all.length === 14 && all.every((x) => x.w >= 0 && x.turns < 300 && x.secs < 3600), 'every bot-against-bot match ends with a winner (longest ' + Math.max(...all.map((x) => x.turns)) + ' flicks, ' + Math.round(Math.max(...all.map((x) => x.secs))) + ' s of play)');
+  ok(winsOf(medEasy) >= 6, 'the medium bot beats the easy one most of the time (' + winsOf(medEasy) + ' of 8)');
+  ok(winsOf(hardMed) >= 4, 'the hard bot beats the medium one more often than not (' + winsOf(hardMed) + ' of 6)');
+
+  // Saves: a match at rest comes back the same; a broken save is refused
+  const SM = E.match({ winTo: 5 });
+  for (let k = 0; k < 3; k++) { const c = E.choose(SM, 'medium', lcg(k + 7)); E.resolve(SM, E.run(E.flick(SM, c.id, c.angle, c.power))); }
+  const snap = JSON.parse(JSON.stringify(E.snapshot(SM))), R = E.restore(snap);
+  ok(!!R && JSON.stringify(E.snapshot(R)) === JSON.stringify(E.snapshot(SM)) && R.winTo === 5 && R.b[0].r === E.RB && R.b[5].m === E.MD, 'a saved match comes back with every body, the score, the turn and the goal target');
+  const c1 = E.choose(SM, 'hard', lcg(99)), c2 = E.choose(R, 'hard', lcg(99));
+  ok(JSON.stringify(c1) === JSON.stringify(c2), 'and it plays on exactly as the saved one would');
+  const bad = [
+    Object.assign({}, snap, { winTo: 4 }), Object.assign({}, snap, { score: [5, 0] }), Object.assign({}, snap, { b: snap.b.slice(1) }),
+    Object.assign({}, snap, { b: [[NaN, 3]].concat(snap.b.slice(1)) }), Object.assign({}, snap, { b: [[50, -40]].concat(snap.b.slice(1)) }),
+    Object.assign({}, snap, { turn: 2 }), Object.assign({}, snap, { golden: true }), Object.assign({}, snap, { turns: -1 }), null, 'x'
+  ];
+  ok(bad.every((o) => E.restore(o) === null), 'a broken save is refused (' + bad.length + ' kinds)');
+
+  // Page wiring
+  const gm = games.find((x) => x.id === 'football');
+  ok(!!gm && gm.cat === 'skill' && gm.people === 2 && gm.added === '2026-11-03', 'games.json lists it as a skill game for up to two people');
+  ok(!!gm && /accent: '([^']+)'/.test(html) && html.match(/accent: '([^']+)'/)[1] === gm.color, 'games.json and the page share the accent');
+  ok(!!gm && LOCALE_CODES.every((l) => typeof gm.name[l] === 'string' && html.indexOf(l + ": '" + gm.name[l] + "'") > 0), 'the names match games.json in every language');
+  const icon = fs.readFileSync(path.join(ROOT, 'www/games/football/icon.svg'), 'utf8');
+  ok(!!gm && new RegExp('<rect width="96" height="96" rx="22" fill="' + gm.soft + '"/>').test(icon), 'the icon starts on the soft tint of games.json');
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const lin = (c) => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  const lab = (h) => {
+    const [R1, G1, B1] = rgb(h).map(lin), f = (t) => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+    const X = (R1 * 0.4124 + G1 * 0.3576 + B1 * 0.1805) / 0.95047, Y = R1 * 0.2126 + G1 * 0.7152 + B1 * 0.0722, Z = (R1 * 0.0193 + G1 * 0.1192 + B1 * 0.9505) / 1.08883;
+    return [116 * f(Y) - 16, 500 * (f(X) - f(Y)), 200 * (f(Y) - f(Z))];
+  };
+  const dE = (a, b) => { const A = lab(a), B = lab(b); return Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]); };
+  const lum = (h) => rgb(h).map((c) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0);
+  const others = games.filter((x) => x.id !== 'football').map((x) => [x.id, x.color]);
+  const near = others.map(([id, c]) => [id, dE(c, gm.color)]).sort((x, y) => x[1] - y[1])[0];
+  ok(others.length > 40 && near[1] >= 15 && 1.05 / (lum(gm.color) + 0.05) >= 4.5, 'the accent differs from every other game by ΔE ≥ 15 (nearest ' + near[0] + ', ' + near[1].toFixed(1) + ') and keeps white text at 4.5:1');
+  ok(/C\.daily\('football', G\.daily \+ '\|t' \+ G\.M\.turns\)\.rng/.test(html) && /level: daily \? 'medium' : o\.level/.test(html) && /winTo: daily \? 3 : o\.winTo/.test(html), 'the daily match is against the medium bot, to three goals, its dice seeded by the day and the turn');
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  const ids = ['fb-win', 'fb-hard', 'fb-shut'];
+  ok(ids.every((id) => (core.match(new RegExp("\\{ id: '" + id + "'[^\\n]*", 'g')) || []).length === 1 && /dfr: '[^']+', ar: '[^']+', dar: '[^']+', hi: '[^']+', dhi: '[^']+' \}/.test(core.match(new RegExp("\\{ id: '" + id + "'[^\\n]*"))[0]) && html.indexOf("unlock('" + id + "')") > 0), 'the three Button Football awards exist once, in every language, and are unlocked');
+  ok(/<script src="\.\.\/\.\.\/lib\/cue\.js"><\/script>/.test(html) && !/function tick\(|rollA \* |\(1 \+ T\.ball\)/.test(m[1]), 'the page loads lib/cue.js and keeps no copy of its physics');
+  ok(/ctx\.autosave\(/.test(html) && /ctx\.tutorialIfNew\(TUT\)/.test(html) && (html.match(/tArt\(\d\)/g) || []).length === 3, 'the match saves between flicks and the three-page tutorial shows once');
+  ok(!/[\s{,]again: '/.test(html), 'the page leaves the core\'s "again" label alone');
+  const ms = Date.now() - t0;
+  ok(ms < 12000, 'the Button Football group runs in under 12 s (' + ms + ' ms)');
+}
+
+// #621: the owner asked for an offline slither-style arena against bots (named
+// Wrigglers / مارها: "Snakes" would be confused with Snakes and Ladders)
+function testWrigglers() {
+  head('Wrigglers (#621)');
+  const t0 = Date.now();
+  const E = loadEngine('wrigglers', 'WrigglersEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/wrigglers/index.html'), 'utf8');
+  const games = JSON.parse(fs.readFileSync(path.join(ROOT, 'www/games.json'), 'utf8')).games;
+  // a hand-made arena: the player and the snakes given, no food unless added
+  const bare = (others) => {
+    const S = E.newGame(7, 'easy');
+    S.snakes = [E.makeSnake(S, 0, 0, 0, E.MIN, false)];
+    (others || []).forEach((o) => S.snakes.push(E.makeSnake(S, o[0], o[1], o[2], o[3], true)));
+    S.food = []; S.baseFood = E.FOOD_N;
+    E.rebuild(S);
+    return S;
+  };
+  const still = { aim: null, turn: 0, boost: false };
+  // bots in a bare arena go straight on: no thinking unless asked
+  const freeze = (S) => S.snakes.forEach((s) => { s.ctl = { aim: s.ang, turn: 0, boost: false }; });
+  const run = (S, n, inp) => { let ev = []; for (let i = 0; i < n; i++) { if (S.snakes.length > 1) S.snakes.slice(1).forEach((b) => { b.ctl.aim = b.ang; }); ev = ev.concat(E.step(S, inp || still)); } return ev; };
+
+  // Movement: a fixed step at the set speed, and the body follows at a fixed spacing
+  const M = bare();
+  const x0 = M.snakes[0].pts[0];
+  run(M, 60);
+  const P = M.snakes[0].pts;
+  let gaps = 0;
+  for (let i = 2; i < P.length; i += 2) if (Math.abs(Math.hypot(P[i] - P[i - 2], P[i + 1] - P[i - 1]) - E.SP) < 0.01) gaps++;
+  ok(Math.abs(P[0] - x0 - E.SPEED) < 0.5 && Math.abs(P[1]) < 1e-9, 'one second of steps moves the head ' + E.SPEED + ' units on (' + (P[0] - x0).toFixed(2) + ')');
+  ok(gaps === P.length / 2 - 1 && P.length / 2 === E.segs(E.MIN), 'every body point follows the one before it at ' + E.SP + ' units (' + gaps + ' of ' + (P.length / 2 - 1) + ')');
+  // Turning toward an aim is limited per step, and keys turn the other way round too
+  const T = bare(); E.step(T, { aim: Math.PI / 2, turn: 0, boost: false });
+  const a1 = T.snakes[0].ang;
+  ok(a1 > 0 && a1 < 0.08, 'an aim turns the head a little each step, not at once (' + a1.toFixed(3) + ' rad)');
+  const T2 = bare(); run(T2, 30, { aim: null, turn: -1, boost: false });
+  ok(T2.snakes[0].ang < -1, 'holding left turns the head anticlockwise on the screen (' + T2.snakes[0].ang.toFixed(2) + ')');
+
+  // Growth: eating food adds its value to the length, and the body gets longer
+  const G = bare();
+  E.addFood(G, 20, 0, 5, 1);
+  const ev = run(G, 10);
+  ok(ev.includes('eat') && Math.abs(G.snakes[0].len - (E.MIN + 5)) < 1e-9 && G.food.length === 0, 'a head that reaches a dot eats it and grows by its value (' + G.snakes[0].len + ')');
+  ok(G.snakes[0].pts.length / 2 === E.segs(E.MIN + 5) && E.segs(E.MIN + 5) > E.segs(E.MIN), 'a longer snake has more body points (' + G.snakes[0].pts.length / 2 + ')');
+  ok(E.segs(1e6) === E.MAXSEG && E.radius(1e6) <= 16, 'a huge snake is capped at ' + E.MAXSEG + ' points and a radius of 16');
+
+  // Head into another body kills; the killer is credited when it is the player's body
+  const H = bare([[22, 50, Math.PI / 2, 40]]);
+  freeze(H);
+  // the bot lies across the player's path just ahead of it, its head at (22, 50)
+  H.snakes[1].pts = []; for (let i = 0; i < E.segs(40); i++) H.snakes[1].pts.push(22, 50 - i * E.SP);
+  H.snakes[1].ang = Math.PI / 2; E.rebuild(H);
+  let hev = []; for (let i = 0; i < 40 && !H.over; i++) { H.snakes[1].ctl.aim = Math.PI / 2; hev = hev.concat(E.step(H, still)); }
+  ok(H.over && hev.includes('die') && !H.snakes[0].alive, 'the player\'s head running into a bot\'s body ends the run');
+  ok(H.food.length >= 3 && H.food.every((f) => f.k === 1), 'the crashed player\'s body turns into food (' + H.food.length + ' dots)');
+  // a bot that runs its head into the player's body dies, turns into food and counts
+  // (close enough that it cannot dodge in the steps it has: a bot turns a little a step)
+  const K = bare([[40, -22, Math.PI / 2, 20]]);
+  freeze(K);
+  K.snakes[0].pts = []; for (let i = 0; i < E.segs(60); i++) K.snakes[0].pts.push(60 - i * E.SP, 0);
+  K.snakes[0].len = 60; E.rebuild(K);
+  let kev = []; for (let i = 0; i < 40 && K.snakes[1].alive; i++) kev = kev.concat(E.step(K, { aim: 0, turn: 0, boost: false }));
+  const deadBot = K.snakes[1];
+  ok(!deadBot.alive && kev.includes('kill') && kev.includes('botdie') && K.kills === 1 && K.snakes[0].alive && !K.over, 'a bot running its head into the player\'s body crashes and counts as the player\'s catch');
+  const dropped = K.food.filter((f) => f.k === 1).reduce((s, f) => s + f.v, 0);
+  ok(dropped >= 20 * 0.7 && dropped <= 20, 'its body turns into food worth most of its length (' + dropped.toFixed(1) + ' of 20)');
+  // Own body never kills: a tight circle for ten seconds crosses the snake's own body
+  const O = bare(); O.snakes[0].len = 120; run(O, 1);
+  run(O, 600, { aim: null, turn: 1, boost: false });
+  ok(O.snakes[0].alive && !O.over, 'a long snake turning in circles over its own body lives on');
+
+  // Boost: faster, costs length, drops small food behind, and never takes it below the minimum
+  const B = bare(); B.snakes[0].len = 40; E.step(B, still);
+  const bx = B.snakes[0].pts[0];
+  run(B, 60, { aim: null, turn: 0, boost: true });
+  const lost = 40 - B.snakes[0].len, boostFood = B.food.filter((f) => f.k === 2);
+  ok(Math.abs(B.snakes[0].pts[0] - bx - E.BOOST) < 1 && Math.abs(lost - E.BOOST_COST) < 0.05, 'a second of boost goes ' + E.BOOST + ' units and costs ' + E.BOOST_COST + ' length (' + (B.snakes[0].pts[0] - bx).toFixed(1) + ', ' + lost.toFixed(2) + ')');
+  ok(boostFood.length >= 2 && boostFood.reduce((s, f) => s + f.v, 0) < lost, 'boost leaves small dots behind worth less than it cost (' + boostFood.length + ')');
+  const BM = bare(); BM.snakes[0].len = E.MINB + 0.5; run(BM, 120, { aim: null, turn: 0, boost: true });
+  ok(BM.snakes[0].len >= E.MIN && !BM.snakes[0].boost, 'boost stops near the minimum length and never goes below ' + E.MIN + ' (' + BM.snakes[0].len.toFixed(2) + ')');
+  const BS = bare(); BS.snakes[0].len = E.MIN; E.step(BS, { aim: null, turn: 0, boost: true });
+  ok(!BS.snakes[0].boost && BS.snakes[0].len === E.MIN, 'a snake at the minimum length cannot boost');
+
+  // The wall: heading straight out kills at the edge, not before
+  const W = bare(); W.snakes[0].pts = W.snakes[0].pts.map((v, i) => i % 2 ? v : v + E.R - 200); E.rebuild(W);
+  let steps = 0; while (!W.over && steps < 400) { E.step(W, still); steps++; }
+  const reach = W.snakes[0].pts[0] + E.radius(W.snakes[0].len);
+  ok(W.over && reach > E.R && reach < E.R + 4, 'running into the wall ends the run right at the edge (' + reach.toFixed(1) + ' of ' + E.R + ')');
+
+  // Bots over a long run: a legal state on every step and the same count throughout
+  let bad = 0, counts = 0, botDeaths = 0, ticks = 0;
+  for (const lv of ['easy', 'medium', 'hard']) {
+    const S = E.newGame(1234, lv), n = E.LEVELS[lv].bots;
+    for (let i = 0; i < 2400; i++) {
+      const e = E.step(S, { aim: null, turn: Math.sin(i / 40), boost: i % 300 < 30 });
+      botDeaths += e.filter((x) => x === 'botdie').length; ticks++;
+      if (S.snakes.length !== n + 1) counts++;
+      if (i % 20) continue;
+      let total = 0;
+      for (const s of S.snakes) {
+        if (!s.alive) continue;
+        total += s.pts.length / 2;
+        if (!(s.len >= E.MIN) || s.pts.length / 2 !== E.segs(s.len) || !s.pts.every(Number.isFinite) || Math.hypot(s.pts[0], s.pts[1]) > E.R + 1) bad++;
+      }
+      if (total > E.MAXTOT || S.food.length > E.FOOD_CAP || !S.food.every((f) => Number.isFinite(f.x) && f.v > 0)) bad++;
+    }
+    if (S.snakes.slice(1).filter((s) => s.alive).length < n - 4) counts++;
+  }
+  ok(ticks === 7200 && bad === 0, 'over 2,400 steps a level, every snake keeps a legal body, length and place, and food stays within its cap (' + bad + ' faults)');
+  ok(counts === 0 && botDeaths > 10, 'dead bots come back, so each level keeps its bot count (' + botDeaths + ' bot crashes)');
+  const hard = E.newGame(99, 'hard'), easy = E.newGame(99, 'easy');
+  ok(E.LEVELS.hard.bots > E.LEVELS.medium.bots && E.LEVELS.medium.bots > E.LEVELS.easy.bots && hard.snakes.length === E.LEVELS.hard.bots + 1 && easy.snakes.length === E.LEVELS.easy.bots + 1 && E.LEVELS.hard.hunt && !E.LEVELS.easy.hunt,
+    'harder levels have more bots, and only the hard ones hunt the player');
+  // Bots dodge: alone in an arena, medium bots crash less than half as often as the
+  // same bots that never look ahead (a second engine with dodging switched off)
+  const life = (EE) => { let d = 0; for (let sd = 1; sd <= 3; sd++) { const S = EE.newGame(sd * 31, 'medium'); S.snakes[0].alive = false; S.over = true; for (let i = 0; i < 1800; i++) d += EE.step(S, still).filter((x) => x === 'botdie').length / EE.LEVELS.medium.bots; } return d; };
+  const blind = loadEngine('wrigglers', 'WrigglersEngineFactory');
+  blind.LEVELS.medium.react = 0;
+  const lifeD = life(E), lifeB = life(blind);
+  ok(lifeB > 0 && lifeD < lifeB * 0.5, 'dodging bots crash less than half as often as blind ones (' + lifeD.toFixed(2) + ' vs ' + lifeB.toFixed(2) + ' crashes a bot in 90 s)');
+
+  // Determinism: one seed and one input, one arena; and the daily arena is the same for everyone
+  const play = (seed) => { const S = E.newGame(seed, 'medium'); for (let i = 0; i < 900; i++) E.step(S, { aim: null, turn: Math.cos(i / 70), boost: i % 200 < 20 }); return JSON.stringify(E.snapshot(S)); };
+  const d1 = play(4242), d2 = play(4242), d3 = play(4243);
+  ok(d1 === d2 && d1 !== d3, 'the same seed and the same steering give the same arena; another seed another');
+  ok(/var seed = dailyDate \? C\.daily\('wrigglers', dailyDate\)\.seed : /.test(html) && /return dailyDate \? 'medium' : prefs\.level;/.test(html), 'the daily arena is seeded by the day and always plays Medium');
+  // A saved run comes back the same, and a broken save is refused
+  const SV = E.newGame(5, 'hard'); for (let i = 0; i < 300; i++) E.step(SV, { aim: 1, turn: 0, boost: false });
+  const snap = JSON.parse(JSON.stringify(E.snapshot(SV))), RS = E.restore(snap);
+  ok(!!RS && RS.level === 'hard' && RS.snakes.length === SV.snakes.length && RS.food.length === SV.food.length && Math.abs(RS.snakes[0].len - SV.snakes[0].len) < 0.06, 'a saved arena comes back with its snakes and food');
+  ok(E.restore(Object.assign({}, snap, { level: 'x' })) === null && E.restore(Object.assign({}, snap, { snakes: snap.snakes.slice(1) })) === null && E.restore(Object.assign({}, snap, { snakes: [Object.assign({}, snap.snakes[0], { pts: [1, 2, 3] })].concat(snap.snakes.slice(1)) })) === null, 'a broken save is refused');
+
+  // Step time: 1,000 steps of the hard arena, with its bots grown, stay well inside a frame
+  const PT = E.newGame(77, 'hard');
+  PT.snakes.slice(1).forEach((s) => { s.len = 400; });
+  for (let i = 0; i < 120; i++) E.step(PT, { aim: null, turn: 0.4, boost: false });
+  const tp = Date.now();
+  for (let i = 0; i < 1000; i++) E.step(PT, { aim: null, turn: 0.4, boost: false });
+  const per = (Date.now() - tp) / 1000;
+  ok(per < 1.5, '1,000 hard steps with long bots take ' + per.toFixed(3) + ' ms a step, under 1.5 ms');
+
+  // Page wiring
+  const gm = games.find((g) => g.id === 'wrigglers');
+  ok(!!gm && gm.cat === 'skill' && gm.people === 1 && gm.daily !== false && html.match(/accent: '([^']+)'/)[1] === gm.color, 'games.json lists it as a one-player skill game with a daily arena, sharing the page accent');
+  ok(/C\.stats\.best\('wrigglers', lv, n\)/.test(html) && /C\.stats\.getBest\('wrigglers', S\.level\)/.test(html), 'the best length is kept for each level');
+  ok(/ctx\.autosave\(function \(\) \{\n    if \(!S \|\| S\.over \|\| ended/.test(html) && /window\.addEventListener\('pageshow', function \(e\) \{ if \(e\.persisted\)/.test(html) && /document\.querySelector\('\.ch-scrim'\)/.test(html), 'a run pauses when the app is hidden, a dialog is open or the page comes back from the cache');
+  ok(/if \(cv\.width !== W \|\| cv\.height !== H\)/.test(html) && /document\.fonts\.ready\.then/.test(html) && !/shadowBlur/.test(html), 'the canvas checks both sides, redraws when the font arrives, and draws without blur');
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  ok(['wg-200', 'wg-five', 'wg-daily'].every((id) => new RegExp("\\{ id: '" + id + "',[^\\n]*dde: '[^\\n]*des: '[^\\n]*dpl: '").test(core) && html.indexOf("unlock('" + id + "')") > 0), 'the three Wrigglers awards exist in every language and are unlocked');
+  ok(!/slither/i.test(html) && !/slither/i.test(JSON.stringify(gm)), 'the game is never called Slither');
+  ok(Date.now() - t0 < 12000, 'the Wrigglers tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #617: Cqoicebordel asked for Set; built as Trio with our own name and look ("SET" is a trademark)
+function testTrio() {
+  head('Trio (#617)');
+  const t0 = Date.now();
+  const E = loadEngine('trio', 'TrioEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/trio/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  // 81 cards, each pair completed by exactly one card, 1080 trios in a deck
+  let n = 0, thirdOk = true;
+  for (let a = 0; a < 81; a++) for (let b = a + 1; b < 81; b++) {
+    const c = E.third(a, b);
+    if (c === a || c === b || !E.isTrio(a, b, c)) thirdOk = false;
+    for (let d = b + 1; d < 81; d++) if (E.isTrio(a, b, d)) n++;
+  }
+  ok(n === 1080 && thirdOk, 'every pair of cards has exactly one third, 1080 trios in the deck (' + n + ')');
+  // the rule, feature by feature: all alike or all different
+  const card = (col, sh, cnt, fill) => col + 3 * sh + 9 * cnt + 27 * fill;
+  ok(E.isTrio(card(0, 0, 0, 2), card(0, 0, 1, 2), card(0, 0, 2, 2)), 'one, two and three solid orange circles are a trio');
+  // #617: the "not a trio" tutorial page showed two identical cards, which the deck never holds
+  const tut = [...html.matchAll(/tArt\((\[\[[\d, \[\]]+\]\]), (true|false)\)/g)].map((m) => ({ cards: JSON.parse(m[1]).map((f) => card(f[0], f[1], f[2], f[3])), ok: m[2] === 'true' }));
+  ok(tut.length === 3 && tut.every((s) => s.cards.length === 3 && new Set(s.cards).size === 3 && E.isTrio(s.cards[0], s.cards[1], s.cards[2]) === s.ok), 'every tutorial page shows three different cards, and its tick or cross matches the rule (' + tut.length + ' pages)');
+  ok(!E.isTrio(card(0, 1, 0, 0), card(0, 1, 0, 0) + 0, card(1, 1, 0, 0)) && !E.isTrio(card(0, 1, 0, 0), card(0, 1, 1, 0), card(1, 1, 2, 0)), 'two of one colour and one of another are not');
+  ok(E.isTrio(card(0, 2, 0, 0), card(1, 1, 1, 1), card(2, 0, 2, 2)), 'all four features different is a trio');
+  // games: the table always holds a trio while cards remain, and a deck game always ends
+  let always = true, ended = 0, foundMin = 99, foundMax = 0, maxTable = 0;
+  for (let k = 0; k < 120; k++) {
+    const S = E.newGame('deck', rng(k + 1)); let g = 0;
+    while (!S.over && g++ < 100) {
+      const t = E.trios(S.table);
+      if (!t.length) { always = false; break; }
+      maxTable = Math.max(maxTable, S.table.length);
+      if (!E.take(S, t[0])) { always = false; break; }
+    }
+    if (S.over) ended++;
+    foundMin = Math.min(foundMin, S.found); foundMax = Math.max(foundMax, S.found);
+  }
+  ok(always && ended === 120, 'every deck game always has a trio on the table and ends (' + ended + ' of 120)');
+  ok(foundMin >= 20 && foundMax <= 27 && maxTable <= 21, 'a deck gives ' + foundMin + '–' + foundMax + ' trios, the table never past 21 cards (' + maxTable + ')');
+  const Sh = E.newGame('short', rng(5)); let g2 = 0;
+  while (!Sh.over && g2++ < 40) E.take(Sh, E.trios(Sh.table)[0]);
+  ok(Sh.over && Sh.found === E.GOAL_SHORT, 'the short game ends at ten trios (' + Sh.found + ')');
+  // a wrong pick is a mistake and changes nothing else
+  const W = E.newGame('short', rng(9)), before = W.table.join(), all = E.trios(W.table).map((x) => x.join());
+  let wrong = null;
+  for (let i = 0; i < 12 && !wrong; i++) for (let j = i + 1; j < 12 && !wrong; j++) for (let k = j + 1; k < 12 && !wrong; k++) if (all.indexOf([i, j, k].join()) < 0) wrong = [i, j, k];
+  ok(!!wrong && !E.take(W, wrong) && W.mistakes === 1 && W.table.join() === before, 'a wrong pick counts a mistake and leaves the table as it was');
+  // a trio on a table of twelve is refilled in place, nothing else moves
+  const R = E.newGame('short', rng(11));
+  const t = E.trios(R.table)[0], others = R.table.filter((_, i) => t.indexOf(i) < 0).join();
+  if (R.table.length === 12) { E.take(R, t); ok(R.table.length >= 12 && R.table.filter((_, i) => t.indexOf(i) < 0).slice(0, 9).join() === others, 'a trio on a table of twelve is refilled in its own places'); }
+  else ok(true, 'the first table was dealt past twelve; refill-in-place is covered by the deck games');
+  // hints: two hints open two cards of one trio
+  const H = E.newGame('short', rng(13)), h1 = E.hint(H, []), h2 = E.hint(H, [h1]);
+  ok(h1 >= 0 && h2 >= 0 && h1 !== h2 && E.trios(H.table).some((x) => x.indexOf(h1) >= 0 && x.indexOf(h2) >= 0), 'a second hint points into the same trio as the first');
+  ok(E.stars({ mistakes: 0, hints: 0 }) === 3 && E.stars({ mistakes: 1, hints: 1 }) === 2 && E.stars({ mistakes: 3, hints: 0 }) === 1, 'stars: three clean, two for up to two slips, one for more');
+  // same seed, same deck: the daily game is the same for everyone
+  ok(E.newGame('short', rng(42)).deck.join() === E.newGame('short', rng(42)).deck.join(), 'the same seed deals the same deck');
+  const V = E.newGame('deck', rng(3));
+  ok(E.valid(V) && !E.valid(Object.assign({}, V, { table: V.table.concat([V.deck[0]]) })) && !E.valid(Object.assign({}, V, { mode: 'x' })), 'a save is checked before it is restored');
+  ok(/C\.daily\('trio', dailyDate\)\.rng/.test(html) && ['tri-fast', 'tri-deck', 'tri-daily'].every((id) => html.indexOf("unlock('" + id + "')") > 0) && !/\bSET\b|'Set'/.test(html),
+    'the daily deck is seeded by the day, the three awards are unlocked, and the game is never called Set');
+  ok(Date.now() - t0 < 12000, 'the Trio tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #634: a drop-four game, named Four in a Row ("Connect Four" is a Hasbro trademark)
+function testFourrow() {
+  head('Four in a Row (#634)');
+  const t0 = Date.now();
+  const E = loadEngine('fourrow', 'FourRowEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/fourrow/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  const run = (cols, first) => { const S = E.newGame(first || 0); cols.forEach((c) => E.play(S, c)); return S; };
+  // gravity: a disc lands on the lowest free cell, a full column takes no more
+  const G = run([3, 3, 3]);
+  ok(G.b[5 * 7 + 3] === 0 && G.b[4 * 7 + 3] === 1 && G.b[3 * 7 + 3] === 0 && G.h[3] === 3 && G.turn === 1, 'discs stack from the bottom of a column and the turn passes');
+  const F = run([0, 0, 0, 0, 0, 0]);
+  ok(F.h[0] === 6 && E.play(F, 0) === -1 && F.plies === 6 && E.legal(F).indexOf(0) < 0, 'a full column refuses another disc');
+  ok(E.play(E.newGame(0), 7) === -1 && E.play(E.newGame(0), -1) === -1, 'columns outside 0–6 are refused');
+  // the four directions
+  const hz = run([0, 0, 1, 1, 2, 2, 3]);
+  ok(hz.winner === 0 && E.winLines(hz).some((l) => l.length === 4 && l.every((i) => Math.floor(i / 7) === 5)), 'four across on the bottom row wins');
+  const vt = run([4, 0, 4, 0, 4, 0, 4]);
+  ok(vt.winner === 0 && E.winLines(vt)[0].every((i) => i % 7 === 4), 'four up a column wins');
+  const d1 = run([0, 1, 1, 2, 2, 3, 2, 3, 3, 6, 3]);
+  ok(d1.winner === 0 && E.winLines(d1).some((l) => l.map((i) => i % 7).sort().join() === '0,1,2,3'), 'four on a rising diagonal wins');
+  const d2 = run([6, 5, 5, 4, 4, 3, 4, 3, 3, 0, 3]);
+  ok(d2.winner === 0 && E.winLines(d2).some((l) => l.map((i) => i % 7).sort().join() === '3,4,5,6'), 'four on a falling diagonal wins');
+  ok(run([0, 0, 1, 1, 2, 2]).winner === -1 && E.play(hz, 5) === -1, 'three is not a win, and nothing is played after a win');
+  // a draw: a full board with no line of four
+  const drawCols = [0, 6, 4, 5, 3, 5, 5, 3, 3, 2, 3, 3, 3, 1, 0, 0, 6, 4, 1, 0, 0, 6, 2, 5, 5, 0, 1, 6, 4, 2, 2, 2, 2, 1, 5, 1, 6, 4, 4, 1, 6, 4];
+  const D = E.newGame(0); let stuck = false;
+  drawCols.forEach((c) => { if (E.play(D, c) < 0) stuck = true; });
+  ok(!stuck && D.plies === 42 && D.winner === 2 && E.legal(D).length === 0, 'a full board with no line of four is a draw (' + D.plies + ' discs, winner ' + D.winner + ')');
+  // the bots: take a win, block a loss
+  const winPos = run([0, 6, 1, 6, 2]);             // seat 1 to move, seat 0 threatens column 3; seat 1 has two in column 6
+  const winMine = run([0, 6, 1, 6, 0, 6]);         // seat 0 to move, seat 1 has three in column 6, seat 0 none: block
+  const take = run([0, 6, 1, 6, 2, 5]);            // seat 0 to move and wins in column 3
+  let medOk = true, hardOk = true;
+  for (let s = 1; s <= 4; s++) {
+    if (E.think(take, 'medium', rng(s)) !== 3 || E.think(winPos, 'medium', rng(s)) !== 3 || E.think(winMine, 'medium', rng(s)) !== 6) medOk = false;
+  }
+  if (E.think(take, 'hard', rng(1), { ms: 300 }) !== 3 || E.think(winPos, 'hard', rng(1), { ms: 300 }) !== 3 || E.think(winMine, 'hard', rng(1), { ms: 300 }) !== 6) hardOk = false;
+  ok(medOk, 'the medium bot takes a win and blocks a loss in one');
+  ok(hardOk, 'the hard bot takes a win and blocks a loss in one');
+  // the hard bot keeps to its time on an open board
+  const th = Date.now(), hc = E.think(E.newGame(0), 'hard', rng(2), { ms: 400 }), tt = Date.now() - th;
+  ok(hc === 3 && tt < 1500, 'the hard bot opens in the centre within its time (' + tt + ' ms)');
+  // bot against bot always ends, every board legal on the way
+  let ends = 0, okAll = true, wins = [0, 0, 0];
+  const lv = ['easy', 'medium'];
+  for (let k = 0; k < 24; k++) {
+    const S = E.newGame(k % 2), r = rng(100 + k); let n = 0;
+    while (S.winner === -1 && n++ < 50) {
+      const c = E.think(S, lv[(S.turn + k) % 2], r);
+      if (E.play(S, c) < 0) { okAll = false; break; }
+      if (S.winner === -1 && !E.valid(S)) { okAll = false; break; }
+    }
+    if (S.winner >= 0) { ends++; wins[S.winner === 2 ? 2 : (lv[(S.winner + k) % 2] === 'medium' ? 1 : 0)]++; }
+  }
+  ok(okAll && ends === 24, 'easy against medium games all end with legal moves (' + ends + ' of 24)');
+  ok(wins[1] > wins[0], 'medium beats easy more often than it loses (' + wins[1] + ' to ' + wins[0] + ', ' + wins[2] + ' drawn)');
+  // the same seed plays the same game: the daily bot is the same for everyone
+  const play = () => { const S = E.newGame(0), r = rng(7); while (S.winner === -1) E.play(S, E.think(S, 'medium', r)); return S.b.join(''); };
+  ok(play() === play(), 'the same seed plays the same game');
+  // saves
+  const V = run([3, 3, 2]);
+  const bad1 = E.clone(V); bad1.b[0] = 0;                                   // floating disc
+  const bad2 = E.clone(V); bad2.turn = 1 - bad2.turn;                       // wrong turn
+  const bad3 = E.clone(V); bad3.h[3] = 1;                                   // height out of step
+  ok(E.valid(V) && !E.valid(bad1) && !E.valid(bad2) && !E.valid(bad3) && !E.valid(null), 'a save is checked before it is restored');
+  // the page
+  const gm = games.find((g) => g.id === 'fourrow');
+  ok(!!gm && gm.cat === 'board' && gm.people === 2 && gm.path === 'games/fourrow/index.html', 'Four in a Row is listed as a two-player board game');
+  const rgb = (x) => [1, 3, 5].map((i) => parseInt(x.slice(i, i + 2), 16) / 255);
+  const lin = (c) => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  const lab = (x) => {
+    const [R, Gr, Bl] = rgb(x).map(lin), f = (t) => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+    const X = (R * 0.4124 + Gr * 0.3576 + Bl * 0.1805) / 0.95047, Y = R * 0.2126 + Gr * 0.7152 + Bl * 0.0722, Z = (R * 0.0193 + Gr * 0.1192 + Bl * 0.9505) / 1.08883;
+    return [116 * f(Y) - 16, 500 * (f(X) - f(Y)), 200 * (f(Y) - f(Z))];
+  };
+  const dE = (a, b) => { const P = lab(a), Q = lab(b); return Math.hypot(P[0] - Q[0], P[1] - Q[1], P[2] - Q[2]); };
+  const lum = (x) => rgb(x).map((c) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0);
+  const near = games.filter((g) => g.id !== 'fourrow').map((g) => [g.id, dE(g.color, gm.color)]).sort((x, y) => x[1] - y[1])[0];
+  ok(near[1] >= 15 && 1.05 / (lum(gm.color) + 0.05) >= 4.5 && html.indexOf("accent: '" + gm.color + "'") > 0, 'the accent differs from every other game by ΔE ≥ 15 (nearest ' + near[0] + ', ' + near[1].toFixed(1) + '), keeps white text at 4.5:1 and matches the page');
+  const icon = fs.readFileSync(path.join(ROOT, 'www/games/fourrow/icon.svg'), 'utf8');
+  ok(new RegExp('^<svg[^>]*>\\s*<rect width="96" height="96" rx="22" fill="' + gm.soft + '"/>').test(icon.trim()), 'the icon starts on the soft tint of games.json');
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  ok(['fr-win', 'fr-hard', 'fr-daily'].every((id) => core.indexOf("id: '" + id + "'") > 0 && html.indexOf("unlock('" + id + "')") > 0), 'the three awards are in the core and unlocked by the game');
+  ok(/C\.daily\('fourrow', G\.daily \+ '\|' \+ G\.S\.plies\)\.rng/.test(html) && /daily \? 'medium'/.test(html), 'the daily game plays the medium bot from the day\'s seed');
+  ok(!/Connect ?Four|Hasbro/i.test(html.replace(/"Connect Four" is a Hasbro trademark/, '')), 'the page never uses the trademarked name');
+  ok(/ctx\.tutorialIfNew\(TUT\)/.test(html) && /C\.icon\('gear', 20\)/.test(html) && !/history\.(push|replace)State|localStorage/.test(html), 'a tutorial, options behind a gear, no history or direct storage');
+  ok(Date.now() - t0 < 12000, 'the Four in a Row tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #635: Cqoicebordel asked for a climbing card game; built as Peak with our own cards
+function testPeak() {
+  head('Peak (#635)');
+  const t0 = Date.now();
+  const E = loadEngine('peak', 'PeakEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/peak/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  const d = E.deck(), tally = {};
+  d.forEach((f) => { tally[f] = (tally[f] || 0) + 1; });
+  ok(d.length === 90 && tally[2] === 16 && tally[3] === 12 && tally[9] === 4 && tally[15] === 2 && [16, 17, 18, 19, 20].every((f) => tally[f] === 1), 'the deck has 90 cards: sixteen 2s down to one each of 16–20');
+  const N = E.newGame(4, rng(1), 0);
+  ok(N.hands.every((h) => h.length === 6) && N.pile.length === 66 && E.valid(N), 'four players get six cards each and 66 stay in the pile');
+  // the worked example from the issue, seats N E S W = 0 1 2 3; the pile is drawn from its end
+  const S = E.make([[3, 4, 9, 9, 9, 9], [5, 5, 9, 9, 9, 9], [3, 4, 9, 9, 9, 9], [3, 7, 9, 9, 9, 9]], [11, 12, 13, 14, 15, 16, 17, 18]);
+  const step = (f) => E.begin(S).concat(E.play(S, f)).map((x) => x.t + x.p + (x.face ? ':' + x.face : '')).join(' ');
+  const log = [3, 5, 3, 3, 4, 5, 4, 7].map(step);
+  const want = [
+    'play0:3',
+    'play1:5 beat0:3 draw0:18',
+    'play2:3',
+    'play3:3 beat1:5 draw1:17',
+    'play0:4',
+    'play1:5 beat0:4 draw0:16',
+    'clear2:3 play2:4 beat3:3 draw3:15',
+    'play3:7 beat1:5 beat2:4 draw1:14 draw2:13'
+  ];
+  const bad = log.map((l, i) => l === want[i] ? '' : (i + 1) + ': ' + l).filter(Boolean);
+  ok(!bad.length, 'the issue\'s worked example plays out step by step' + (bad.length ? ' (' + bad.join(' | ') + ')' : ''));
+  ok(S.table.join() === '0,0,0,7' && S.discard.length === 7, 'after the example only West\'s 7 stands, and seven cards are out');
+  // three 3s on the table are worth 9 each, so a lone 5 cannot beat them, and a 9 ties
+  const T = E.make([[9, 2], [2], [2], [2]], [], [0, 3, 3, 3]);
+  ok(E.value(T, 1) === 9 && E.preview(T, 9).beaten.length === 0 && E.preview(T, 9).v === 9, 'three 3s are worth 9 each, and a 9 ties them: ties stay');
+  // a cascade: a played 4 beats a lone 3; the 3s' partner gone, the other 3 is worth 3 and falls too
+  const K = E.make([[4, 9], [9], [9], [9]], [2, 2, 2, 2], [0, 3, 6, 0]);
+  const kv = E.play(K, 4);
+  ok(kv.filter((e) => e.t === 'beat').length === 1 && K.table.join() === '4,0,6,0', 'a lower lone card falls and a higher one stays');
+  const K2 = E.make([[5, 9], [9], [9], [9]], [2, 2, 2], [0, 3, 3, 0]);
+  ok(E.play(K2, 5).filter((e) => e.t === 'beat').length === 0 && K2.table.join() === '5,3,3,0', 'a pair of 3s (6 each) holds against a 5');
+  const K3 = E.make([[7, 9], [9], [9], [9]], [2, 2, 2], [0, 3, 3, 2]);
+  const k3 = E.play(K3, 7);
+  ok(k3.filter((e) => e.t === 'beat').length === 3 && K3.table.join() === '7,0,0,0', 'a 7 knocks down a pair of 3s and a 2 together');
+  // values are counted again as cards leave: a 4 joining another 4 (8 each) beats a pair of 3s
+  // (6 each) and a lone 5; with the 5 gone nothing changes for the 4s
+  const R = E.make([[4, 9], [9], [9], [9], [9]], [2, 2, 2, 2], [0, 4, 3, 3, 5]);
+  const rv = E.play(R, 4);
+  ok(rv[0].v === 8 && R.table.join() === '4,4,0,0,0', 'a played card joins its twin on the table and both count double');
+  // an empty pile: the discards, the card just beaten included, are shuffled into a new one (#635)
+  const P = E.make([[9, 9], [2, 2], [9], [9]], [], [0, 3, 0, 0]);
+  P.discard = [5, 6];
+  const pv = E.play(P, 9);
+  ok(pv.some((e) => e.t === 'beat' && e.p === 1) && pv.some((e) => e.t === 'reshuffle') && pv.some((e) => e.t === 'draw' && e.p === 1) && P.hands[1].length === 3 && P.pile.length + P.discard.length === 2 && P.discard.length === 0, 'with the pile empty the discards become the new pile and a beaten card is replaced');
+  const P2 = E.make([[9, 9], [2, 2], [9], [9]], [], [0, 3, 0, 0]);
+  P2.discard = [5, 6, 7, 8, 10, 11];
+  const P3 = E.clone(P2);
+  E.play(P2, 9); E.play(P3, 9);
+  ok(P2.pile.join() === P3.pile.join(), 'the new pile is shuffled the same way from the same position, so the daily stays the same for everyone');
+  // a beaten player always draws, so nobody can empty their hand off-turn and nobody shares a win (#635)
+  const W = E.make([[9, 2], [], [], [2]], [], [0, 3, 4, 0]);
+  const wv = E.play(W, 9);
+  ok(!E.over(W) && W.hands[1].length === 1 && W.hands[2].length === 1 && !wv.some((e) => e.t === 'win'), 'a beaten player with no hand draws from the reshuffled discards instead of winning');
+  // a card that stands until its owner's next turn leaves with no draw; with an empty hand, that is the win
+  const L = E.make([[2, 9], [9, 9], [9, 9], [9, 9]], [5, 5, 5], [0, 0, 0, 0]);
+  L.turn = 2;
+  const seq = [];
+  for (let i = 0; i < 5; i++) { seq.push(L.turn); E.begin(L); E.play(L, E.legal(L)[0]); }
+  ok(seq.join() === '2,3,0,1,2', 'turns pass round the table in seat order (' + seq.join() + ')');
+  const Wn = E.make([[], [9], [9], [9]], [5], [6, 0, 0, 0]);
+  const bv = E.begin(Wn);
+  ok(bv.length === 2 && bv[0].t === 'clear' && bv[1].t === 'win' && Wn.winners.join() === '0' && Wn.discard.join() === '6', 'a standing last card clears at its owner\'s turn and that player wins');
+  const Cl = E.make([[2, 3], [9], [9], [9]], [5], [6, 0, 0, 0]);
+  ok(E.legal(Cl).length === 0 && E.begin(Cl).length === 1 && Cl.hands[0].length === 2 && !E.over(Cl) && E.legal(Cl).join() === '2,3', 'a standing card blocks play until it clears, with no draw and no win while cards are in hand');
+  ok(E.play(E.make([[3], [9], [9]], []), 4) === null, 'a card not in the hand is refused');
+  // the bots: every move legal, every game ends, and the levels are in order
+  let ends = 0, okAll = true, medW = 0, easyW = 0, moves = 0;
+  for (let k = 0; k < 120; k++) {
+    const lv = [0, 1, 2, 3].map((i) => ((i + k) % 2 ? 'medium' : 'easy'));
+    const r = rng(500 + k), G = E.newGame(4, r, k % 4);
+    let n = 0;
+    while (!E.over(G) && n++ < 400) {
+      E.begin(G); if (E.over(G)) break;
+      const f = E.botMove(G, lv[G.turn], r);
+      if (E.play(G, f) === null || !E.valid(G)) { okAll = false; break; }
+    }
+    if (E.over(G)) { ends++; moves += G.moves; G.winners.forEach((w) => { if (lv[w] === 'medium') medW++; else easyW++; }); }
+  }
+  ok(okAll && ends === 120, 'easy against medium: every move legal and every game ends (' + ends + ' of 120, ' + (moves / Math.max(1, ends)).toFixed(0) + ' turns on average)');
+  ok(medW > easyW, 'medium wins more often than easy (' + medW + ' to ' + easyW + ')');
+  const H = E.newGame(6, rng(3), 0), th = Date.now();
+  let hf = null;
+  for (let i = 0; i < 5; i++) hf = E.botMove(H, 'hard', rng(9 + i));
+  const ht = (Date.now() - th) / 5;
+  ok(E.legal(H).indexOf(hf) >= 0 && ht < 250, 'the hard bot picks a legal card at six players within its time (' + ht.toFixed(0) + ' ms a move)');
+  const replay = () => { const r = rng(42), G = E.newGame(4, r, 0); while (!E.over(G)) { E.begin(G); if (!E.over(G)) E.play(G, E.botMove(G, 'medium', r)); } return G.discard.join() + '|' + G.winners.join(); };
+  ok(replay() === replay(), 'the same seed plays the same game, so the daily is the same for everyone');
+  // saves
+  const V = E.newGame(5, rng(8), 2);
+  const b1 = E.clone(V); b1.hands[0].push(20);
+  const b2 = E.clone(V); b2.turn = 9;
+  const b3 = E.clone(V); b3.n = 7;
+  const b4 = E.clone(V); b4.pile[0] = b4.pile[0] === 2 ? 3 : 2;
+  ok(E.valid(V) && !E.valid(b1) && !E.valid(b2) && !E.valid(b3) && !E.valid(b4) && !E.valid(null), 'a save is checked before it is restored');
+  // the page
+  const gm = games.find((g) => g.id === 'peak');
+  ok(!!gm && gm.cat === 'cards' && gm.people === 1 && gm.path === 'games/peak/index.html', 'Peak is listed as a one-player card game');
+  const rgb = (x) => [1, 3, 5].map((i) => parseInt(x.slice(i, i + 2), 16) / 255);
+  const lin = (c) => c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  const lab = (x) => {
+    const [Rr, Gr, Bl] = rgb(x).map(lin), f = (t) => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+    const X = (Rr * 0.4124 + Gr * 0.3576 + Bl * 0.1805) / 0.95047, Y = Rr * 0.2126 + Gr * 0.7152 + Bl * 0.0722, Z = (Rr * 0.0193 + Gr * 0.1192 + Bl * 0.9505) / 1.08883;
+    return [116 * f(Y) - 16, 500 * (f(X) - f(Y)), 200 * (f(Y) - f(Z))];
+  };
+  const dE = (a, b) => { const A = lab(a), B = lab(b); return Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]); };
+  const lum = (x) => rgb(x).map((c) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0);
+  const near = games.filter((g) => g.id !== 'peak').map((g) => [g.id, dE(g.color, gm.color)]).sort((x, y) => x[1] - y[1])[0];
+  ok(near[1] >= 15 && 1.05 / (lum(gm.color) + 0.05) >= 4.5 && html.indexOf("accent: '" + gm.color + "'") > 0, 'the accent differs from every other game by ΔE ≥ 15 (nearest ' + near[0] + ', ' + near[1].toFixed(1) + '), keeps white text at 4.5:1 and matches the page');
+  const icon = fs.readFileSync(path.join(ROOT, 'www/games/peak/icon.svg'), 'utf8');
+  ok(new RegExp('^<svg[^>]*>\\s*<rect width="96" height="96" rx="22" fill="' + gm.soft + '"/>').test(icon.trim()), 'the icon starts on the soft tint of games.json');
+  const core = fs.readFileSync(path.join(ROOT, 'www/lib/chogan.js'), 'utf8');
+  ok(['pk-win', 'pk-hard', 'pk-daily'].every((id) => core.indexOf("id: '" + id + "'") > 0 && html.indexOf("unlock('" + id + "')") > 0), 'the three awards are in the core and unlocked by the game');
+  ok(/C\.daily\('peak', M\.daily \+ '\|' \+ S\.moves/.test(html) && /daily \? 'medium'/.test(html) && /var n = daily \? 4/.test(html), 'the daily game seats four, plays medium bots and seeds them from the day');
+  ok(!/F\x75ji ?Fl\x75sh/i.test(html) && !/F\x75ji ?Fl\x75sh/i.test(JSON.stringify(gm)), 'the page never uses the product name');
+  ok(/cardSpeed: true/.test(html) && /C\.cards\.speedRow\(\)/.test(html) && /C\.cards\.pace\(/.test(html), 'the card speed setting is honoured');
+  ok(/ctx\.tutorialIfNew\(TUT\)/.test(html) && /C\.icon\('gear', 20\)/.test(html) && !/history\.(push|replace)State|localStorage/.test(html), 'a tutorial, options behind a gear, no history or direct storage');
+  ok(Date.now() - t0 < 12000, 'the Peak tests finish in under 12 s (' + (Date.now() - t0) + ' ms)');
 }
 
 // #554: xmha97 asked for Lights Out (named Lights Off: "Lights Out" is a trademark)
@@ -10595,6 +11919,62 @@ function testLights() {
   ok(/C\.daily\('lights', dailyDate\)\.rng/.test(html) && ['lit-perfect', 'lit-big', 'lit-daily'].every((id) => html.indexOf("unlock('" + id + "')") > 0), 'the daily puzzle is seeded by the day, and the three awards are unlocked');
   ok(/\.lt-board \{[^}]*direction: ltr;/.test(html) && /board\.addEventListener\('keydown'/.test(html), 'the board is left to right in every language, so the arrows are geometric');
   ok(Date.now() - t0 < 8000, 'the Lights Off tests finish in under 8 s (' + (Date.now() - t0) + ' ms)');
+}
+
+// #639: itun0 asked for a one-per-region animal puzzle; built as Territories with our own
+// name and animals. A puzzle must have one answer and be solvable without guessing, so the
+// generator is checked against a brute-force count and the page's own logic solver.
+function testTerritories() {
+  head('Territories (#639)');
+  const t0 = Date.now();
+  const E = loadEngine('territories', 'TerritoriesEngineFactory');
+  const html = fs.readFileSync(path.join(ROOT, 'www/games/territories/index.html'), 'utf8');
+  const rng = (seed) => { let x = seed >>> 0; return () => { x = (x * 1664525 + 1013904223) >>> 0; return x / 4294967296; }; };
+  // the 4×4 board of the tutorial: rows AABB / ACBB / DCCB / DDCC
+  const R4 = [0, 0, 1, 1, 0, 2, 1, 1, 3, 2, 2, 1, 3, 3, 2, 2];
+  const grid = (n, cells, v) => { const g = new Array(n * n).fill(E.EMPTY); cells.forEach((i) => { g[i] = v === undefined ? E.ANIMAL : v; }); return g; };
+  ok(E.touching(6, 0, 7) && E.touching(6, 0, 1) && E.touching(6, 0, 6) && !E.touching(6, 0, 2) && !E.touching(6, 5, 6), 'animals touch side by side and corner to corner, and the end of a row does not touch the next row\'s start');
+  ok(E.clash(4, R4, 0, 3) && E.clash(4, R4, 0, 12) && E.clash(4, R4, 0, 4) && E.clash(4, R4, 2, 7) && !E.clash(4, R4, 1, 7), 'two animals clash in the same row, column or region, or touching');
+  ok(E.won(4, R4, grid(4, [1, 7, 8, 14])) && !E.won(4, R4, grid(4, [1, 7, 8])) && !E.won(4, R4, grid(4, [0, 7, 8, 14])), 'the tutorial\'s answer wins; three animals or a wrong one do not');
+  const bad = E.conflicts(4, R4, grid(4, [5, 10, 3]));
+  ok(bad[5] && bad[10] && !bad[3], 'only the animals that break a rule are marked (two touching, a third one alone is not)');
+  const seen = E.seen(4, R4, grid(4, [5]));
+  ok(seen[0] && seen[4] && seen[6] && seen[9] && seen[13] && seen[15] && !seen[3] && !seen[5] && seen.filter(Boolean).length === 12, 'auto-cross covers the animal\'s row, column, region and neighbours, and nothing else (' + seen.filter(Boolean).length + ' cells)');
+  ok(E.cycle(E.EMPTY) === E.CROSS && E.cycle(E.CROSS) === E.ANIMAL && E.cycle(E.ANIMAL) === E.EMPTY, 'a tap goes empty, cross, animal and back to empty');
+  ok(E.stars(0) === 3 && E.stars(1) === 2 && E.stars(2) === 1 && E.stars(40) === 1, 'three stars with no mistake, two after one, one after more: never a loss');
+  ok(E.count(4, R4, 5) === 1 && E.solve(4, R4).solved, 'the tutorial board has one answer and the solver finds it');
+  // generated puzzles: every size, several seeds; each has one answer by brute force, and
+  // the logic solver (no guessing) ends on exactly that answer
+  let gen = 0, unique = 0, logic = 0, shaped = 0, slow = 0, even = 0;
+  const r = rng(639);
+  for (const n of E.SIZES) for (let k = 0; k < 12; k++) {
+    const s = Date.now(), P = E.generate(n, r);
+    if (Date.now() - s > 1500) slow++;
+    gen++;
+    if (!P) continue;
+    const regs = new Set(P.reg);
+    if (P.reg.length === n * n && regs.size === n && [...regs].every((g) => E.connected(n, P.reg, g))) shaped++;
+    // the first draft's median board gave one region 15 of 36 cells
+    if (Math.max(...[...regs].map((g) => P.reg.filter((x) => x === g).length)) <= Math.floor(2.5 * n)) even++;
+    if (E.count(n, P.reg, 2) === 1) unique++;
+    const S = E.solve(n, P.reg), want = P.sol.map((c, row) => row * n + c);
+    if (S.solved && !S.broken && E.won(n, P.reg, S.g) && want.every((i) => S.g[i] === E.ANIMAL)) logic++;
+  }
+  ok(gen === 36 && shaped === gen, 'every generated puzzle has n whole regions on an n×n board (' + shaped + '/' + gen + ')');
+  ok(even === gen, 'no region of a generated puzzle covers more than 2.5n cells (' + even + '/' + gen + ')');
+  ok(unique === gen, 'every generated puzzle has exactly one answer, counted by brute force (' + unique + '/' + gen + ')');
+  ok(logic === gen, 'the logic solver finishes every generated puzzle without guessing, on the generator\'s answer (' + logic + '/' + gen + ')');
+  ok(slow === 0, 'no puzzle takes over 1.5 s to make');
+  const a = E.generate(7, rng(5)), b = E.generate(7, rng(5));
+  ok(a && b && a.reg.join() === b.reg.join(), 'the same seed gives the same puzzle, so the daily is the same for everyone');
+  const N = 36, zero = new Array(N).fill(0), R6 = E.generate(6, rng(9)).reg;
+  ok(E.valid({ n: 6, reg: R6, g: zero, mistakes: 0 }) && !E.valid({ n: 5, reg: R6, g: zero, mistakes: 0 }) && !E.valid({ n: 6, reg: R6, g: zero.slice(1), mistakes: 0 }) &&
+    !E.valid({ n: 6, reg: R6.map(() => 0), g: zero, mistakes: 0 }) && !E.valid({ n: 6, reg: R6, g: zero.map(() => 3), mistakes: 0 }), 'a save is checked before it is restored (size, lengths, regions, marks)');
+  ok(/C\.daily\('territories', dailyDate\)\.rng/.test(html) && /DAILY_N = 7/.test(html) && ['tr-clean', 'tr-big', 'tr-daily'].every((id) => html.indexOf("unlock('" + id + "')") > 0), 'the daily 7×7 is seeded by the day, and the three awards are unlocked');
+  ok(/\.tr-board \{[^}]*direction: ltr;/.test(html) && /board\.addEventListener\('keydown'/.test(html) && /C\.undoKey\(e\)/.test(html), 'the board is left to right in every language, arrows move on it, and undo has its keys');
+  ok(!/<img|\.png|\.webp|[\u{1F400}-\u{1F43F}]/u.test(html), 'the animals are drawn in code: no image files and no emoji');
+  ok(/function showSettings[\s\S]{0,300}C\.ui\.switch\(prefs\.auto/.test(html), 'auto-cross is a switch behind the gear');
+  ok(Date.now() - t0 < 15000, 'the Territories tests finish in under 15 s (' + (Date.now() - t0) + ' ms)');
 }
 
 // #544: a player asked for Simon (named Echo in English: "Simon" is a trademark)
@@ -10651,6 +12031,18 @@ function testAirHockey() {
   ok(g0.ev.includes('goal0') && g0.S.score.join() === '1,0' && g1.ev.includes('goal1') && g1.S.score.join() === '0,1', 'a puck through the top mouth is a goal for the bottom player, and the other way round');
   ok(post.ev.includes('wall') && !post.ev.some((e) => e.startsWith('goal')) && post.S.puck.vy > 0, 'beside the mouth the puck bounces off the end board');
   ok(g0.S.puck.y < E.H / 2 && g1.S.puck.y > E.H / 2 && g0.S.puck.vx === 0 && g0.S.puck.vy === 0 && g0.S.wait > 0, 'after a goal the puck waits, still, in the half that let it in');
+  // #592: the resting puck ignored the mallets, so a swing at it passed through, and the puck
+  // woke under the mallet and was knocked backwards, often into the player's own goal.
+  // A player swings up at the puck the moment it reappears in their half.
+  const serve = () => { const S = shoot(E.W / 2 + 40, 600).S; S.mal[0] = { x: S.puck.x, y: S.puck.y + 120, vx: 0, vy: 0 }; return S; };
+  const sv = serve(), wait0 = sv.wait;
+  let svHit = -1, svVy = 0, svBelow = false;
+  for (let i = 0; i < 60 && svHit < 0; i++) { const ev = E.step(sv, [{ x: sv.puck.x, y: sv.mal[0].y - 1400 * E.DT }, hold(sv)[1]], half); if (ev.includes('hit')) { svHit = i; svVy = sv.puck.vy; svBelow = sv.mal[0].y > sv.puck.y; } }
+  ok(wait0 > 0 && svHit >= 0 && svHit * E.DT < wait0 && svVy < -200, 'a swing at the resting puck hits it at once, up the table (hit at ' + (svHit * E.DT).toFixed(2) + ' s of a ' + wait0.toFixed(2) + ' s rest, vy ' + svVy.toFixed(0) + ')');
+  ok(svBelow, 'the swing does not pass through the puck (mallet still below it)');
+  const idle = shoot(E.W / 2 + 40, 600).S, iy = idle.puck.y; let idleSteps = 0;
+  while (idle.wait > 0 && idleSteps < 200) { E.step(idle, hold(idle), half); idleSteps++; }
+  ok(idleSteps > 0 && Math.abs(idleSteps * E.DT - wait0) < 0.05 && idle.puck.y === iy, 'untouched, the puck still rests its full ' + wait0.toFixed(2) + ' s in place');
   const side = fresh(); side.puck = { x: 20, y: 300, vx: -500, vy: 0 }; E.step(side, hold(side), half); E.step(side, hold(side), half);
   ok(side.puck.vx > 0 && side.puck.vx < 500, 'the side boards return the puck a little slower');
 
@@ -10902,6 +12294,20 @@ function testTanks() {
   ok(['tnk-win', 'tnk-hard', 'tnk-big'].every((id) => new RegExp("\\{ id: '" + id + "',[^\\n]*dde: '[^\\n]*des: '").test(core) && html.indexOf("unlock('" + id + "')") > 0), 'the three Tanks awards exist in every language and are unlocked');
   // #510: the field is drawn left to right in every language, so the step buttons must not follow RTL
   ok(/el\('span', \{ class: 'tk-steps', dir: 'ltr' \}, \[stepBtn\(-1, 'moveL', '◀'\), stepBtn\(1, 'moveR', '▶'\)\]\)/.test(html), 'the step buttons sit in a left-to-right group, ◀ (left) first, in every language');
+  // #714: on a tall phone the field was a 640 x 440 box with empty space above and below;
+  // a taller slot now becomes sky above the same world, never a different world
+  {
+    const m = html.match(/(var VIEW_H = \d+;[^\n]*\n)?  function size\(\) \{[\s\S]*?\n  \}\n/);
+    ok(!!m, 'Tanks has a size() to test');
+    const mk = (W, H) => new Function('E', 'box', (m ? m[0] : '') + '; return size();')({ W: E.W, H: E.H }, { getBoundingClientRect: () => ({ width: W, height: H }) });
+    const tall = m ? mk(366, 480) : null, wide = m ? mk(800, 420) : null, huge = m ? mk(366, 2000) : null;
+    ok(tall && tall.w === 366 && tall.h === 480, 'in a tall slot the view keeps the full width and takes the full height (' + JSON.stringify(tall) + ')');
+    ok(huge && huge.w === 366 && huge.h === Math.round(366 * 900 / E.W), 'the view grows to at most 640 x 900 world units (' + JSON.stringify(huge) + ')');
+    ok(wide && wide.h === 420 && wide.w === Math.floor(420 * E.W / E.H), 'in a wide slot the field is its own 640 x 440 (' + JSON.stringify(wide) + ')');
+    ok(/g\.scale\(k, k\); g\.translate\(0, up\);/.test(html) && /up = Math\.max\(0, h \/ k - E\.H\)/.test(html), 'the extra height is drawn as sky above the world, which keeps its coordinates');
+    ok(/\.tk-wrap > \.ch-fit \{ --fit-ar: calc\(640 \/ 900\); \}/.test(html) && /@container game \(min-aspect-ratio: 5 \/ 4\) \{ \.tk-wrap > \.ch-fit \{ --fit-ar: calc\(640 \/ 440\); \} \}/.test(html) && /\.ch-nocq \.ch-gamemain\.ch-wide \.tk-wrap > \.ch-fit \{ --fit-ar: calc\(640 \/ 440\); \}/.test(html), 'the slot may be tall when stacked and is 640 x 440 beside the side column, with or without container queries');
+    ok(/\.tk-players \{ container-type: inline-size;/.test(html) && /@container \(max-width: 340px\) \{\s*\.tk-player \{ flex-wrap: wrap;/.test(html), 'in the narrow side column the shot count moves under the name instead of squeezing it');
+  }
   ok(Date.now() - t0 < 15000, 'the Tanks tests finish in under 15 s (' + (Date.now() - t0) + ' ms)');
 }
 
@@ -11058,7 +12464,7 @@ function testXiangqi() {
   const lum = (x) => rgb(x).map((c) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0);
   const near = games.filter((g) => g.id !== 'xiangqi').map((g) => [g.id, dE(g.color, gm.color)]).sort((x, y) => x[1] - y[1])[0];
   ok(near[1] >= 15 && 1.05 / (lum(gm.color) + 0.05) >= 4.5, 'the accent differs from every other game by ΔE ≥ 15 (nearest ' + near[0] + ', ' + near[1].toFixed(1) + ') and keeps white text at 4.5:1');
-  ok(/name: \{ fa: 'شطرنج چینی', en: 'Chinese chess', zh: '中国象棋', de: 'Chinesisches Schach', es: 'Ajedrez chino' \}/.test(html), 'the five names match games.json');
+  ok(/name: \{ fa: 'شطرنج چینی', en: 'Chinese chess', zh: '中国象棋', de: 'Chinesisches Schach', es: 'Ajedrez chino', pl: 'Szachy chińskie', fr: 'Échecs chinois', ar: 'الشطرنج الصيني', hi: 'चीनी शतरंज' \}/.test(html), 'the names match games.json in every language');
   ok(/newGame\(\{ daily: dailyDate, level: 2, mode: 'ai' \}\)/.test(html) && /C\.stats\.daily\('xiangqi', S\.daily/.test(html), 'the daily game uses the same deterministic AI for everyone');
   ok(/kb\('U \/ Ctrl\+Z'/.test(html) && /if \(C\.undoKey\(e\)\) \{ undo\(\);/.test(html), 'the undo key is labelled and handled');
   ok(/E\.validState\(saved\.s\)/.test(html) && /ctx\.autosave\(function/.test(html), 'the game saves and restores a checked state');
@@ -11338,19 +12744,23 @@ function testTelegramPost() {
   let kb = null; try { kb = JSON.parse(btnLine); } catch (e) { kb = null; }
   const urls = kb && Array.isArray(kb.inline_keyboard) ? [].concat(...kb.inline_keyboard).map((b) => b.text && b.url) : [];
   ok(urls.join() === ['https://choganhq.github.io/chogan/', 'https://github.com/choganhq/chogan/releases/tag/v0.5.1', 'https://f-droid.org/packages/io.github.choganhq.chogan/'].join(), 'the post has buttons for the web, this release and F-Droid');
-  ok(!/https?:\/\//.test(block('v0.5.1').replace(/^\[(buttons|cover)\].*$/gm, '').replace(/<a href="https:\/\/github\.com\/[A-Za-z0-9-]+">@[A-Za-z0-9-]+<\/a>/g, '')), 'no bare links in the text; they are buttons (only a contributor\'s name links to their profile)');
+  ok(!/https?:\/\//.test(block('v0.5.1').replace(/^\[(buttons|cover)\].*$/gm, '').replace(/<a href="https:\/\/github\.com\/([A-Za-z0-9-]+)">github\.com\/\1<\/a>/g, '')), 'no bare links in the text; they are buttons (only a contributor\'s name links to their profile)');
   // A contributor is credited on the line of their change, linked to their profile (owner's wish, #530, #533)
-  ok(/\n• Chinese chess, thanks to <a href="https:\/\/github\.com\/lanlan3292">@lanlan3292<\/a>\n/.test(block('v0.18.0')) && /• Way Out: [^\n]*, thanks to <a href="https:\/\/github\.com\/ggYasin">@ggYasin<\/a>\n/.test(block('v0.5.1')) && !/<b>Thanks to<\/b>/.test(hist.stdout || '') && !/@margani/.test(hist.stdout || ''),
+  ok(/\n• Chinese chess, thanks to <a href="https:\/\/github\.com\/lanlan3292">github\.com\/lanlan3292<\/a>\n/.test(block('v0.18.0')) && /• Way Out: [^\n]*, thanks to <a href="https:\/\/github\.com\/ggYasin">github\.com\/ggYasin<\/a>\n/.test(block('v0.5.1')) && !/<b>Thanks to<\/b>/.test(hist.stdout || '') && !/@margani/.test(hist.stdout || ''),
     'the credit sits on the change\'s own line, linked, never as a line of its own at the end, and never the owner');
   const cl39 = path.join(clDir, '39.txt');
   const mdT = spawnSync('python3', [path.join(ROOT, 'tools/release-notes.py'), '--md', cl39], { encoding: 'utf8' }).stdout;
-  ok(/\n  - Chinese chess, thanks to \[@lanlan3292\]\(https:\/\/github\.com\/lanlan3292\)\n/.test(mdT), 'the GitHub notes link the name on the same line');
+  ok(/\n  - Chinese chess, thanks to \[github\.com\/lanlan3292\]\(https:\/\/github\.com\/lanlan3292\)\n/.test(mdT), 'the GitHub notes link the name on the same line');
   const tricky = path.join(os.tmpdir(), 'chogan-cl-at-' + process.pid + '.txt');
-  fs.writeFileSync(tricky, 'Improvements:\n- mail a@b.c and @x"><b and @ok-name\n');
+  fs.writeFileSync(tricky, 'Improvements:\n- mail a@b.c, see https://github.com/choganhq/chogan, github.com/x"><b and github.com/ok-name\n');
   const tH = spawnSync('python3', [path.join(ROOT, 'tools/release-notes.py'), '--html', tricky], { encoding: 'utf8' }).stdout;
+  fs.writeFileSync(tricky, 'Improvements:\n- Polish, thanks to @tmpjx555\n');
+  const tAt = spawnSync('python3', [path.join(ROOT, 'tools/release-notes.py'), '--check', tricky], { encoding: 'utf8' });
   fs.unlinkSync(tricky);
-  ok(/a@b\.c/.test(tH) && /<a href="https:\/\/github\.com\/x">@x<\/a>&quot;&gt;&lt;b/.test(tH) && /<a href="https:\/\/github\.com\/ok-name">@ok-name<\/a>/.test(tH) && !/"><b/.test(tH.replace(/<a href="[^"]*">/g, '')),
-    'only a login after @ becomes a link; an email stays text and nothing can break out of the link');
+  ok(/a@b\.c/.test(tH) && /<a href="https:\/\/github\.com\/x">github\.com\/x<\/a>&quot;&gt;&lt;b/.test(tH) && /<a href="https:\/\/github\.com\/ok-name">github\.com\/ok-name<\/a>/.test(tH) && /see https:\/\/github\.com\/choganhq\/chogan,/.test(tH) && !/"><b/.test(tH.replace(/<a href="[^"]*">/g, '')),
+    'only a github.com/login credit becomes a link; an email or a longer URL stays text and nothing can break out of the link');
+  // F-Droid and Play show the file as plain text, where @login leads nowhere (#644)
+  ok(tAt.status === 1 && /github\.com\/tmpjx555/.test(tAt.stderr), '--check refuses an @login credit and names the github.com form');
   // Every contributor git can name is credited in the changelog of the release that carries their work
   const missing = [];
   for (const t of tags) {
@@ -11359,7 +12769,7 @@ function testTelegramPost() {
     if (!who.length) continue;
     const code = (spawnSync('git', ['show', t + ':www/version.js'], { cwd: ROOT, encoding: 'utf8' }).stdout.match(/APP_VERSION_CODE = (\d+)/) || [])[1];
     const f = path.join(clDir, code + '.txt'), text = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '';
-    who.filter((w) => text.indexOf('@' + w) < 0).forEach((w) => missing.push(t + ' ' + w));
+    who.filter((w) => text.indexOf('github.com/' + w) < 0).forEach((w) => missing.push(t + ' ' + w));
   }
   const contrib = spawnSync('bash', [path.join(ROOT, 'tools/contributors.sh'), 'v0.18.0'], { cwd: ROOT, env: Object.assign({}, process.env, { CONTRIBUTORS_OFFLINE: '1' }), encoding: 'utf8' });
   ok(contrib.status === 0 && contrib.stdout === 'lanlan3292\n' && !missing.length, 'tools/contributors.sh names a release\'s contributors, and each is credited in its changelog' + (missing.length ? ' (missing: ' + missing.join(', ') + ')' : ''));
@@ -11441,7 +12851,7 @@ function testModalFocus() {
   ok(/el\('button', \{ class: 'ch-btn ch-btn--ghost ch-seeboard'[\s\S]*?shown\.close\('board'\)[\s\S]*?Chogan\.t\('seeBoard'\)/.test(fin) && /body\.push\(el\('button'/.test(fin) && /return \(shown = ui\.modal\(/.test(fin),
     'the result window has a See the board button that closes it like X, not like an action');
   const locales = [...core.matchAll(/result: '[^']+', seeBoard: '([^']+)'/g)].map((m) => m[1]);
-  ok(locales.length === 5 && new Set(locales).size === 5, 'See the board is translated in all five languages (' + locales.length + ')');
+  ok(locales.length === LOCALE_CODES.length && new Set(locales).size === LOCALE_CODES.length, 'See the board is translated in every language (' + locales.length + ')');
   ok(/\n    eye: 'M/.test(core), 'the eye icon exists');
   ok(/function hideResultBtn\(\) \{\n[^\n]*resultBtn\.hidden = true;\n[^\n]*afterBar\.remove\(\)/.test(core), 'the bar goes away when a new round starts');
   const relabel = games.filter((g) => /ch-modal__actions \.ch-btn--primary/.test(fs.readFileSync(path.join(ROOT, 'www', g.path), 'utf8'))).map((g) => g.id);
@@ -11476,6 +12886,21 @@ if (!isMainThread && workerData && workerData.cueGame) {
 // (#493), and a group can't be left out by a missing call. A group that runs no check at
 // all fails the run.
 const GROUPS = [...fs.readFileSync(__filename, 'utf8').matchAll(/^(?:async )?function (test[A-Za-z0-9]+)\(\) \{/gm)].map((m) => m[1]);
+// This file reached the 1 MB guard of testNoStrayFiles (#654), so newer groups live in
+// tools/tests/*.js. Each exports `function (T)` that returns its groups by name; T carries
+// the shared helpers, and T.games() the list testFiles loaded. A file that exports no
+// group is a failure, not a silent skip.
+const SPLIT_DIR = path.join(__dirname, 'tests');
+const SPLIT_FILES = fs.existsSync(SPLIT_DIR) ? fs.readdirSync(SPLIT_DIR).filter((f) => f.endsWith('.js')).sort() : [];
+const SPLIT_T = { ok, head, loadEngine, rng, fs, path, vm, os, spawnSync, ROOT, LOCALE_CODES, games: () => games };
+const SPLIT_EMPTY = [];
+const SPLIT = [];
+for (const f of SPLIT_FILES) {
+  const groups = require(path.join(SPLIT_DIR, f))(SPLIT_T) || {};
+  const names = Object.keys(groups).filter((n) => /^test[A-Za-z0-9]+$/.test(n) && typeof groups[n] === 'function');
+  if (!names.length) SPLIT_EMPTY.push(f);
+  for (const n of names) SPLIT.push([f + ':' + n, groups[n]]);
+}
 (async function () {
   const idle = [];
   for (const name of GROUPS) {
@@ -11484,8 +12909,14 @@ const GROUPS = [...fs.readFileSync(__filename, 'utf8').matchAll(/^(?:async )?fun
     await eval(name)();
     if (checks === before) idle.push(name);
   }
+  for (const [name, fn] of SPLIT) {
+    const before = checks;
+    await fn();
+    if (checks === before) idle.push(name);
+  }
   head('کامل بودن اجرا');
-  ok(GROUPS.length >= 137, 'every test group was found and run (' + GROUPS.length + ')');
+  ok(GROUPS.length + SPLIT.length >= 137, 'every test group was found and run (' + GROUPS.length + ' in test.js, ' + SPLIT.length + ' in tools/tests)');
+  ok(!SPLIT_EMPTY.length, 'every file in tools/tests exports at least one test group (' + SPLIT.length + ' groups in ' + SPLIT_FILES.length + ' files)' + (SPLIT_EMPTY.length ? '; none in: ' + SPLIT_EMPTY.join(', ') : ''));
   ok(!idle.length, 'every test group ran at least one check' + (idle.length ? ' (none in: ' + idle.join(', ') + ')' : ''));
   ok(checks >= MIN_CHECKS, 'دست‌کم ' + MIN_CHECKS + ' بررسی اجرا شد (' + checks + ' اجرا شد)');
   console.log('\n' + (failures ? ('✗ ' + failures + ' خطا از ' + checks + ' بررسی') : ('همه‌ی ' + checks + ' بررسی سبز')));

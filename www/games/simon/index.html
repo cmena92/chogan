@@ -7,6 +7,7 @@
 <title>سایمون — چوگان</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   .sm-wrap > .ch-fit { --fit-ar: 1; }
   .ch-fit > .sm-box { width: 100%; height: 100%; display: grid; place-items: center; }
@@ -95,7 +96,7 @@ if (typeof module !== 'undefined') module.exports = SimonEngineFactory;
   C.boot({});
   var ctx = C.game({
     id: 'simon',
-    name: { fa: 'سایمون', en: 'Echo', zh: '闪灯记忆', de: 'Echo', es: 'Eco' },
+    name: { fa: 'سایمون', en: 'Echo', zh: '闪灯记忆', de: 'Echo', es: 'Eco', pl: 'Echo', fr: 'Écho', ar: 'الصدى', hi: 'गूँज' },
     accent: '#2C64FC',
     mood: 'menu',
     strings: {
@@ -116,6 +117,42 @@ if (typeof module !== 'undefined') module.exports = SimonEngineFactory;
         tutTitle1: 'Watch', tutText1: 'The pads light up one by one, each with its own note. Remember the order.',
         tutTitle2: 'Repeat', tutText2: 'Tap the same order. Each round adds one more.',
         tutTitle3: 'How far?', tutText3: 'The first mistake ends the game. Repeating is never timed.'
+      },
+      pl: {
+        pads: 'Cztery kolorowe pola', start: 'Start', tapStart: 'Dotknij środka, aby rozpocząć', watch: 'Oglądaj i słuchaj…', yourTurn: 'Teraz powtórz',
+        roundN: 'Runda {n}', wrong: 'Błąd! Dotarłeś do rundy {n}.', bestN: 'Najlepszy wynik: {n}', dailySm: 'Codzienne Echo', reached: 'Runda', triesN: 'Próby',
+        green: 'Zielony', red: 'Czerwony', yellow: 'Żółty', blue: 'Niebieski', kPads: 'Cztery pola (góra-lewo, góra-prawo, dół-lewo, dół-prawo)', kStart: 'Start',
+        rules: 'W każdej rundzie kolejne pola podświetlają się jedno po drugim, a każde wydaje swój własny dźwięk. Gdy sekwencja się skończy, powtórz tę samą kolejność, dotykając odpowiednich pól. Jeśli zrobisz to poprawnie, w następnej rundzie na końcu zostanie dodane jeszcze jedno pole, a całość odtworzy się nieco szybciej. Pierwszy błąd kończy grę, a ukończone rundy stanowią Twój wynik. Nie musisz się spieszyć: powtarzanie sekwencji nigdy nie jest ograniczone czasem. Każde pole ma również swój własny kształt, dzięki czemu możesz je rozróżnić bez pomocy kolorów. Codzienne wyzwanie to ta sama sekwencja dla wszystkich.',
+        tutTitle1: 'Oglądaj', tutText1: 'Pola podświetlają się jedno po drugim, a każde z nich wydaje własny dźwięk. Zapamiętaj kolejność.',
+        tutTitle2: 'Powtórz', tutText2: 'Dotknij pól w tej samej kolejności. Każda runda dodaje jeden nowy element na końcu.',
+        tutTitle3: 'Jak daleko zajdziesz?', tutText3: 'Pierwszy błąd kończy grę. Powtarzanie sekwencji nie jest ograniczone czasem.'
+      },
+      fr: {
+        pads: 'Quatre touches de couleur', start: 'Démarrer', tapStart: 'Touche le centre pour démarrer', watch: 'Regarde et écoute…', yourTurn: 'À toi de répéter',
+        roundN: 'Manche {n}', wrong: 'Raté ! Tu as atteint la manche {n}.', bestN: 'Record : {n}', dailySm: 'Écho du jour', reached: 'Manche', triesN: 'Essais',
+        green: 'Vert', red: 'Rouge', yellow: 'Jaune', blue: 'Bleu', kPads: 'Les quatre touches (haut gauche, haut droite, bas gauche, bas droite)', kStart: 'Démarrer',
+        rules: 'À chaque manche, des touches s’allument l’une après l’autre, chacune avec sa note. À la fin, répète le même ordre en touchant les touches. Si c’est juste, la manche suivante en ajoute une à la fin et va un peu plus vite. La première erreur termine la partie, et les manches réussies font ton score. Rien ne presse : la répétition n’est jamais chronométrée. Chaque touche a aussi sa forme, tu peux donc les distinguer sans la couleur. Le défi du jour est la même séquence pour tous.',
+        tutTitle1: 'Regarde', tutText1: 'Les touches s’allument une à une, chacune avec sa note. Retiens l’ordre.',
+        tutTitle2: 'Répète', tutText2: 'Touche-les dans le même ordre. Chaque manche en ajoute une.',
+        tutTitle3: 'Jusqu’où ?', tutText3: 'La première erreur termine la partie. La répétition n’est jamais chronométrée.'
+      },
+      ar: {
+        pads: 'أربع لوحات ملونة', start: 'ابدأ', tapStart: 'انقر الوسط لتبدأ', watch: 'شاهد واستمع…', yourTurn: 'الآن كرّرها',
+        roundN: 'الجولة {n}', wrong: 'خطأ! بلغت الجولة {n}.', bestN: 'الأفضل: {n}', dailySm: 'صدى اليوم', reached: 'الجولة', triesN: 'المحاولات',
+        green: 'أخضر', red: 'أحمر', yellow: 'أصفر', blue: 'أزرق', kPads: 'اللوحات الأربع (أعلى اليسار، أعلى اليمين، أسفل اليسار، أسفل اليمين)', kStart: 'ابدأ',
+        rules: 'في كل جولة تضيء بعض اللوحات بالتتابع، ولكل منها نغمتها. حين ينتهي العرض، كرّر الترتيب نفسه بالنقر على اللوحات. إن أصبت تضيف الجولة التالية لوحة أخرى في النهاية وتعزف أسرع قليلًا. أول خطأ ينهي اللعبة، والجولات التي أكملتها هي نتيجتك. لا عجلة: التكرار بلا وقت محدد أبدًا. لكل لوحة شكلها الخاص أيضًا، فيمكنك تمييزها دون الألوان. تحدي اليوم تسلسل واحد للجميع.',
+        tutTitle1: 'شاهد', tutText1: 'تضيء اللوحات واحدة تلو الأخرى، ولكل منها نغمتها. تذكّر الترتيب.',
+        tutTitle2: 'كرّر', tutText2: 'انقر الترتيب نفسه. كل جولة تضيف لوحة أخرى.',
+        tutTitle3: 'إلى أي مدى؟', tutText3: 'أول خطأ ينهي اللعبة. التكرار بلا وقت محدد أبدًا.'
+      },
+      hi: {
+        pads: 'चार रंगीन बटन', start: 'शुरू', tapStart: 'शुरू करने के लिए बीच में छुएँ', watch: 'देखें और सुनें…', yourTurn: 'अब दोहराएँ',
+        roundN: 'दौर {n}', wrong: 'ग़लत! आप दौर {n} तक पहुँचे।', bestN: 'रिकॉर्ड: {n}', dailySm: 'रोज़ की गूँज', reached: 'दौर', triesN: 'कोशिशें',
+        green: 'हरा', red: 'लाल', yellow: 'पीला', blue: 'नीला', kPads: 'चारों बटन (ऊपर बाएँ, ऊपर दाएँ, नीचे बाएँ, नीचे दाएँ)', kStart: 'शुरू',
+        rules: 'हर दौर में कुछ बटन बारी-बारी से जलते हैं, हर एक की अपनी आवाज़ होती है। जब यह ख़त्म हो, बटन छूकर वही क्रम दोहराएँ। सही रहा तो अगले दौर में आख़िर में एक और जुड़ता है और थोड़ा तेज़ बजता है। पहली ग़लती पर खेल ख़त्म होता है, और पूरे किए दौर आपका स्कोर हैं। कोई जल्दी नहीं: दोहराने पर कोई समय सीमा नहीं है। हर बटन का अपना आकार भी है, ताकि रंग के बिना भी पहचान सकें। रोज़ की चुनौती में सबके लिए एक ही क्रम होता है।',
+        tutTitle1: 'देखें', tutText1: 'बटन एक-एक करके जलते हैं, हर एक की अपनी आवाज़ के साथ। क्रम याद रखें।',
+        tutTitle2: 'दोहराएँ', tutText2: 'वही क्रम छुएँ। हर दौर में एक और जुड़ता है।',
+        tutTitle3: 'कितनी दूर?', tutText3: 'पहली ग़लती पर खेल ख़त्म। दोहराने पर कोई समय सीमा नहीं।'
       },
       zh: {
         pads: '四个彩色按键', start: '开始', tapStart: '点中间开始', watch: '看好、听好……', yourTurn: '现在按顺序重复',

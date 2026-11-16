@@ -7,6 +7,7 @@
 <title>فری‌سل — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* روی کارت در تم تاریک یک پله روشن‌تر از سطح است؛ با --c-surface کارت تیره
      روی زمینه‌ی تیره گم می‌شد و ستون‌های بلند یک لکه‌ی یکدست بودند. */
@@ -20,7 +21,7 @@
      دسته‌ی در حال کشیدن لب همان کادر بریده می‌شد (#102). */
   .fc-board { position: relative; flex: 1; min-height: 0; width: 100%; }
   /* کشیدن کارت با انگشت نباید صفحه را جابه‌جا کند */
-  .fc-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: pointer; }
+  .fc-canvas { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: pointer; }
   .fc-input {
     font: inherit; width: 100%; padding: 10px 14px; border-radius: var(--r-md);
     border: 1px solid var(--c-line); background: var(--c-surface-2); color: var(--c-text);
@@ -232,6 +233,27 @@ function FreecellEngineFactory() {
     return -1;
   }
 
+  // The longest tail of a picked run that can go to a column (#572). A run
+  // picked by its top card was refused whole when only its lower cards fit
+  // there, or when it was longer than the free cells allow, so the move felt
+  // invalid. Free cells and foundations still take exactly what was picked.
+  function fitCount(S, from, n, to) {
+    if (to >= CELL || from >= CELL) return canMove(S, from, n, to) ? n : 0;
+    for (var k = n; k >= 1; k--) if (canMove(S, from, k, to)) return k;
+    return 0;
+  }
+
+  // Where a tap sends a picked run: the whole run anywhere it fits, else its
+  // longest tail onto a filled column, else onto an empty one.
+  function bestMove(S, from, n) {
+    var to = bestTarget(S, from, n), k, i;
+    if (to >= 0) return { to: to, n: n };
+    if (from >= CELL) return null;
+    for (k = n - 1; k >= 1; k--) for (i = 0; i < 8; i++) if (S.cols[i].length && canMove(S, from, k, i)) return { to: i, n: k };
+    for (k = n - 1; k >= 1; k--) for (i = 0; i < 8; i++) if (!S.cols[i].length && canMove(S, from, k, i)) return { to: i, n: k };
+    return null;
+  }
+
   // آیا هنوز حرکتی هست که چیزی را عوض کند
   function hasMoves(S) {
     for (var f = 0; f < 12; f++) {
@@ -285,7 +307,7 @@ function FreecellEngineFactory() {
     validDeal: validDeal, pickDeal: pickDeal, deal: deal, newGame: newGame, clone: clone,
     canStack: canStack, isRun: isRun, runLength: runLength, freeCells: freeCells, emptyCols: emptyCols,
     maxMove: maxMove, canMove: canMove, move: move, undo: undo, userMoves: userMoves,
-    isSafe: isSafe, autoStep: autoStep, autoAll: autoAll, bestTarget: bestTarget,
+    isSafe: isSafe, autoStep: autoStep, autoAll: autoAll, bestTarget: bestTarget, fitCount: fitCount, bestMove: bestMove,
     hasMoves: hasMoves, won: won, validState: validState
   };
   if (typeof self !== 'undefined') self.FreecellEngine = api;
@@ -304,7 +326,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = FreecellEn
   C.boot({});
   var ctx = C.game({
     id: 'freecell',
-    name: { fa: 'فری‌سل', en: 'FreeCell', zh: '空当接龙', de: 'FreeCell', es: 'FreeCell' },
+    name: { fa: 'فری‌سل', en: 'FreeCell', zh: '空当接龙', de: 'FreeCell', es: 'FreeCell', pl: 'FreeCell', fr: 'FreeCell', ar: 'فري سيل', hi: 'फ़्रीसेल' },
     accent: '#C9545F',
     mood: 'sudoku',
     cardSpeed: true,
@@ -334,6 +356,58 @@ if (typeof module !== 'undefined' && module.exports) module.exports = FreecellEn
         tutTitle1: 'The goal', tutText1: 'Move every card to the four foundations at the top: each suit from ace to king.',
         tutTitle2: 'Columns and free cells', tutText2: 'A card goes on a card one rank higher of the other colour. The four free cells each hold one card for a while.',
         tutTitle3: 'Tap or drag', tutText3: 'Tap a card to send it to the best place, or drag it wherever you like. Undo is unlimited, and cards that are no longer needed go to the foundations by themselves.'
+      },
+      pl: {
+        table: 'Stół karciany', moves: 'Ruchy', movesN: 'Ruchy: {n}', dealN: 'Rozdanie {n}', dailyFc: 'Codzienny FreeCell',
+        newDeal: 'Nowe rozdanie', randomDeal: 'Losowe rozdanie', playDeal: 'Zagraj to rozdanie',
+        dealNumber: 'Numer rozdania', dealHint: 'Liczba od 1 do 32000. Każdy numer to taki sam układ kart jak w innych programach FreeCell.',
+        badDeal: 'To nie jest prawidłowy numer rozdania', restartDaily: 'Zrestartuj to rozdanie',
+        undoMove: 'Cofnij ruch', noMoves: 'Brak możliwych ruchów', noMovesSub: 'Cofnij kilka ruchów lub zacznij nowe rozdanie.',
+        kbColumn: 'Ruch między kolumnami', kbCard: 'Wybierz kartę lub górny rząd', kbAuto: 'Wyślij w najlepsze miejsce',
+        kbPick: 'Podnieś i połóż', kbCancel: 'Upuść wybraną kartę', kbNew: 'Nowe rozdanie',
+        rules: 'Zapełnij cztery pola bazowe od asa do króla, po jednym dla każdego koloru. W kolumnach kartę kładzie się na karcie o jeden stopień wyższej i innego koloru (czarny/czerwony). Każde wolne pole mieści jedną kartę. Uporządkowaną sekwencję można przenieść w całości, jeśli jest wystarczająco dużo wolnych pól i pustych kolumn.',
+        tutTitle1: 'Cel gry', tutText1: 'Przenieś wszystkie karty na cztery pola bazowe u góry: każdy kolor od asa do króla.',
+        tutTitle2: 'Kolumny i wolne pola', tutText2: 'Kartę kładzie się na karcie o jeden stopień wyższej i przeciwnego koloru. Cztery wolne pola mogą tymczasowo pomieścić po jednej karcie.',
+        tutTitle3: 'Stuknij lub przeciągnij', tutText3: 'Stuknij kartę, aby wysłać ją w najlepsze miejsce, lub przeciągnij ją tam, gdzie chcesz. Cofanie ruchów jest nieograniczone, a karty, które nie są już potrzebne, same trafiają na pola bazowe.'
+      },
+      fr: {
+        table: 'Table de jeu', moves: 'Coups', movesN: '{n} coups', dealN: 'Donne {n}', dailyFc: 'FreeCell du jour',
+        newDeal: 'Nouvelle donne', randomDeal: 'Donne au hasard', playDeal: 'Jouer cette donne',
+        dealNumber: 'Numéro de donne', dealHint: 'Un nombre de 1 à 32000. Chaque nombre donne la même disposition que dans les autres jeux FreeCell.',
+        badDeal: 'Ce n’est pas un numéro de donne', restartDaily: 'Recommencer cette donne',
+        undoMove: 'Annuler le coup', noMoves: 'Plus de coups possibles', noMovesSub: 'Annule quelques coups ou commence une nouvelle donne.',
+        kbColumn: 'Passer d’une colonne à l’autre', kbCard: 'Choisir une carte ou la rangée du haut', kbAuto: 'Envoyer à la meilleure place',
+        kbPick: 'Prendre et poser', kbCancel: 'Lâcher la carte prise', kbNew: 'Nouvelle donne',
+        rules: 'Remplis les quatre fondations de l’as au roi, une couleur chacune. Dans les colonnes, une carte se pose sur une carte d’un rang au-dessus et de l’autre couleur. Chaque cellule libre contient une carte. Une suite ordonnée se déplace d’un bloc s’il y a assez de cellules libres et de colonnes vides.',
+        tutTitle1: 'Le but', tutText1: 'Mets toutes les cartes sur les quatre fondations en haut : chaque couleur de l’as au roi.',
+        tutTitle2: 'Colonnes et cellules libres', tutText2: 'Une carte se pose sur une carte d’un rang au-dessus et de l’autre couleur. Les quatre cellules libres gardent chacune une carte un moment.',
+        tutTitle3: 'Touche ou glisse', tutText3: 'Touche une carte pour l’envoyer à la meilleure place, ou glisse-la où tu veux. Annulations illimitées, et les cartes devenues inutiles vont seules aux fondations.'
+      },
+      ar: {
+        table: 'طاولة الورق', moves: 'الحركات', movesN: '{n} حركة', dealN: 'التوزيعة {n}', dailyFc: 'فري سيل اليومية',
+        newDeal: 'توزيعة جديدة', randomDeal: 'توزيعة عشوائية', playDeal: 'العب هذه التوزيعة',
+        dealNumber: 'رقم التوزيعة', dealHint: 'رقم من 1 إلى 32000. كل رقم يعطي الترتيب نفسه كما في برامج فري سيل الأخرى.',
+        badDeal: 'هذا ليس رقم توزيعة', restartDaily: 'أعد هذه التوزيعة',
+        undoMove: 'تراجع', noMoves: 'لا حركات متبقية', noMovesSub: 'تراجع عن بضع حركات أو ابدأ توزيعة جديدة.',
+        kbColumn: 'التنقل بين الأعمدة', kbCard: 'اختيار ورقة أو الصف العلوي', kbAuto: 'إرسال إلى أفضل مكان',
+        kbPick: 'التقاط ووضع', kbCancel: 'ترك الورقة الملتقطة', kbNew: 'توزيعة جديدة',
+        rules: 'املأ القواعد الأربع من الآس إلى الملك، لكل شكل قاعدة. في الأعمدة توضع الورقة على ورقة أعلى منها بدرجة ومن اللون الآخر. كل خانة حرة تتسع لورقة واحدة. تنتقل السلسلة المرتبة دفعة واحدة إن توفرت خانات حرة وأعمدة فارغة كافية.',
+        tutTitle1: 'الهدف', tutText1: 'انقل كل الأوراق إلى القواعد الأربع في الأعلى: كل شكل من الآس إلى الملك.',
+        tutTitle2: 'الأعمدة والخانات الحرة', tutText2: 'توضع الورقة على ورقة أعلى منها بدرجة ومن اللون الآخر. كل خانة من الخانات الحرة الأربع تحفظ ورقة واحدة مؤقتًا.',
+        tutTitle3: 'انقر أو اسحب', tutText3: 'انقر ورقة لإرسالها إلى أفضل مكان، أو اسحبها حيث تشاء. التراجع بلا حدود، والأوراق التي لم تعد لازمة تذهب إلى القواعد وحدها.'
+      },
+      hi: {
+        table: 'ताश की मेज़', moves: 'चालें', movesN: '{n} चालें', dealN: 'बाज़ी {n}', dailyFc: 'रोज़ का फ़्रीसेल',
+        newDeal: 'नई बाज़ी', randomDeal: 'कोई भी बाज़ी', playDeal: 'यह बाज़ी खेलें',
+        dealNumber: 'बाज़ी नंबर', dealHint: '1 से 32000 तक कोई नंबर। हर नंबर पर पत्ते वैसे ही बँटते हैं जैसे दूसरे फ़्रीसेल प्रोग्रामों में।',
+        badDeal: 'यह बाज़ी नंबर नहीं है', restartDaily: 'यह बाज़ी फिर से शुरू करें',
+        undoMove: 'चाल वापस', noMoves: 'कोई चाल नहीं बची', noMovesSub: 'कुछ चालें वापस लें या नई बाज़ी शुरू करें।',
+        kbColumn: 'कतारों के बीच चलें', kbCard: 'पत्ता या ऊपर की पंक्ति चुनें', kbAuto: 'सबसे अच्छी जगह भेजें',
+        kbPick: 'उठाएँ और रखें', kbCancel: 'उठाया पत्ता छोड़ें', kbNew: 'नई बाज़ी',
+        rules: 'चारों नींवों को इक्के से बादशाह तक भरें, हर नींव में एक रंग। कतारों में पत्ता उससे एक बड़े और उलटे रंग (लाल पर काला, काले पर लाल) के पत्ते पर रखा जाता है। हर फ़्री सेल में एक पत्ता आता है। क्रम से लगी पत्तों की लड़ी एक साथ चलती है, अगर ख़ाली फ़्री सेल और ख़ाली कतारें काफ़ी हों।',
+        tutTitle1: 'लक्ष्य', tutText1: 'सारे पत्ते ऊपर की चार नींवों पर ले जाएँ: हर रंग इक्के से बादशाह तक।',
+        tutTitle2: 'कतारें और फ़्री सेल', tutText2: 'पत्ता उससे एक बड़े और उलटे रंग के पत्ते पर रखा जाता है। चारों फ़्री सेल में थोड़ी देर के लिए एक-एक पत्ता रख सकते हैं।',
+        tutTitle3: 'छुएँ या खींचें', tutText3: 'पत्ते को छुएँ तो वह सबसे अच्छी जगह जाता है, या उसे जहाँ चाहें खींचें। वापस लेने की कोई सीमा नहीं, और जिन पत्तों की ज़रूरत नहीं रही, वे अपने आप नींव पर चले जाते हैं।'
       },
       zh: {
         table: '牌桌', moves: '步数', movesN: '{n} 步', dealN: '第 {n} 局', dailyFc: '每日空当接龙',
@@ -730,9 +804,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = FreecellEn
 
   function tap(src, n) {
     if (src < CELL && !E.isRun(S.cols[src], S.cols[src].length - n)) { C.feedback('bad'); return; }
-    var to = E.bestTarget(S, src, n);
-    if (to < 0) { C.feedback('bad'); return; }
-    doMove(src, n, to, null);
+    var m = E.bestMove(S, src, n);
+    if (!m) { C.feedback('bad'); return; }
+    doMove(src, m.n, m.to, null);
   }
 
   function doMove(src, n, to, dropPos) {
@@ -811,8 +885,17 @@ if (typeof module !== 'undefined' && module.exports) module.exports = FreecellEn
       drag = null;
       if (cancelled) { draw(); return; }
       var p = pt(e);
-      var to = dropAt(p.x, p.y, d.cards[0]);
-      if (to < 0 || to === d.src || !E.canMove(S, d.src, d.n, to)) {
+      // The column the dragged card mostly covers wins over the one under the
+      // finger: a card held by its edge looked dropped on one column while
+      // the finger was over its neighbour (#572).
+      var to = dropAt(d.x + d.dx + L.cw / 2, d.y + d.dy + L.ch / 2, d.cards[0]);
+      var k = to >= 0 ? E.fitCount(S, d.src, d.n, to) : 0;
+      if (!k) {
+        var alt = dropAt(p.x, p.y, d.cards[0]);
+        var ka = alt >= 0 ? E.fitCount(S, d.src, d.n, alt) : 0;
+        if (ka || to < 0 || to === d.src) { to = alt; k = ka; }
+      }
+      if (!k) {
         if (to >= 0 && to !== d.src) C.feedback('bad');
         var back = positions(), from = {};
         for (var i = 0; i < d.cards.length; i++) from[d.cards[i]] = { x: d.x + d.dx, y: d.y + d.dy + i * L.ov };
@@ -820,7 +903,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = FreecellEn
         startAnim(from);
         return;
       }
-      doMove(d.src, d.n, to, { x: d.x + d.dx, y: d.y + d.dy });
+      doMove(d.src, k, to, { x: d.x + d.dx, y: d.y + d.dy + (d.n - k) * L.ov });
       return;
     }
     if (!cancelled && !blocked()) tap(h.src, h.n);
@@ -886,7 +969,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = FreecellEn
     } else if (k === ' ') {
       if (picked) {
         var to = curTarget();
-        if (to !== picked.src) doMove(picked.src, picked.n, to, null);
+        var kp = E.fitCount(S, picked.src, picked.n, to);
+        if (to !== picked.src) { if (kp) doMove(picked.src, kp, to, null); else C.feedback('bad'); }
         picked = null;
         cur.k = -1;
       } else {

@@ -7,6 +7,7 @@
 <title>گوریل‌ها — چوگان</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   .gz-wrap > .ch-fit { --fit-ar: calc(640 / 560); }
   .ch-fit > .gz-box { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
@@ -224,7 +225,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = GorillasEn
   C.boot({});
   var ctx = C.game({
     id: 'gorillas',
-    name: { fa: 'گوریل‌ها', en: 'Gorillas', zh: '大猩猩', de: 'Gorillas', es: 'Gorilas' },
+    name: { fa: 'گوریل‌ها', en: 'Gorillas', zh: '大猩猩', de: 'Gorillas', es: 'Gorilas', pl: 'Goryle', fr: 'Gorilles', ar: 'الغوريلات', hi: 'गोरिल्ला' },
     accent: '#6B4423',
     mood: 'menu',
     strings: {
@@ -253,6 +254,58 @@ if (typeof module !== 'undefined' && module.exports) module.exports = GorillasEn
         tutTitle1: 'The goal', tutText1: 'Throw the banana so it hits the gorilla across the city. Three rounds win the match.',
         tutTitle2: 'Aim', tutText2: 'Grab anywhere on the city and pull back like a slingshot. The angle and power show by the arrow; let go to throw.',
         tutTitle3: 'Wind', tutText3: 'The arrow at the bottom shows this round\'s wind. Correct your next throw by where the last one fell.'
+      },
+      pl: {
+        city: 'Miasto i dwa goryle', vsBot: 'Przeciwko botowi', people: 'Dwóch graczy', bot: 'Bot', playerN: 'Gracz {n}', newMatch: 'Nowy mecz',
+        yourTurn: 'Twoja kolej', turnOf: 'Kolej gracza {n}', botThinks: '{n} celuje', roundN: 'Runda {n}', roundTo: 'Gra do {n}',
+        aimDrag: 'Chwyć w dowolnym miejscu miasta i odciągnij jak z procy; puść, aby rzucić.', aimNums: 'Ustaw kąt i siłę, a następnie stuknij Rzuć.', aimStick: 'Popchnij dżojstik w stronę, w którą chcesz rzucić; mocniejsze wychylenie to większa siła. Puść, aby rzucić.', stick: 'Dżojstik celowania',
+        angle: 'Kąt', power: 'Siła', throwIt: 'Rzuć', wind: 'Wiatr', calm: 'Bez wiatru', control: 'Sterowanie', ctlDrag: 'Przeciąganie', ctlNums: 'Liczby', ctlStick: 'Dżojstik',
+        hitOther: '{n} trafiony!', hitSelf: 'Trafienie we własnego goryla!', missed: 'Pudło', roundTo2: '{n} zdobywa rundę', playerWon: '{n} wygrywa', dailyGz: 'Codzienne Goryle',
+        throwsN: 'Rzuty: {n}', rounds: 'Rundy', throws: 'Rzuty',
+        kAngle: 'Zwiększ lub zmniejsz kąt', kPower: 'Większa lub mniejsza siła', kThrow: 'Rzuć',
+        rules: 'Dwa goryle stoją na dachach wieżowców i na zmianę rzucają wybuchającym bananem. Wybierasz kąt oraz siłę rzutu; grawitacja ściąga banan w dół, a wiatr (pokazany na dole) spycha go w lewo lub w prawo. Banan, który trafi w budynek, niszczy jego fragment. Kto pierwszy trafi przeciwnego goryla, zdobywa rundę; trafienie samego siebie oznacza jej przegraną. Trzy wygrane rundy kończą mecz, a każda runda to zupełnie nowe miasto. Dostępne są dwa sposoby celowania, które zmienisz pod ikoną zębatki: przeciąganie jak z procy lub wpisywanie liczb dla kąta i siły – zupełnie jak w oryginalnej grze. Codzienne wyzwanie to mecz przeciwko średniemu botowi w miastach, które są takie same dla wszystkich graczy.',
+        tutTitle1: 'Cel gry', tutText1: 'Rzuć bananem tak, aby trafić w goryla po drugiej stronie miasta. Trzy wygrane rundy dają zwycięstwo w meczu.',
+        tutTitle2: 'Celowanie', tutText2: 'Chwyć w dowolnym miejscu ekranu miasta i odciągnij w tył jak z procy. Strzałka pokaże kąt oraz siłę; puść palec, aby wykonać rzut.',
+        tutTitle3: 'Wiatr', tutText3: 'Strzałka na dole ekranu pokazuje wiatr w tej rundzie. Skoryguj swój kolejny rzut na podstawie tego, gdzie spadł poprzedni banan.'
+      },
+      fr: {
+        city: 'Une ville et deux gorilles', vsBot: 'Contre le robot', people: 'Deux joueurs', bot: 'Robot', playerN: 'Joueur {n}', newMatch: 'Nouveau match',
+        yourTurn: 'À toi', turnOf: 'Au tour de {n}', botThinks: '{n} vise', roundN: 'Manche {n}', roundTo: 'Premier à {n}',
+        aimDrag: 'Attrape la ville n’importe où et tire en arrière comme une fronde ; relâche pour lancer.', aimNums: 'Règle l’angle et la puissance, puis touche Lancer.', aimStick: 'Pousse le joystick dans la direction du lancer ; plus loin, plus fort. Relâche pour lancer.', stick: 'Joystick de visée',
+        angle: 'Angle', power: 'Puissance', throwIt: 'Lancer', wind: 'Vent', calm: 'Calme', control: 'Visée', ctlDrag: 'Glisser', ctlNums: 'Nombres', ctlStick: 'Joystick',
+        hitOther: '{n} est touché !', hitSelf: 'Touché lui-même !', missed: 'Raté', roundTo2: '{n} gagne la manche', playerWon: '{n} gagne', dailyGz: 'Gorilles du jour',
+        throwsN: '{n} lancers', rounds: 'Manches', throws: 'Lancers',
+        kAngle: 'Monter ou baisser l’angle', kPower: 'Plus ou moins de puissance', kThrow: 'Lancer',
+        rules: 'Deux gorilles se tiennent sur les toits et lancent à tour de rôle une banane explosive. Tu choisis l’angle et la puissance ; la gravité tire la banane vers le bas et le vent, affiché en bas, la pousse à gauche ou à droite. Une banane qui touche un immeuble y fait un trou. Le premier à toucher l’autre gorille gagne la manche ; si tu te touches toi-même, tu la perds. Trois manches gagnent le match, et chaque manche a une nouvelle ville. Il y a deux façons de viser, au choix derrière l’engrenage : glisser comme une fronde, ou des nombres pour l’angle et la puissance comme dans le jeu d’origine. Le défi du jour est un match contre le robot moyen dans des villes identiques pour tous.',
+        tutTitle1: 'Le but', tutText1: 'Lance la banane pour toucher le gorille de l’autre côté de la ville. Trois manches gagnent le match.',
+        tutTitle2: 'Vise', tutText2: 'Attrape la ville n’importe où et tire en arrière comme une fronde. L’angle et la puissance s’affichent près de la flèche ; relâche pour lancer.',
+        tutTitle3: 'Le vent', tutText3: 'La flèche en bas montre le vent de cette manche. Corrige ton prochain lancer selon où le dernier est tombé.'
+      },
+      ar: {
+        city: 'مدينة وغوريلان', vsBot: 'ضد الروبوت', people: 'لاعبان', bot: 'الروبوت', playerN: 'اللاعب {n}', newMatch: 'مباراة جديدة',
+        yourTurn: 'دورك', turnOf: 'دور {n}', botThinks: '{n} يصوّب', roundN: 'الجولة {n}', roundTo: 'الأول إلى {n}',
+        aimDrag: 'أمسك المدينة من أي مكان واسحب إلى الخلف كالمقلاع؛ أفلت لترمي.', aimNums: 'اضبط الزاوية والقوة، ثم انقر «ارمِ».', aimStick: 'ادفع عصا التحكم في اتجاه الرمي؛ كلما ابتعدت كان أقوى. أفلت لترمي.', stick: 'عصا التصويب',
+        angle: 'الزاوية', power: 'القوة', throwIt: 'ارمِ', wind: 'الريح', calm: 'هادئة', control: 'التصويب', ctlDrag: 'سحب', ctlNums: 'أرقام', ctlStick: 'عصا',
+        hitOther: 'أُصيب {n}!', hitSelf: 'أصاب نفسه!', missed: 'أخطأ', roundTo2: '{n} يفوز بالجولة', playerWon: 'فاز {n}', dailyGz: 'غوريلات اليوم',
+        throwsN: '{n} رميات', rounds: 'الجولات', throws: 'الرميات',
+        kAngle: 'ارفع الزاوية أو اخفضها', kPower: 'قوة أكثر أو أقل', kThrow: 'ارمِ',
+        rules: 'يقف غوريلان على أسطح المباني ويتناوبان رمي موزة متفجرة. تختار الزاوية والقوة؛ والجاذبية تسحب الموزة إلى الأسفل، والريح الظاهرة في الأسفل تدفعها يمينًا أو يسارًا. الموزة التي تصيب مبنى تقتطع منه جزءًا. أول من يصيب الغوريلا الأخرى يفوز بالجولة؛ وإن أصبت نفسك خسرتها. ثلاث جولات تحسم المباراة، ولكل جولة مدينة جديدة. هناك طريقتان للتصويب تبدّل بينهما خلف الترس: السحب كالمقلاع، أو أرقام للزاوية والقوة كما في اللعبة الأصلية. تحدي اليوم مباراة ضد الروبوت المتوسط في مدن واحدة للجميع.',
+        tutTitle1: 'الهدف', tutText1: 'ارمِ الموزة لتصيب الغوريلا في الجهة الأخرى من المدينة. ثلاث جولات تحسم المباراة.',
+        tutTitle2: 'صوّب', tutText2: 'أمسك المدينة من أي مكان واسحب إلى الخلف كالمقلاع. تظهر الزاوية والقوة بجانب السهم؛ أفلت لترمي.',
+        tutTitle3: 'الريح', tutText3: 'السهم في الأسفل يبين ريح هذه الجولة. صحّح رميتك التالية حسب مكان سقوط السابقة.'
+      },
+      hi: {
+        city: 'एक शहर और दो गोरिल्ला', vsBot: 'बॉट से', people: 'दो खिलाड़ी', bot: 'बॉट', playerN: 'खिलाड़ी {n}', newMatch: 'नया मुक़ाबला',
+        yourTurn: 'आपकी बारी', turnOf: '{n} की बारी', botThinks: '{n} निशाना ले रहे हैं', roundN: 'दौर {n}', roundTo: '{n} जीत तक',
+        aimDrag: 'शहर में कहीं भी पकड़ें और गुलेल की तरह पीछे खींचें; फेंकने के लिए छोड़ें।', aimNums: 'कोण और ताक़त तय करें, फिर फेंकें दबाएँ।', aimStick: 'जॉयस्टिक को उस ओर धकेलें जिधर फेंकना है; जितना दूर, उतना ज़ोर। फेंकने के लिए छोड़ें।', stick: 'निशाने का जॉयस्टिक',
+        angle: 'कोण', power: 'ताक़त', throwIt: 'फेंकें', wind: 'हवा', calm: 'शांत', control: 'निशाना', ctlDrag: 'खींचना', ctlNums: 'अंक', ctlStick: 'जॉयस्टिक',
+        hitOther: '{n} को लगा!', hitSelf: 'ख़ुद को लगा!', missed: 'चूक गया', roundTo2: '{n} ने दौर जीता', playerWon: '{n} जीत गए', dailyGz: 'रोज़ के गोरिल्ला',
+        throwsN: '{n} फेंक', rounds: 'दौर', throws: 'फेंक',
+        kAngle: 'कोण बढ़ाएँ या घटाएँ', kPower: 'ताक़त बढ़ाएँ या घटाएँ', kThrow: 'फेंकें',
+        rules: 'दो गोरिल्ला छतों पर खड़े हैं और बारी-बारी फटने वाला केला फेंकते हैं। कोण और ताक़त आप चुनते हैं; गुरुत्व केले को नीचे खींचता है और हवा, जो नीचे दिखती है, उसे बाएँ या दाएँ धकेलती है। इमारत से टकराया केला उसका एक टुकड़ा उड़ा देता है। जो पहले दूसरे गोरिल्ला को मारे, वह दौर जीतता है; ख़ुद को मारा तो दौर हार गए। तीन दौर जीतने पर मुक़ाबला जीतते हैं, और हर दौर में नया शहर होता है। निशाना लगाने के दो तरीक़े हैं, जो गियर में बदलते हैं: गुलेल की तरह खींचना, या असली खेल की तरह कोण और ताक़त के अंक। रोज़ की चुनौती मध्यम बॉट के ख़िलाफ़ ऐसे शहरों में मुक़ाबला है जो सबके लिए एक जैसे हैं।',
+        tutTitle1: 'लक्ष्य', tutText1: 'केला ऐसे फेंकें कि शहर के उस पार वाले गोरिल्ला को लगे। तीन दौर जीतने पर मुक़ाबला आपका।',
+        tutTitle2: 'निशाना', tutText2: 'शहर में कहीं भी पकड़ें और गुलेल की तरह पीछे खींचें। कोण और ताक़त तीर के पास दिखते हैं; फेंकने के लिए छोड़ें।',
+        tutTitle3: 'हवा', tutText3: 'नीचे का तीर इस दौर की हवा दिखाता है। पिछला केला जहाँ गिरा, उसे देखकर अगला फेंक सुधारें।'
       },
       zh: {
         city: '城市和两只大猩猩', vsBot: '对战电脑', people: '双人', bot: '电脑', playerN: '玩家 {n}', newMatch: '新比赛',

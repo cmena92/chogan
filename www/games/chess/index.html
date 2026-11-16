@@ -7,6 +7,7 @@
 <title>شطرنج — کاپیبارا</title>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../../lib/chogan.css">
+<script src="../../lib/early.js"></script>
 <style>
   /* تخته شیء فیزیکی است: رنگ خانه‌ها در هر دو تم یکی است و در راست‌چین آینه نمی‌شود */
   :root { --cs-light: #EEDCBC; --cs-dark: #B58A63; --cs-last: rgba(233, 196, 72, .5); --cs-check: rgba(220, 70, 60, .75); }
@@ -26,26 +27,30 @@
     aspect-ratio: 1; border-radius: var(--r-md); overflow: hidden; box-shadow: var(--sh-2); touch-action: none; user-select: none; }
   .cs-sq { position: relative; border: 0; padding: 0; margin: 0; cursor: pointer; background: var(--cs-light); }
   .cs-sq--d { background: var(--cs-dark); }
-  .cs-sq--last::before { content: ''; position: absolute; inset: 0; background: var(--cs-last); }
-  .cs-sq--sel::before { content: ''; position: absolute; inset: 0; background: rgba(84, 140, 210, .45); }
-  .cs-sq--check::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle, var(--cs-check) 0%, rgba(220,70,60,0) 70%); animation: cs-check 700ms var(--ease) 2; }
+  .cs-sq--last::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: var(--cs-last); }
+  .cs-sq--sel::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(84, 140, 210, .45); }
+  .cs-sq--check::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: radial-gradient(circle, var(--cs-check) 0%, rgba(220,70,60,0) 70%); animation: cs-check 700ms var(--ease) 2; }
   /* #407: check pulses twice; a taken piece shrinks and fades under the one that took it */
   @keyframes cs-check { 50% { transform: scale(1.15); opacity: .7; } }
   .cs-gone { position: fixed; pointer-events: none; z-index: 5; animation: cs-gone 260ms var(--ease) forwards; }
   .cs-gone svg { position: static; width: 100%; height: 100%; }
   @keyframes cs-gone { to { opacity: 0; transform: scale(.5); } }
   .cs-sq--cur { outline: 3px solid var(--game); outline-offset: -3px; }
-  .cs-sq svg { position: absolute; inset: 6%; width: 88%; height: 88%; pointer-events: none; }
+  .cs-sq svg { position: absolute; top: 6%; right: 6%; bottom: 6%; left: 6%; width: 88%; height: 88%; pointer-events: none; }
   .cs-dot { position: absolute; left: 50%; top: 50%; width: 30%; height: 30%; transform: translate(-50%, -50%); border-radius: 50%; background: rgba(40, 40, 40, .28); pointer-events: none; }
-  .cs-ring { position: absolute; inset: 4%; border-radius: 50%; border: 4px solid rgba(40, 40, 40, .3); pointer-events: none; }
+  .cs-ring { position: absolute; top: 4%; right: 4%; bottom: 4%; left: 4%; border-radius: 50%; border: 4px solid rgba(40, 40, 40, .3); pointer-events: none; }
   .cs-coord { position: absolute; font-size: 10px; font-weight: 800; line-height: 1; pointer-events: none; color: rgba(60, 40, 20, .55); }
   .cs-coord--f { right: 3px; bottom: 2px; }
   .cs-coord--r { left: 3px; top: 2px; }
   .cs-top { display: flex; flex-wrap: wrap; gap: var(--s-2); justify-content: center; align-items: center; }
   .cs-top .ch-btn { gap: 4px; }
+  /* beside the board on a phone turned sideways the side column is about 250px, and the
+     mode switch ran past it with "Versus AI" and "Puzzles" cut off (#610) */
+  .cs-top .ch-seg { max-width: 100%; }
+  .cs-top .ch-seg button { min-width: 0; padding-inline: 10px; white-space: normal; line-height: 1.15; }
   .cs-thinking { animation: cs-blink 900ms infinite; }
   @keyframes cs-blink { 50% { opacity: .45; } }
-  @media (prefers-reduced-motion: reduce) { .cs-thinking { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { :root:not([data-motion="on"]) .cs-thinking { animation: none; } }
   .cs-pz-dots { flex: 1; min-width: 0; display: flex; gap: 5px; justify-content: flex-end; align-items: center; }
   .cs-pz-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c-text-faint); opacity: .45; flex: 0 0 auto; }
   .cs-pz-dot--now, .cs-pz-dot--ok, .cs-pz-dot--bad { opacity: 1; }
@@ -59,6 +64,9 @@
   .cs-moves { direction: ltr; font-size: var(--fs-sm); color: var(--c-text-dim); text-align: left; height: 4.4em; overflow-y: auto;
     padding: 6px 10px; background: var(--c-surface-2); border-radius: var(--r-md); font-variant-numeric: tabular-nums; }
   .cs-moves:empty { visibility: hidden; }
+  /* on a short phone (360×640) the two-line move list cost the board a fifth of its size;
+     one line is enough there, and it still keeps its room before the first move */
+  @container game (max-height: 560px) { .cs-moves { height: 2.2em; } }
   .cs-promo { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-2); }
   .cs-promo button { aspect-ratio: 1; border: 0; border-radius: var(--r-md); background: var(--cs-light); cursor: pointer; padding: 6px; }
   .cs-promo svg { width: 100%; height: 100%; }
@@ -890,7 +898,7 @@ function ChessBotFactory() {
   C.boot({});
   var ctx = C.game({
     id: 'chess',
-    name: { fa: 'شطرنج', en: 'Chess', zh: '国际象棋', de: 'Schach', es: 'Ajedrez' },
+    name: { fa: 'شطرنج', en: 'Chess', zh: '国际象棋', de: 'Schach', es: 'Ajedrez', pl: 'Szachy', fr: 'Échecs', ar: 'الشطرنج', hi: 'शतरंज' },
     accent: '#5A6B7B',
     mood: 'menu',
     strings: {
@@ -923,6 +931,66 @@ function ChessBotFactory() {
         tutTitle1: 'Versus AI or a friend', tutText1: 'Play the AI, or a friend on the same phone. Tap a piece to see where it can go, then tap the target square, or drag the piece.',
         tutTitle2: 'All the rules', tutText2: 'Castling, en passant and promotion are all in. The board turns to the next player after each move; switch that off with the rotate button.',
         tutTitle3: 'The end', tutText3: 'Checkmate wins. Stalemate, threefold repetition and fifty moves without a capture are draws. Undo is unlimited, and you can resign or agree a draw.'
+      },
+      pl: {
+        white: 'Białe', black: 'Czarne', toMove: 'Ruch gracza: {c}', check: 'Szach!', mate: 'Mat',
+        stalemate: 'Pat: remis', fifty: 'Pięćdziesiąt ruchów bez bicia lub ruchu pionem: remis', repetition: 'Trzykrotne powtórzenie pozycji: remis',
+        material: 'Niewystarczający materiał do zmatowania: remis', agreed: 'Remis za porozumieniem stron', whiteWins: 'Białe wygrywają', blackWins: 'Czarne wygrywają',
+        resigned: 'Gracz {c} poddał grę', resign: 'Poddaj się', resignAsk: '{c} poddaje grę?', offerDraw: 'Propozycja remisu',
+        drawAsk: 'Czy obaj gracze zgadzają się na remis?', autoFlip: 'Obracaj planszę', faceToFace: 'Twarzą w twarz', promote: 'Promuj piona na',
+        newGame: 'Nowa gra', undoMove: 'Cofnij ruch', board: 'Szachownica', move: 'Ruch na planszy',
+        pick: 'Wybierz lub wykonaj ruch', flipKey: 'Obróć planszę', cancelPick: 'Anuluj wybór', moves: 'Ruchy',
+        vsAi: 'Przeciwko SI', twoPlayers: 'Dwóch graczy', bot: 'SI', thinking: 'SI myśli…', yourMove: 'Twój ruch',
+        youWin: 'Wygrywasz!', youLose: 'Przegrywasz', newMatch: 'Nowa gra', resignMe: 'Poddaj tę grę?', draw: 'Remis', yourColor: 'Twój kolor', randomSide: 'Losowy', puzzles: 'Zadania', pzFind: 'Znajdź najlepszy ruch', pzMateIn: 'Mat w {n}', pzWatch: 'Ruch przeciwnika…', pzWrong: 'To nie ten ruch. Spróbuj ponownie', pzRight: 'Dobrze! Graj dalej', pzSolved: 'Rozwiązane!', pzLate: 'Rozwiązane, po potknięciu', pzShown: 'Oto prawidłowa odpowiedź', pzHint: 'Podpowiedź', pzHintOn: 'Rusz tę bierkę', pzShow: 'Rozwiązanie', pzNext: 'Następne zadanie', pzEnd: 'Zakończ', pzOf: 'Zadanie {i} z {n}', pzSet: 'Rozwiązano {s} z {n}', pzRating: 'Ranking', pzDaily: 'Codzienne zadania', pzCredit: 'Zadania szachowe pochodzą z otwartej bazy Lichess (CC0).', pzRules: 'Zadania: przeciwnik wykonuje ruch, a Twoim celem jest znalezienie najlepszego kontrataku. Runda składa się z pięciu zadań; codzienne wyzwanie to trzy zadania, po jednym z każdego poziomu. Błędny ruch jest cofany i możesz spróbować ponownie, ale to zadanie nie będzie już liczone jako rozwiązane bezbłędnie.',
+        rules: 'Pełne zasady poruszania się FIDE, bez zegara: roszada, bicie w przelocie i promocja. Mat oznacza wygraną; pat, trzykrotne powtórzenie pozycji, pięćdziesiąt ruchów bez bicia lub ruchu pionem oraz niewystarczający materiał dają remis. Graj z SI na trzech poziomach trudności lub we dwóch graczy na jednym telefonie; w grze dwuosobowej z włączonym obracaniem plansza obraca się do kolejnego gracza po każdym ruchu.',
+        tutTitle1: 'Przeciwko SI lub znajomemu', tutText1: 'Graj z SI lub ze znajomym na tym samym telefonie. Dotknij bierki, aby zobaczyć jej możliwe ruchy, a następnie dotknij pola docelowego lub przeciągnij ją.',
+        tutTitle2: 'Pełne zasady', tutText2: 'Roszada, bicie w przelocie i promocja piona są w pełni obsługiwane. Plansza obraca się do kolejnego gracza po każdym posunięciu – możesz to wyłączyć przyciskiem obracania.',
+        tutTitle3: 'Koniec gry', tutText3: 'Mat oznacza wygraną. Pat, trzykrotne powtórzenie pozycji i pięćdziesiąt ruchów bez bicia kończą się remisem. Cofanie ruchów jest nieograniczone, możesz też w każdej chwili poddać partię lub zaproponować remis.'
+      },
+      fr: {
+        white: 'Blancs', black: 'Noirs', toMove: 'Aux {c} de jouer', check: 'Échec !', mate: 'Échec et mat',
+        stalemate: 'Pat : nulle', fifty: 'Cinquante coups sans prise ni coup de pion : nulle', repetition: 'Triple répétition : nulle',
+        material: 'Matériel insuffisant pour mater : nulle', agreed: 'Nulle par accord', whiteWins: 'Les Blancs gagnent', blackWins: 'Les Noirs gagnent',
+        resigned: 'Les {c} abandonnent', resign: 'Abandonner', resignAsk: 'Les {c} abandonnent ?', offerDraw: 'Nulle',
+        drawAsk: 'Les deux joueurs acceptent-ils la nulle ?', autoFlip: 'Tourner le plateau', faceToFace: 'Face à face', promote: 'Promouvoir le pion en',
+        newGame: 'Nouvelle partie', undoMove: 'Annuler le coup', board: 'Échiquier', move: 'Se déplacer sur le plateau',
+        pick: 'Choisir ou jouer', flipKey: 'Tourner le plateau', cancelPick: 'Annuler la sélection', moves: 'Coups',
+        vsAi: 'Contre l’IA', twoPlayers: 'Deux joueurs', bot: 'IA', thinking: 'L’IA réfléchit…', yourMove: 'À toi',
+        youWin: 'Tu gagnes !', youLose: 'Tu as perdu', newMatch: 'Nouvelle partie', resignMe: 'Abandonner cette partie ?', draw: 'Nulle', yourColor: 'Ta couleur', randomSide: 'Au hasard', puzzles: 'Problèmes', pzFind: 'Trouve le meilleur coup', pzMateIn: 'Mat en {n}', pzWatch: 'L’adversaire joue…', pzWrong: 'Pas celui-là. Réessaie', pzRight: 'Bien ! Continue', pzSolved: 'Résolu !', pzLate: 'Résolu, après une erreur', pzShown: 'Voilà la réponse', pzHint: 'Indice', pzHintOn: 'Joue cette pièce', pzShow: 'Solution', pzNext: 'Problème suivant', pzEnd: 'Terminer', pzOf: 'Problème {i} sur {n}', pzSet: '{s} sur {n} résolus', pzRating: 'Classement', pzDaily: 'Problèmes du jour', pzCredit: 'Les problèmes viennent de la base ouverte de Lichess (CC0).', pzRules: 'Problèmes : l’adversaire joue un coup, tu trouves la meilleure suite. Une série compte cinq problèmes ; le défi du jour en a trois, un de chaque niveau. Un mauvais coup est repris et tu peux réessayer, mais ce problème ne compte plus comme résolu.',
+        rules: 'Toutes les règles de la FIDE, sans pendule : roque, prise en passant et promotion. Le mat gagne ; le pat, la triple répétition, cinquante coups sans prise ni coup de pion et le matériel insuffisant font nulle. Joue contre l’IA à trois niveaux, ou à deux sur un téléphone ; à deux avec la rotation activée, le plateau se tourne vers le joueur suivant après chaque coup.',
+        tutTitle1: 'Contre l’IA ou un ami', tutText1: 'Joue contre l’IA, ou contre un ami sur le même téléphone. Touche une pièce pour voir où elle peut aller, puis touche la case d’arrivée, ou fais glisser la pièce.',
+        tutTitle2: 'Toutes les règles', tutText2: 'Roque, prise en passant et promotion sont là. Le plateau se tourne vers le joueur suivant après chaque coup ; désactive-le avec le bouton de rotation.',
+        tutTitle3: 'La fin', tutText3: 'Le mat gagne. Le pat, la triple répétition et cinquante coups sans prise font nulle. Les annulations sont illimitées, et tu peux abandonner ou convenir d’une nulle.'
+      },
+      ar: {
+        white: 'الأبيض', black: 'الأسود', toMove: 'دور {c}', check: 'كش ملك!', mate: 'كش مات',
+        stalemate: 'جمود: تعادل', fifty: 'خمسون نقلة بلا أسر ولا نقلة جندي: تعادل', repetition: 'تكرار ثلاثي: تعادل',
+        material: 'لا قطع كافية للمات: تعادل', agreed: 'تعادل بالاتفاق', whiteWins: 'فاز الأبيض', blackWins: 'فاز الأسود',
+        resigned: '{c} استسلم', resign: 'استسلام', resignAsk: 'هل يستسلم {c}؟', offerDraw: 'تعادل',
+        drawAsk: 'هل يوافق اللاعبان على التعادل؟', autoFlip: 'تدوير الرقعة', faceToFace: 'وجهًا لوجه', promote: 'ترقية الجندي إلى',
+        newGame: 'لعبة جديدة', undoMove: 'تراجع', board: 'رقعة الشطرنج', move: 'نقلة على الرقعة',
+        pick: 'اختر أو انقل', flipKey: 'تدوير الرقعة', cancelPick: 'إلغاء الاختيار', moves: 'النقلات',
+        vsAi: 'ضد الروبوت', twoPlayers: 'لاعبان', bot: 'الروبوت', thinking: 'الروبوت يفكر…', yourMove: 'دورك',
+        youWin: 'فزت!', youLose: 'خسرت', newMatch: 'لعبة جديدة', resignMe: 'هل تستسلم في هذه اللعبة؟', draw: 'تعادل', yourColor: 'لونك', randomSide: 'عشوائي', puzzles: 'ألغاز', pzFind: 'جد أفضل نقلة', pzMateIn: 'مات في {n}', pzWatch: 'الخصم يتحرك…', pzWrong: 'ليست هذه. حاول مجددًا', pzRight: 'صحيح! تابع', pzSolved: 'حُلّ!', pzLate: 'حُلّ بعد خطأ', pzShown: 'هذا هو الحل', pzHint: 'تلميح', pzHintOn: 'حرّك هذه القطعة', pzShow: 'الحل', pzNext: 'اللغز التالي', pzEnd: 'إنهاء', pzOf: 'اللغز {i} من {n}', pzSet: 'حُلّ {s} من {n}', pzRating: 'التقييم', pzDaily: 'ألغاز اليوم', pzCredit: 'الألغاز من قاعدة ألغاز Lichess المفتوحة (CC0).', pzRules: 'الألغاز: يتحرك الخصم، وتجد أنت أفضل متابعة. الجولة خمسة ألغاز؛ وتحدي اليوم ثلاثة، واحد من كل مستوى. النقلة الخاطئة تُسترجع ويمكنك المحاولة مجددًا، لكن ذلك اللغز لا يُحسب محلولًا.',
+        rules: 'قواعد الحركة كاملة كما في FIDE، بلا ساعة: التبييت والأسر بالمرور والترقية. كش مات يفوز؛ والجمود والتكرار الثلاثي وخمسون نقلة بلا أسر ولا نقلة جندي ونقص القطع كلها تعادل. العب ضد الروبوت بثلاثة مستويات، أو لاعبين على هاتف واحد؛ وفي لعبة اللاعبين مع تفعيل التدوير، تدور الرقعة نحو اللاعب التالي بعد كل نقلة.',
+        tutTitle1: 'ضد الروبوت أو صديق', tutText1: 'العب ضد الروبوت، أو ضد صديق على الهاتف نفسه. انقر قطعة لترى أين يمكنها الذهاب، ثم انقر المربع المطلوب، أو اسحب القطعة.',
+        tutTitle2: 'كل القواعد', tutText2: 'التبييت والأسر بالمرور والترقية كلها موجودة. تدور الرقعة نحو اللاعب التالي بعد كل نقلة؛ أوقف ذلك بزر التدوير.',
+        tutTitle3: 'النهاية', tutText3: 'كش مات يفوز. الجمود والتكرار الثلاثي وخمسون نقلة بلا أسر كلها تعادل. التراجع بلا حدود، ويمكنك الاستسلام أو الاتفاق على تعادل.'
+      },
+      hi: {
+        white: 'सफ़ेद', black: 'काला', toMove: '{c} की चाल', check: 'शह!', mate: 'शह और मात',
+        stalemate: 'गतिरोध: बराबरी', fifty: 'पचास चालें बिना मारे या प्यादा चले: बराबरी', repetition: 'तीन बार दोहराव: बराबरी',
+        material: 'मात देने लायक़ मोहरे नहीं बचे: बराबरी', agreed: 'सहमति से बराबरी', whiteWins: 'सफ़ेद जीता', blackWins: 'काला जीता',
+        resigned: '{c} ने हार मानी', resign: 'हार मानें', resignAsk: '{c} हार मानेगा?', offerDraw: 'बराबरी',
+        drawAsk: 'क्या दोनों खिलाड़ी बराबरी पर सहमत हैं?', autoFlip: 'बोर्ड घुमाएँ', faceToFace: 'आमने-सामने', promote: 'प्यादे की पदोन्नति:',
+        newGame: 'नया खेल', undoMove: 'चाल वापस', board: 'शतरंज का बोर्ड', move: 'बोर्ड पर चलें',
+        pick: 'चुनें या चलें', flipKey: 'बोर्ड घुमाएँ', cancelPick: 'चुनाव रद्द करें', moves: 'चालें',
+        vsAi: 'कंप्यूटर से', twoPlayers: 'दो खिलाड़ी', bot: 'कंप्यूटर', thinking: 'कंप्यूटर सोच रहा है…', yourMove: 'आपकी चाल',
+        youWin: 'आप जीत गए!', youLose: 'आप हार गए', newMatch: 'नया खेल', resignMe: 'यह खेल छोड़ें?', draw: 'बराबरी', yourColor: 'आपका रंग', randomSide: 'कोई भी', puzzles: 'पहेलियाँ', pzFind: 'सबसे अच्छी चाल खोजें', pzMateIn: '{n} में मात', pzWatch: 'विरोधी चल रहा है…', pzWrong: 'यह नहीं। फिर कोशिश करें', pzRight: 'सही! आगे बढ़ें', pzSolved: 'हल हो गई!', pzLate: 'हल हुई, एक ग़लती के बाद', pzShown: 'जवाब यह था', pzHint: 'संकेत', pzHintOn: 'यह मोहरा चलें', pzShow: 'हल', pzNext: 'अगली पहेली', pzEnd: 'ख़त्म', pzOf: 'पहेली {i} / {n}', pzSet: '{n} में से {s} हल', pzRating: 'रेटिंग', pzDaily: 'रोज़ की पहेलियाँ', pzCredit: 'पहेलियाँ Lichess के खुले पहेली डेटाबेस (CC0) से ली गई हैं।', pzRules: 'पहेलियाँ: विरोधी एक चाल चलता है, आप सबसे अच्छी आगे की चाल खोजें। एक दौर में पाँच पहेलियाँ हैं; रोज़ की चुनौती में तीन, हर स्तर से एक। ग़लत चाल वापस हो जाती है और आप फिर कोशिश कर सकते हैं, पर वह पहेली हल हुई नहीं गिनी जाती।',
+        rules: 'FIDE के पूरे चाल-नियम, बिना घड़ी के: किलेबंदी, आँ पासाँ और पदोन्नति। शह और मात से जीत होती है; गतिरोध, तीन बार दोहराव, बिना मारे या प्यादा चले पचास चालें और मात लायक़ मोहरे न होना बराबरी है। कंप्यूटर से तीन स्तरों पर खेलें, या एक फ़ोन पर दो खिलाड़ी; दो खिलाड़ियों के खेल में घुमाना चालू हो तो हर चाल के बाद बोर्ड अगले खिलाड़ी की ओर घूम जाता है।',
+        tutTitle1: 'कंप्यूटर या दोस्त से', tutText1: 'कंप्यूटर से खेलें, या उसी फ़ोन पर किसी दोस्त से। मोहरा छुएँ तो दिखेगा कि वह कहाँ जा सकता है, फिर मंज़िल का खाना छुएँ, या मोहरा खींचें।',
+        tutTitle2: 'सारे नियम', tutText2: 'किलेबंदी, आँ पासाँ और पदोन्नति सब शामिल हैं। हर चाल के बाद बोर्ड अगले खिलाड़ी की ओर घूमता है; घुमाने वाले बटन से इसे बंद करें।',
+        tutTitle3: 'अंत', tutText3: 'शह और मात से जीत होती है। गतिरोध, तीन बार दोहराव और बिना मारे पचास चालें बराबरी हैं। वापस लेने की कोई सीमा नहीं, और आप हार मान सकते हैं या बराबरी पर सहमत हो सकते हैं।'
       },
       zh: {
         white: '白方', black: '黑方', toMove: '轮到{c}', check: '将军！', mate: '将死',

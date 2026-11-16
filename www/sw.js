@@ -17,13 +17,17 @@ const SHELL = [
   './manifest.webmanifest',
   './favicon.svg',
   './privacy.html',
+  './privacy-plus.html',
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
   './lib/chogan.css',
+  './lib/early.js',
   './lib/chogan.js',
   './lib/cue.js',
-  './fonts/vazirmatn-variable.woff2'
+  './fonts/vazirmatn-variable.woff2',
+  './fonts/nunito-latin.woff2',
+  './fonts/noto-devanagari.woff2'
 ];
 
 async function buildList() {
