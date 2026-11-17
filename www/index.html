@@ -1168,8 +1168,18 @@
   // behind a restricted network could not tell "no update" from "the check failed". The
   // button runs the same check and can be tapped again after any result. Only the web
   // has a service worker; the Android app updates through its store and shows no row.
+  // Capybara's APK has no internet permission and no service worker: its update row is a plain
+  // link to the latest release on GitHub, opened in the browser (cmena92/chogan#48)
+  function apkUpdateRow() {
+    return el('div', { class: 'ch-item ch-upd' }, [
+      el('div', { class: 'ch-item__label', text: C.t('updRow') }),
+      el('a', { href: 'https://github.com/cmena92/chogan/releases/latest', target: '_blank', rel: 'noopener', text: C.t('updCheck') })
+    ]);
+  }
+
   function updateRow() {
     var U = C.updates;
+    if (window.Capacitor) return apkUpdateRow();
     if (!U || !U.supported) return null;
     var note = el('div', { class: 'ch-upd__note ch-sm ch-dim', role: 'status', 'aria-live': 'polite' });
     var go = el('button', { class: 'ch-btn ch-btn--primary ch-btn--sm', type: 'button', text: C.t('updateNow') });

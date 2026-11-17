@@ -1137,6 +1137,36 @@ async function testGestos() {
   });
 }
 
+/* ------------------------------------------------ updating the APK from GitHub Releases (#48) */
+
+async function testActualizarApk() {
+  head('La APK busca actualizaciones en GitHub Releases, sin permiso de internet (#48)');
+  const URL_REL = 'https://github.com/cmena92/chogan/releases/latest';
+  // the Profile tab, reached from the menu, with or without the Android app around the page
+  const perfil = async ({ abrir, evaluar, cdp }, apk, lang) => {
+    if (apk) await cdp('Page.addScriptToEvaluateOnNewDocument', { source: 'window.Capacitor = { isNativePlatform: () => true };' });
+    await abrir('/index.html', 'body');
+    await evaluar(preparar({ lang: lang || 'es' }) + ` && localStorage.setItem('chogan.app.welcomeSeen', 'true')`);
+    await abrir('/index.html', '#navIn button');
+    const n = await evaluar(`document.querySelectorAll('#navIn button').length`);
+    await evaluar(`document.querySelectorAll('#navIn button')[${n - 1}].click(); true`); await evaluar(pausa(500));
+    return evaluar(`(() => { const a = [...document.querySelectorAll('a')].find((x) => x.href === '${URL_REL}'); return a ? { texto: a.textContent, target: a.target, rel: a.rel } : null; })()`);
+  };
+  await navegador(async (b) => {
+    const r = await perfil(b, true, 'es');
+    ok(!!r && r.texto === 'Buscar actualizaciones' && r.target === '_blank' && /noopener/.test(r.rel), 'en la APK, el Perfil enlaza la última publicación de GitHub, en el navegador (' + JSON.stringify(r) + ')');
+  });
+  await navegador(async (b) => {
+    const r = await perfil(b, true, 'en');
+    ok(!!r && r.texto === 'Check for updates', 'el enlace habla el idioma de la app');
+  });
+  await navegador(async (b) => {
+    ok(await perfil(b, false) === null, 'en la web no aparece: ahí actualiza el service worker');
+  });
+  const manifiesto = fs.readFileSync(path.join(ROOT, 'android/app/src/main/AndroidManifest.xml'), 'utf8');
+  ok(!/android\.permission\.INTERNET/.test(manifiesto), 'la APK sigue sin permiso de internet');
+}
+
 /* ------------------------------------------------ run */
 
 const GROUPS = [...fs.readFileSync(__filename, 'utf8').matchAll(/^(?:async )?function (test[A-Za-z0-9]+)\(\) \{/gm)].map((m) => m[1]);
