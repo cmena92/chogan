@@ -8,12 +8,20 @@ on:
   push:
     branches: ['rebrand/**', 'feature/**']
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Debug APK or signed AAB (build only; no Play upload)'
+        required: false
+        default: debug
+        type: choice
+        options: [debug, signed-aab]
 
 permissions:
   contents: read
 
 jobs:
   apk:
+    if: github.event_name != 'workflow_dispatch' || inputs.mode != 'signed-aab'
     name: Debug APK
     runs-on: ubuntu-latest
 
@@ -69,4 +77,111 @@ jobs:
         with:
           name: capybara-debug-apk
           path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+  signed-aab:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode == 'signed-aab'
+    name: Signed AAB (build only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Read Gradle version from the wrapper
+        id: gradleversion
+        run: |
+          set -euo pipefail
+          V=$(sed -n 's|.*/gradle-\([0-9][^-]*\)-bin\.zip.*|\1|p' android/gradle/wrapper/gradle-wrapper.properties)
+          [ -n "$V" ] || { echo "Could not read Gradle version"; exit 1; }
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: ${{ steps.gradleversion.outputs.version }}
+          cache-disabled: true
+
+      - name: Download pinned bundletool
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --retry 3 \
+            https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar \
+            -o "$RUNNER_TEMP/bundletool.jar"
+          echo "a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29  $RUNNER_TEMP/bundletool.jar" | sha256sum --check --strict
+
+      - name: Build with existing release key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_FILE: ${{ runner.temp }}/release.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          umask 077
+          trap 'rm -f "$ANDROID_KEYSTORE_FILE"' EXIT
+          : "${ANDROID_KEYSTORE_BASE64:?Missing keystore}" "${ANDROID_KEYSTORE_PASSWORD:?Missing password}"
+          : "${ANDROID_KEY_ALIAS:?Missing alias}" "${ANDROID_KEY_PASSWORD:?Missing key password}"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$ANDROID_KEYSTORE_FILE"
+          # Export only the public certificate, never private key material.
+          keytool -exportcert -keystore "$ANDROID_KEYSTORE_FILE" -storepass:env ANDROID_KEYSTORE_PASSWORD \
+            -alias "$ANDROID_KEY_ALIAS" -file "$RUNNER_TEMP/signer.der"
+          CERT=$(keytool -J-Duser.language=en -J-Duser.country=US -printcert -file "$RUNNER_TEMP/signer.der" | awk '/SHA256:/{gsub(":", "", $2); print tolower($2)}')
+          [ "$CERT" = 601f619e5e1555f31a2c9038063450f2aafa9e95d218edd87e18f10673882b41 ] || { echo 'Wrong source certificate'; exit 1; }
+          (cd android && gradle --no-daemon bundleRelease)
+
+      - name: Remove raw key even on failure
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.jks"
+
+      - name: Verify signed bundle and merged manifest
+        run: |
+          set -euo pipefail
+          AAB=android/app/build/outputs/bundle/release/app-release.aab
+          [ -s "$AAB" ]
+          CERT=$(keytool -J-Duser.language=en -J-Duser.country=US -printcert -jarfile "$AAB" | awk '/SHA256:/{gsub(":", "", $2); print tolower($2)}')
+          [ "$CERT" = 601f619e5e1555f31a2c9038063450f2aafa9e95d218edd87e18f10673882b41 ] || { echo 'Wrong bundle certificate'; exit 1; }
+          # Trust only the pinned public source cert: no blanket ignoring self-signed errors.
+          keytool -importcert -noprompt -alias release -file "$RUNNER_TEMP/signer.der" \
+            -keystore "$RUNNER_TEMP/public-trust.p12" -storepass public-only
+          # Strict rejects tampering AND unsigned added entries (exit bit 16).
+          jarsigner -J-Duser.language=en -J-Duser.country=US -verify -strict -verbose -certs \
+            -keystore "$RUNNER_TEMP/public-trust.p12" -storepass public-only "$AAB" > "$RUNNER_TEMP/jar-verification.txt" 2>&1
+          grep -Fx 'jar verified.' "$RUNNER_TEMP/jar-verification.txt"
+          java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle="$AAB"
+          java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle="$AAB" --module=base > "$RUNNER_TEMP/manifest.xml"
+          python3 - <<'PY'
+          import os, re, xml.etree.ElementTree as ET
+          from pathlib import Path
+          manifest = ET.parse(Path(os.environ['RUNNER_TEMP']) / 'manifest.xml').getroot()
+          ns = '{http://schemas.android.com/apk/res/android}'
+          source = Path('www/version.js').read_text()
+          version = re.search(r"APP_VERSION\s*=\s*['\"]([^'\"]+)['\"]", source)[1]
+          code = re.search(r'APP_VERSION_CODE\s*=\s*(\d+)', source)[1]
+          assert manifest.get('package') == 'com.webcomcr.capybara', 'Wrong package'
+          assert manifest.get(ns + 'versionName') == version, 'Wrong versionName'
+          assert manifest.get(ns + 'versionCode') == code, 'Wrong versionCode'
+          permissions = sorted({e.get(ns + 'name', '') for e in manifest if e.tag.startswith('uses-permission')})
+          print('Merged permissions:', ', '.join(permissions))
+          assert 'android.permission.INTERNET' not in permissions, 'INTERNET forbidden'
+          PY
+          mkdir -p aab-artifact
+          cp "$AAB" aab-artifact/capybara-play-test.aab
+          (cd aab-artifact && sha256sum capybara-play-test.aab | tee SHA256SUMS)
+
+      - name: Upload verified AAB only
+        uses: actions/upload-artifact@v6
+        with:
+          name: capybara-play-test
+          path: |
+            aab-artifact/capybara-play-test.aab
+            aab-artifact/SHA256SUMS
+          if-no-files-found: error
           retention-days: 14

@@ -24,3 +24,6 @@ www/_shot.html
 Thumbs.db
 .idea/
 *.iml
+
+# Disposable build-only verifier fixtures and local evidence
+.aab-validation/
