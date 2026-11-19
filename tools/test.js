@@ -7887,7 +7887,7 @@ function testPepkExport() {
   const keyLines = y.split('\n').filter((l) => /inputs\.encryption_key/.test(l));
   ok(keyLines.length === 1 && /^\s+ENCRYPTION_KEY: \$\{\{ inputs\.encryption_key \}\}$/.test(keyLines[0]), 'the PEM input reaches the shell only through env');
   ok(/--rsa-aes-encryption/.test(y) && /--include-cert/.test(y), 'PEPK encrypts to Play\'s key and includes the certificate');
-  ok(/c3f70a1af8a45558678d1d9b413415d1b0a4c3208835ce78c1f37c4a3a008839/.test(y), 'the exported key is checked against the permanent Chogan fingerprint');
+  ok(/601f619e5e1555f31a2c9038063450f2aafa9e95d218edd87e18f10673882b41/.test(y), 'the exported key is checked against the permanent Capybara fingerprint');
   ok(/if: always\(\)\n\s+run: rm -f "\$RUNNER_TEMP\/release\.jks"/.test(y), 'the keystore is always removed');
   ok(/permissions:\n\s+contents: read/.test(y) && !/contents: write|gh release/.test(y), 'nothing is published');
   ok(/retention-days: 1/.test(y), 'the artifact lives one day');

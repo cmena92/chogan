@@ -1,0 +1,24 @@
+# Capybara: encrypted Play signing-key export
+Branch: fix/capybara-pepk | Isolated worktree: .validation51/pepk-export/ under the session-authorized Chogan repository.
+Delivery: ask-on-risk, one security work unit (~150–250 authored lines forecast); no Play upload, key rotation or default-branch merge.
+
+## Specs
+S1. User authorized «si» to: «¿me autorizás a preparar la exportación cifrada de la clave actual de Capybara? No la subiré a Google Play ni cambiaré ninguna clave.» The immediately preceding proposal specifies generating the encrypted ZIP in GitHub using existing secrets.
+S2. Preserve and validate Capybara's existing signer SHA256: 601f619e5e1555f31a2c9038063450f2aafa9e95d218edd87e18f10673882b41. Existing workflow still pins upstream c3f70a1a…a008839 and must not run unchanged.
+S3. User-provided files: /home/oruspc/Descargas/pepk.jar (SHA256 aaccc0774b240aa5304bdad2a49865e92f229ca73209ecb6eaafe75dc858e24e, matches reviewed workflow pin) and /home/oruspc/Descargas/encryption_public_key.pem (SHA256 c53a06e3291a4825c1310f9f80014e9dbb152860232330f0a3beec1080bddc82, valid RSA3072 public encryption key downloaded from owner's Play Console).
+S4. Never expose passwords, keystore or private key in chat/logs/repository. Keep production material only inside ephemeral GitHub-hosted runner; export only the encrypted ZIP for the supplied Play public key. Preserve checksum, source-key-certificate, ZIP-certificate and cleanup checks. Do not put encrypted key on public Releases or change Play configuration. Artifact retention remains one day.
+S5. Keep #51 and privacy worktree edits untouched. Only push the isolated export branch after local/independent checks; wait its CI, dispatch this specific export workflow on its verified commit, download encrypted artifact and verify certificate/content before owner handoff. No automatic upload to Play. Public PEM may be provided as workflow input, not committed.
+
+## Tasks
+T1 | S1-S5 | delegated writer | done | Exporter adapted and tested: RED against old gates/names, GREEN26 including 10 existing checks and 6 bash syntax checks; malformed/wrong/empty/extra input rejects. No production export or commit yet.
+T2 | S1-S5 | independent verifier + parent | done | Risk: item 2 (production signing-key handling), item 5 (workflow). Independent scoped PASS, 26/26 and negative scenarios inspected, no blockers. Parent26 PASS; no production keys/export used. Operational CI/artifact proof remains T3.
+T3 | S1-S5 | inline parent | in_progress | Commit/push isolated branch, wait CI, dispatch authorized PEPK export and validate artifact. No Play upload or default-branch merge.
+
+## Log
+L1. User authorization, verbatim: «si» after explicit encrypted-export question.
+L2. Source baseline 897cfd191f01d7f71298250e2d787aed38bc5564. Production secret names exist: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD; no values read. Native gh workflow view does not support --json; only the read-only invocation failed. Workflow path and implementation already read locally.
+L3. Isolated worktree created from origin/main under parent-authorized /home/oruspc/cmena92/chogan. Worker scope uses narrow nested repository-relative paths; no new independent repository required. Parent owns workflow dispatch/artifact retrieval. Engram unavailable; local task document is recovery record, mirror pending.
+L4. Writer completed: exact ZIP allowlist and nonempty checks, both Capybara certificate gates, reviewed PEPK hash unchanged; test26 PASS with stubbed Java/keytool/download/upload and disposable certs. No real export proof claimed. Parent read actual diff/tests/docs and staged only six intended files (296 authored lines including this task document), scratch ignored.
+L5. ASSESS returned high, independentVerifier=true, reviewDue/high_risk and native continuation. Primary RDD is OFF; continuation relayed unchanged but not executed. Independent verifier reviews only this new export scope, not replace/retry unavailable #51 proof.
+L6. Independent verifier mwn7aa66-9-aj21 final scoped PASS, no blockers/correction batch: copied workflow/test files, isolated node tools/test-capybara-pepk.mjs exit0, 26 PASS, no stderr, negative scenario logs inspected. Source/isolation unchanged. Parent independently reran26 PASS and whitespace check. Limits: Java/keytool/download/upload mocked; rm checked via stub arguments; actual GitHub scheduler/production export not claimed. Artifact step default success() remains false after failed gates even with always cleanup.
+L7. Before GitHub operations parent revalidated public PEM/JAR SHA and PEM parse; matches S3. Existing active exporter workflow id419688437. No secret values read. User permission covers isolated branch publication and encrypted export only; default branch/Play unchanged.

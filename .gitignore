@@ -24,3 +24,6 @@ www/_shot.html
 Thumbs.db
 .idea/
 *.iml
+
+# Disposable PEPK workflow tests (including test-only private keys)
+/.pepk-validation/
